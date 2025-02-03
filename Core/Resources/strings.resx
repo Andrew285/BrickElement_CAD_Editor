@@ -1,0 +1,304 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Colon_Symbol" xml:space="preserve">
+    <value>:</value>
+  </data>
+  <data name="ContextMenu_AttachingItem" xml:space="preserve">
+    <value>Set Attaching</value>
+  </data>
+  <data name="ContextMenu_CreateCubeBrickElementItem" xml:space="preserve">
+    <value>Cube</value>
+  </data>
+  <data name="ContextMenu_CreateItem" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="ContextMenu_CreatePyramidBrickElementItem" xml:space="preserve">
+    <value>Pyramid</value>
+  </data>
+  <data name="ContextMenu_CreateSphereBrickElementItem" xml:space="preserve">
+    <value>Sphere</value>
+  </data>
+  <data name="ContextMenu_DeleteItem" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ContextMenu_DivideItem" xml:space="preserve">
+    <value>Divide</value>
+  </data>
+  <data name="ContextMenu_NotAttachingItem" xml:space="preserve">
+    <value>Unset Attaching</value>
+  </data>
+  <data name="ContextMenu_NotTargetItem" xml:space="preserve">
+    <value>Unset Target</value>
+  </data>
+  <data name="ContextMenu_TargetItem" xml:space="preserve">
+    <value>Set Target</value>
+  </data>
+  <data name="CreatingComponent" xml:space="preserve">
+    <value>Cube Brick Element</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="ExitMenu" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="FiguresMenuItem_SolidObjects" xml:space="preserve">
+    <value>Solid Objects</value>
+  </data>
+  <data name="FiguresMenuItem_CustomObjects" xml:space="preserve">
+    <value>Create Custom</value>
+  </data>
+  <data name="FiguresMenuItem_CustomSurface" xml:space="preserve">
+    <value>Surface</value>
+  </data>
+  <data name="FiguresMenuItem_CustomHollowObject" xml:space="preserve">
+    <value>Hollow Object</value>
+  </data>
+  <data name="FiguresMenuItem_HollowObjects" xml:space="preserve">
+    <value>Hollow Objects</value>
+  </data>
+  <data name="FiguresMenuItem_CreateWith" xml:space="preserve">
+    <value>Create with</value>
+  </data>
+  <data name="FiguresMenuItem_CreateWithLine" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="Line" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="Lines" xml:space="preserve">
+    <value>Lines</value>
+  </data>
+  <data name="MenuItem_Camera" xml:space="preserve">
+    <value>Camera</value>
+  </data>
+  <data name="MenuItem_Figures" xml:space="preserve">
+    <value>Figures</value>
+  </data>
+  <data name="MenuItem_File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="MenuItem_Scene" xml:space="preserve">
+    <value>Scene</value>
+  </data>
+  <data name="OpenMenu" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="PropertiesTabControl_Creating" xml:space="preserve">
+    <value>Creating</value>
+  </data>
+  <data name="PropertiesTabControl_Properties" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="PropertiesTabControl_Render" xml:space="preserve">
+    <value>Optimisation</value>
+  </data>
+  <data name="Properties_Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="Properties_Size_TopFoundationSize" xml:space="preserve">
+    <value>Top Foundation Size</value>
+  </data>
+  <data name="Properties_Size_DownFoundationSize" xml:space="preserve">
+    <value>Down Foundation Size</value>
+  </data>
+  <data name="Properties_Size_Height" xml:space="preserve">
+    <value>Height</value>
+  </data>
+  <data name="Properties_Size_Radius" xml:space="preserve">
+    <value>Radius</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Render_Drawing" xml:space="preserve">
+    <value>Drawing</value>
+  </data>
+  <data name="Render_Drawing_Faces" xml:space="preserve">
+    <value>Faces</value>
+  </data>
+  <data name="Render_Drawing_TriangleFaces" xml:space="preserve">
+    <value>Draw All Faces</value>
+  </data>
+  <data name="Render_Drawing_VertexIndices" xml:space="preserve">
+    <value>Vertex Lables</value>
+  </data>
+  <data name="SaveMenu" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="X_Coordinate" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Y_Coordinate" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Z_Coordinate" xml:space="preserve">
+    <value>Z</value>
+  </data>
+  <data name="CameraSetViewByAxis" xml:space="preserve">
+    <value>Set By Axis</value>
+    <comment>Aligns the camera position along the specified axis</comment>
+  </data>
+  <data name="AddLine" xml:space="preserve">
+    <value>Add Line</value>
+  </data>
+  <data name="UpdateLine" xml:space="preserve">
+    <value>Update Line</value>
+  </data>
+  <data name="RemoveLine" xml:space="preserve">
+    <value>Remove Line</value>
+  </data>
+  <data name="Error_PleaseEnterValidCoords" xml:space="preserve">
+    <value>Please, enter valid values of line's coordianates</value>
+  </data>
+  <data name="Error_PleaseEnterValidLine" xml:space="preserve">
+    <value>Please, select a line and enter updated coordinates</value>
+  </data>
+  <data name="ExportSuccess" xml:space="preserve">
+    <value>The object is exported successfully</value>
+  </data>
+  <data name="ExportMenu" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="ObjFormat" xml:space="preserve">
+    <value>OBJ</value>
+  </data>
+  <data name="SceneMode_ViewMode" xml:space="preserve">
+    <value>View Mode</value>
+  </data>
+  <data name="SceneMode_EditMode" xml:space="preserve">
+    <value>Edit Mode</value>
+  </data>
+  <data name="Property_Position" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="Property_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+</root>
