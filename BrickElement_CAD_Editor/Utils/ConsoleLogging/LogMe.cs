@@ -2,7 +2,7 @@
 
 namespace UI.Utils.ConsoleLogging
 {
-    public static class Log
+    public static class LogMe
     {
         private const string INFO = "INFO:";
         private static Color INFO_COLOR = Color.FromArgb(165, 229, 250);

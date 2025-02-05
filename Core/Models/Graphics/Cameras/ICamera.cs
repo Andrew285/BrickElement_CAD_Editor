@@ -13,6 +13,7 @@ namespace Core.Models.Graphics.Cameras
         public CameraProjection Projection { get; set; }
         public float ZoomMax { get; set; }
         public float ZoomMin { get; set; }
+        public float DistanceToTarget { get; set; }
 
         public void Zoom();
         public void Update();
