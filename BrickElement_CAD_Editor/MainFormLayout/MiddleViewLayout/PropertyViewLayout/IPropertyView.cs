@@ -1,6 +1,8 @@
-﻿namespace UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout
+﻿using UI.Utils.ViewLayout.ControlUtil;
+
+namespace UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout
 {
-    public interface IPropertyView
+    public interface IPropertyView: IView<Panel>
     {
     }
 }

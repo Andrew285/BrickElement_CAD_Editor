@@ -1,30 +1,28 @@
-﻿namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
+﻿using UI.Utils.ViewLayout.CustomPanelView;
+
+namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
 {
-    public class SceneView : ISceneView
+    public class SceneView: PanelView, ISceneView
     {
-        private Panel _panel;
         public event EventHandler OnSceneRendered;
 
         public Panel Control
         {
             get
             {
-                return _panel;
+                return panel;
             }
 
             set
             {
-                _panel = value;
+                panel = value;
             }
         }
 
         public SceneView()
         {
-            _panel = new Panel
-            {
-                Dock = DockStyle.Fill,
-                BackColor = Color.Red
-            };
+            panel.Dock = DockStyle.Fill;
+            panel.BackColor = Color.Red;
         }
     }
 }

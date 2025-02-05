@@ -2,15 +2,8 @@
 using Core.Models.Graphics.Cameras;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UI.MainFormLayout;
-using UI.MainFormLayout.MiddleViewLayout;
-using UI.MainFormLayout.MiddleViewLayout.SceneViewLayout;
+using UI.Utils.ConsoleLogging;
 
 namespace UI
 {
@@ -45,7 +38,10 @@ namespace UI
             //var mainViewPresenter = serviceProvider.GetRequiredService<MainViewPresenter>();
 
 
+            // Create Console window
+            ConsoleAllocator.Create();
 
+            // Initialize MainForm
             IMainForm view = new MainForm();
 
             ICamera camera = new PerspectiveCamera();

@@ -1,5 +1,7 @@
 ﻿using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
+using Raylib_cs;
+using System.Security.Cryptography.X509Certificates;
 using UI.MainFormLayout.MiddleViewLayout.SceneViewLayout;
 
 namespace UI.MainFormLayout
@@ -17,6 +19,9 @@ namespace UI.MainFormLayout
             this.mainForm = mainForm;
             this.renderer = renderer;
             this.scene = scene;
+
+            //Mesh obj = renderer
+            //scene.Objects.Add()
 
             MainViewPresenter = new MainViewPresenter(mainForm.MainView, renderer, scene);
             mainForm.OnLoaded += HandleOnLoaded;

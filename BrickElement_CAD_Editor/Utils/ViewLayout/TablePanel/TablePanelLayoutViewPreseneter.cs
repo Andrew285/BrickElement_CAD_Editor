@@ -1,4 +1,4 @@
-﻿namespace UI.Utils.TablePanel
+﻿namespace UI.Utils.ViewLayout.TablePanel
 {
     public class TableLayoutPanelViewPreseneter
     {
@@ -6,7 +6,7 @@
 
         public TableLayoutPanelViewPreseneter(ITableLayoutPanelView tableView)
         {
-            this.tableLayoutPanelView = tableView;
+            tableLayoutPanelView = tableView;
         }
     }
 }

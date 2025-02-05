@@ -1,7 +1,7 @@
 ﻿using UI.MainFormLayout.ExtraToolsViewLayout;
 using UI.MainFormLayout.MenuViewLayout;
 using UI.MainFormLayout.MiddleViewLayout;
-using UI.Utils.ControlUtil;
+using UI.Utils.ViewLayout.ControlUtil;
 
 namespace UI.MainFormLayout
 {

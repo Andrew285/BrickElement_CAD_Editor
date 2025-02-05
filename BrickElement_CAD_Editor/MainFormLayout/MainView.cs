@@ -2,8 +2,8 @@
 using UI.MainFormLayout.ExtraToolsViewLayout;
 using UI.MainFormLayout.MenuViewLayout;
 using UI.MainFormLayout.MiddleViewLayout;
-using UI.Utils.ControlUtil;
-using UI.Utils.TablePanel;
+using UI.Utils.ViewLayout.ControlUtil;
+using UI.Utils.ViewLayout.TablePanel;
 using Utils;
 
 namespace UI.MainFormLayout
@@ -21,7 +21,7 @@ namespace UI.MainFormLayout
         private readonly (int, int) extraToolsPosition = (0, 1);
 
         private const float middleViewHeightPercentage = 80f;
-        private (int, int) middleViewRowColsCount = (1, 2);
+        private (int, int) middleViewRowColsCount = (1, 3);
         private readonly (int, int) middleViewPosition = (0, 2);
 
         private const float consoleViewHeightPercentage = 4.5f;
@@ -46,7 +46,7 @@ namespace UI.MainFormLayout
             ExtraToolsView = new ExtraToolsView();
             AddControlToLayout(ExtraToolsView, extraToolsPosition);
 
-            MiddleView = new MiddleView(this, middleViewRowColsCount.Item1, middleViewRowColsCount.Item2);
+            MiddleView = new MiddleView();
             AddControlToLayout(MiddleView, middleViewPosition);
         }
 

@@ -1,5 +1,4 @@
 ﻿
-using Core.Models.Graphics.Cameras;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout;

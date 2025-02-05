@@ -9,7 +9,6 @@ namespace Core.Models.Scene
 
         public Scene() 
         {
-        
         }
     }
 }

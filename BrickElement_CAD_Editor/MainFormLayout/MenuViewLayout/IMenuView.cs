@@ -1,4 +1,4 @@
-﻿using UI.Utils.ControlUtil;
+﻿using UI.Utils.ViewLayout.ControlUtil;
 
 namespace UI.MainFormLayout.MenuViewLayout
 {

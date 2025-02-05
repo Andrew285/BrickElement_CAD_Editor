@@ -9,12 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="MainFormLayout\MiddleViewLayout\LeftSideViewLayout\CatalogueView\" />
-    <Folder Include="MainFormLayout\MiddleViewLayout\LeftSideViewLayout\SceneTreeView\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
+    <PackageReference Include="Pastel" Version="6.0.1" />
     <PackageReference Include="Raylib-cs" Version="7.0.1" />
   </ItemGroup>
 
