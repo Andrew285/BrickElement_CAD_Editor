@@ -19,8 +19,6 @@ namespace UI.MainFormLayout
 
             MenuViewPresenter = new MenuViewPresenter(mainView.MenuView);
             MiddleViewPresenter = new MiddleViewPresenter(view.MiddleView, renderer, scene);
-            //mainView.OnLoaded += MiddleViewPresenter.SceneViewPresenter.HandleOnLoaded;
-            //mainView.OnSceneRendered += MiddleViewPresenter.SceneViewPresenter.HandleOnSceneRendered;
         }
     }
 }

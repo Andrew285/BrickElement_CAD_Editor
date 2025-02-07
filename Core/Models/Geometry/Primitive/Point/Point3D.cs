@@ -2,7 +2,7 @@
 using System.Numerics;
 using Color = Raylib_cs.Color;
 
-namespace Core.Models.Geometry.Primitive
+namespace Core.Models.Geometry.Primitive.Point
 {
     public class Point3D : SceneObject3D
     {
@@ -21,7 +21,7 @@ namespace Core.Models.Geometry.Primitive
             color = NON_SELECTED_COLOR;
         }
 
-        public Point3D(Vector3 position): this()
+        public Point3D(Vector3 position) : this()
         {
             Position = position;
         }

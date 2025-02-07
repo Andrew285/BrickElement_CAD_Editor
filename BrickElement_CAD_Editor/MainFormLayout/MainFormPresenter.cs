@@ -20,9 +20,6 @@ namespace UI.MainFormLayout
             this.renderer = renderer;
             this.scene = scene;
 
-            //Mesh obj = renderer
-            //scene.Objects.Add()
-
             MainViewPresenter = new MainViewPresenter(mainForm.MainView, renderer, scene);
             mainForm.OnLoaded += HandleOnLoaded;
         }

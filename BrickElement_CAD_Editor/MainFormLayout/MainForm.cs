@@ -39,7 +39,6 @@ namespace BrickElement_CAD_Editor
         private void SetEventHandlers()
         {
             this.Shown += (s, e) => OnLoaded?.Invoke(this, EventArgs.Empty);
-            //this.Shown += (s, e) => OnSceneRendered?.Invoke(this, EventArgs.Empty);
             this.KeyPress += (s, e) => OnKeyPressed?.Invoke(this, EventArgs.Empty);
         }
     }
