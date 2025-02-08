@@ -1,5 +1,6 @@
 ﻿using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
+using Core.Models.Scene;
 using Color = Raylib_cs.Color;
 
 namespace Core.Models.Geometry.Primitive.Line

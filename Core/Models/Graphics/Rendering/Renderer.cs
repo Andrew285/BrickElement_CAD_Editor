@@ -1,5 +1,5 @@
 ﻿using Core.Models.Geometry;
-using Core.Models.Geometry.Primitive;
+using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Graphics.Cameras;
 using Core.Models.Scene;
 using Raylib_cs;
@@ -96,20 +96,30 @@ namespace Core.Models.Graphics.Rendering
             Raylib.ClearBackground(ENVIRONMENT_COLOR);
             Raylib.BeginMode3D(Camera.ToCamera3D());
 
-            DrawSceneObjects(scene.Objects);
+            DrawSceneObjects(scene.Objects3D);
 
             OnRender3D?.Invoke();
             Raylib.EndMode3D();
 
             DrawFPS();
+            DrawSceneObjects(scene.Objects2D);
 
             OnRender2D?.Invoke();
             Raylib.EndDrawing();
         }
 
-        private void DrawSceneObjects(List<SceneObject> objects)
+        public bool IsFaceVisible(Plane3D face)
         {
-            foreach (SceneObject obj in objects) 
+            Vector3 faceNormal = face.CalculateNormal(); // Implement normal calculation
+            Vector3 viewDirection = Vector3.Normalize((face.GetCenter() - Camera.Position));
+
+            return Vector3.Dot(faceNormal, viewDirection) < 0; // Render only front-facing faces
+        }
+
+        #region Drawing
+        private void DrawSceneObjects<T>(List<T> objects) where T : SceneObject
+        {
+            foreach (SceneObject obj in objects)
             {
                 if (obj is IDrawable)
                 {
@@ -156,6 +166,21 @@ namespace Core.Models.Graphics.Rendering
             Raylib.DrawLine3D(start, end, color);
         }
 
+        public void DrawTriangle3D(Vector3 v1, Vector3 v2, Vector3 v3, Color color)
+        {
+            Raylib.DrawTriangle3D(v1, v2, v3, color);
+        }
+
+        public void DrawText(string text, int posX, int posY, int fontSize, Color color)
+        {
+            Raylib.DrawText(text, posX, posY, fontSize, color);
+        }
+
+        public Vector2 GetWorldToScreen(Vector3 value)
+        {
+            return Raylib.GetWorldToScreen(value, Camera.ToCamera3D());
+        }
+
         private void DrawFPS()
         {
             Raylib.DrawFPS(
@@ -163,5 +188,7 @@ namespace Core.Models.Graphics.Rendering
                 (int)FPS_TEXT_POSITION.Y
             );
         }
+
+        #endregion
     }
 }

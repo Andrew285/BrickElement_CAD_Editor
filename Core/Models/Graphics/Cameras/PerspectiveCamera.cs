@@ -22,8 +22,8 @@ namespace Core.Models.Graphics.Cameras
         public PerspectiveCamera()
         {
             Position = new Vector3(0.0f, 0.0f, 10.0f); // Initial camera position
-            Target = new Vector3(0.0f, 0.0f, 0.0f);      // Camera looking at the cube
-            Up = new Vector3(0.0f, 1.0f, 0.0f);          // Camera up vector
+            Target = Vector3.Zero;      // Camera looking at the cube
+            Up = Vector3.UnitY;          // Camera up vector
             FovY = 45.0f;                                // Camera field-of-view Y
             Projection = CameraProjection.Perspective;
         }
@@ -49,7 +49,7 @@ namespace Core.Models.Graphics.Cameras
 
         public void UpdateRotation(Vector2 mouseDelta)
         {
-            yaw -= mouseDelta.X * 0.003f;
+            yaw += mouseDelta.X * 0.003f;
             pitch -= mouseDelta.Y * 0.003f;
             pitch = Math.Clamp(pitch, -MathF.PI / 2.2f, MathF.PI / 2.2f);
         }
@@ -94,7 +94,7 @@ namespace Core.Models.Graphics.Cameras
                     pitch = MathF.PI / 2; // Level with the Y-axis 
                     break;
                 case AxisType.Z:
-                    Position = new Vector3(0, 0, distanceToTarget);  // Keep only the Z value
+                    Position = new Vector3(0, 0, -distanceToTarget);  // Keep only the Z value
                     Target = new Vector3(0, 0, 0);             // Look directly at the origin
                     yaw = 0; // Looking down the Z-axis
                     pitch = 0; // Level with the Z-axis

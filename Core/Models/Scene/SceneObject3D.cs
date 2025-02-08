@@ -1,10 +1,11 @@
-﻿using Core.Models.Graphics.Rendering;
+﻿using Core.Models.Geometry;
+using Core.Models.Graphics.Rendering;
 using System.Numerics;
 using Color = Raylib_cs.Color;
 
-namespace Core.Models.Geometry
+namespace Core.Models.Scene
 {
-    public abstract class SceneObject3D: SceneObject, IDrawable, ITransformable3D, IColorable
+    public abstract class SceneObject3D : SceneObject, IDrawable, ITransformable3D, IColorable
     {
         protected Vector3 position = Vector3.Zero;
         protected Vector3 rotation = Vector3.UnitY;
@@ -25,7 +26,7 @@ namespace Core.Models.Geometry
 
         public virtual Vector3 GetCenter()
         {
-            return position + (Scale / 2);
+            return position + Scale / 2;
         }
 
         public void SetColor(Color color)

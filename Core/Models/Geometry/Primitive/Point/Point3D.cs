@@ -1,10 +1,11 @@
 ﻿using Core.Models.Graphics.Rendering;
+using Core.Models.Scene;
 using System.Numerics;
 using Color = Raylib_cs.Color;
 
 namespace Core.Models.Geometry.Primitive.Point
 {
-    public class Point3D : SceneObject3D
+    public class Point3D : SceneObject3D, IPoint3D
     {
         public static float RADIUS = 0.1f;
         public const float MIN_RADIUS = 0.01f;
@@ -15,6 +16,10 @@ namespace Core.Models.Geometry.Primitive.Point
 
         private readonly Color SELECTED_COLOR = Color.Red;
         private readonly Color NON_SELECTED_COLOR = Color.Black;
+
+        public float X { get { return Position.X; } }
+        public float Y { get { return Position.Y; } }
+        public float Z { get { return Position.Z; } }
 
         public Point3D()
         {
