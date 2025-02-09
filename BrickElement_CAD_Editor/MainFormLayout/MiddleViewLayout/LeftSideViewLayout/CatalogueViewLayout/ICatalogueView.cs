@@ -4,6 +4,6 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
 {
     public interface ICatalogueView: IView<Panel>
     {
-        public event EventHandler OnCubeClicked;
+        public event EventHandler OnItemClicked;
     }
 }

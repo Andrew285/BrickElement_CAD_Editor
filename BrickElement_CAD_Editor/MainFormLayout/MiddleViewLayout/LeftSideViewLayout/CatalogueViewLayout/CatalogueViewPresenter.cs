@@ -20,7 +20,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             this.scene = scene;
             this.renderer = renderer;
 
-            catalogueView.OnCubeClicked += HandleOnCubeClick;
+            catalogueView.OnItemClicked += HandleOnCubeClick;
         }
 
         public void HandleOnCubeClick(object sender, EventArgs e)
