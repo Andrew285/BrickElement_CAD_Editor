@@ -1,17 +1,18 @@
-﻿using Core.Models.Geometry.Complex.BrickElements;
-using Core.Models.Graphics.Cameras;
+﻿using Core.Models.Graphics.Cameras;
 
 namespace Core.Models.Scene
 {
     public class Scene: IScene
     {
+        public ICamera? Camera { get; set; }
+
         private List<SceneObject3D> objects3D;
         public List<SceneObject3D> Objects3D { get { return objects3D; } }
 
+
         private List<SceneObject2D> objects2D;
         public List<SceneObject2D> Objects2D { get { return objects2D; } }
-
-        public ICamera? Camera { get; set; }
+        public event Action<SceneObject> OnObjectAddedToScene;
 
         public Scene() 
         {
@@ -22,6 +23,7 @@ namespace Core.Models.Scene
         public void AddObject3D(SceneObject3D obj)
         {
             objects3D.Add(obj);
+            OnObjectAddedToScene.Invoke(obj);
         }
 
         public bool RemoveObject3D(SceneObject3D obj)

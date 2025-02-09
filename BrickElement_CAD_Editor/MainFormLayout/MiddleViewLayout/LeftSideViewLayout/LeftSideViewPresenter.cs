@@ -16,7 +16,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout
         {
             this.leftSideView = leftSideView;
 
-            SceneTreeViewPresenter = new SceneTreeViewPresenter();
+            SceneTreeViewPresenter = new SceneTreeViewPresenter(leftSideView.SceneTreeView, scene);
             CatalogueViewPresenter = new CatalogueViewPresenter(leftSideView.CatalogueView, scene, renderer);
         }
     }
