@@ -1,0 +1,110 @@
+﻿using Core.Models.Geometry.Primitive.Point;
+using Core.Models.Graphics.Rendering;
+using Core.Models.Scene;
+using System.Numerics;
+
+
+namespace Core.Models.Geometry.Primitive.Plane
+{
+    public abstract class BasePlane3D : SceneObject3D, IPlane3D
+    {
+        protected List<TrianglePlane3D> trianglePlanes;
+        protected List<BasePoint3D> vertices;
+
+        public List<BasePoint3D> Vertices { get { return vertices; } }
+        public List<TrianglePlane3D> TrianglePlanes { get { return trianglePlanes; } }
+
+        public bool AreTriangleFacesDrawable
+        {
+            get
+            {
+                return trianglePlanes[0].AreLinesDrawable;
+            }
+            set
+            {
+                if (value == trianglePlanes[0].AreLinesDrawable)
+                {
+                    return;
+                }
+
+                foreach (var trianglePlane in trianglePlanes)
+                {
+                    trianglePlane.AreLinesDrawable = value;
+                }
+            }
+        }
+
+        public override bool IsSelected
+        {
+            get
+            {
+                return isSelected;
+            }
+
+            set
+            {
+                isSelected = value;
+                foreach (TrianglePlane3D trianglePlane in trianglePlanes)
+                {
+                    trianglePlane.IsSelected = value;
+                }
+            }
+        }
+
+        public BasePlane3D(): base()
+        {
+            vertices = new List<BasePoint3D>();
+            trianglePlanes = new List<TrianglePlane3D>();
+        }
+
+        public override void Draw(IRenderer renderer)
+        {
+            foreach (TrianglePlane3D trianglePlane in trianglePlanes)
+            {
+                trianglePlane.Draw(renderer);
+            }
+        }
+
+        public List<BasePoint3D> GetUniqueVertices(List<TrianglePlane3D> planes)
+        {
+            List<BasePoint3D> uniquePoints = new List<BasePoint3D>();
+            foreach (TrianglePlane3D plane in planes)
+            {
+                IsPointUnique(uniquePoints, plane.Point1);
+                IsPointUnique(uniquePoints, plane.Point2);
+                IsPointUnique(uniquePoints, plane.Point3);
+            }
+
+            void IsPointUnique(List<BasePoint3D> uniquePoints, BasePoint3D planePoint)
+            {
+                if (!uniquePoints.Any(p => p.ID == planePoint.ID))
+                {
+                    uniquePoints.Add(planePoint);
+                }
+            }
+
+            return uniquePoints;
+        }
+
+        public Vector3 CalculateNormal()
+        {
+            if (trianglePlanes.Count == 0)
+                return new Vector3(0, 0, 0); // Default normal if no triangles exist
+
+            // Take the first triangle for normal calculation
+            BasePoint3D p1 = trianglePlanes[0].Point1;
+            BasePoint3D p2 = trianglePlanes[0].Point2;
+            BasePoint3D p3 = trianglePlanes[0].Point3;
+
+            // Calculate two edge vectors
+            Vector3 edge1 = new Vector3(p2.X - p1.X, p2.Y - p1.Y, p2.Z - p1.Z);
+            Vector3 edge2 = new Vector3(p3.X - p1.X, p3.Y - p1.Y, p3.Z - p1.Z);
+
+            // Compute cross product (gives normal vector)
+            Vector3 normal = Vector3.Cross(edge1, edge2);
+
+            // Normalize the normal vector to unit length
+            return Vector3.Normalize(normal);
+        }
+    }
+}

@@ -28,7 +28,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             // CASE 1
 
             CubeBrickElement cbe = new CubeBrickElement(new System.Numerics.Vector3(0, 0, 0), new System.Numerics.Vector3(3, 3, 3));
-            cbe.AreTriangleFacesDrawable = true;
+            //cbe.AreTriangleFacesDrawable = true;
             scene.AddObject3D(cbe);
 
             VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Vertices, renderer);

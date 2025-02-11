@@ -7,22 +7,26 @@ namespace Core.Models.Geometry.Primitive.Plane
 {
     public class TrianglePlane3D : SceneObject3D
     {
-        public Point3D Point1 { get; }
-        public Point3D Point2 { get; }
-        public Point3D Point3 { get; }
-
-        private readonly Color SELECTED_COLOR = Color.Red;
-        private readonly Color NON_SELECTED_COLOR = Color.LightGray;
+        public BasePoint3D Point1 { get; }
+        public BasePoint3D Point2 { get; }
+        public BasePoint3D Point3 { get; }
 
         public bool AreLinesDrawable { get; set; } = false;
 
-        public TrianglePlane3D(Point3D p1, Point3D p2, Point3D p3)
+        public override Color NonSelectedColor { get; set; } = Color.LightGray;
+
+        public TrianglePlane3D(): base()
+        {
+            Point1 = new Point3D(0, 0, 0);
+            Point2 = new Point3D(0, 0, 1);
+            Point3 = new Point3D(0, 1, 1);
+        }
+
+        public TrianglePlane3D(BasePoint3D p1, BasePoint3D p2, BasePoint3D p3): this()
         {
             Point1 = p1;
             Point2 = p2;
             Point3 = p3;
-
-            color = NON_SELECTED_COLOR;
         }
 
         public override void Draw(IRenderer renderer)
@@ -32,14 +36,14 @@ namespace Core.Models.Geometry.Primitive.Plane
                 DrawLines(renderer);
             }
 
-            renderer.DrawTriangle3D(Point1.Position, Point2.Position, Point3.Position, color);
+            renderer.DrawTriangle3D(Point1.ToVector3(), Point2.ToVector3(), Point3.ToVector3(), color);
         }
 
         public void DrawLines(IRenderer renderer)
         {
-            renderer.DrawLine3D(Point1.Position, Point2.Position, Color.Black);
-            renderer.DrawLine3D(Point2.Position, Point3.Position, Color.Black);
-            renderer.DrawLine3D(Point3.Position, Point1.Position, Color.Black);
+            renderer.DrawLine3D(Point1.ToVector3(), Point2.ToVector3(), Color.Black);
+            renderer.DrawLine3D(Point2.ToVector3(), Point3.ToVector3(), Color.Black);
+            renderer.DrawLine3D(Point3.ToVector3(), Point1.ToVector3(), Color.Black);
         }
     }
 }

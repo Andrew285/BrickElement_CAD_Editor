@@ -1,10 +1,15 @@
 ﻿using Core.Models.Geometry;
+using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
+using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Cameras;
 using Core.Models.Scene;
 using Raylib_cs;
+using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Color = Raylib_cs.Color;
 
 namespace Core.Models.Graphics.Rendering
@@ -108,6 +113,154 @@ namespace Core.Models.Graphics.Rendering
             Raylib.EndDrawing();
         }
 
+        public SceneObject3D? RaycastObjects3D(List<SceneObject3D> objects) 
+        {
+            Ray ray = Raylib.GetScreenToWorldRay(Raylib.GetMousePosition(), Camera.ToCamera3D());
+            return Raycast(objects, ray);
+        }
+
+        public SceneObject3D? Raycast<T>(List<T> objects, Ray ray) where T: SceneObject3D
+        {
+            //(SceneObject3D, float) resultSceneObject = (null, -1f);
+            SceneObject3D? resultSceneObject = null;
+            float minDistance = float.MaxValue;
+
+            foreach (SceneObject3D obj in objects)
+            {
+                if (obj is IMesh)
+                {
+                    IMesh meshObj = (IMesh)obj;
+
+                    SceneObject3D? selectedVertex = Raycast(meshObj.Vertices, ray);
+                    SceneObject3D? selectedEdge = Raycast(meshObj.Edges, ray);
+                    SceneObject3D? selectedFace = Raycast(meshObj.Faces, ray);
+
+                    resultSceneObject = FindClosestSelectedObject(selectedVertex, selectedEdge, selectedFace);
+                    break;
+
+                    //if (resultSceneObject != null)
+                    //    return resultSceneObject;
+                }
+                else if (obj is IPoint3D)
+                {
+                    IPoint3D point = (IPoint3D)obj;
+                    BoundingBox pointBoundingBox = GetBoundingBox(point);
+
+                    if (Raylib.GetRayCollisionBox(ray, pointBoundingBox).Hit)
+                    {
+                        float distance = Vector3.Distance(Camera.Position, point.ToVector3());
+                        if (distance < minDistance)
+                        {
+                            minDistance = distance;
+                            resultSceneObject = obj;
+                        }
+                    }
+                }
+                else if (obj is ILine3D)
+                {
+                    ILine3D line = (ILine3D)obj;
+                    BoundingBox lineBoundingBox = GetBoundingBox(line);
+
+                    if (Raylib.GetRayCollisionBox(ray, lineBoundingBox).Hit)
+                    {
+                        float distance = Vector3.Distance(Camera.Position, (line.StartPoint.ToVector3() + line.EndPoint.ToVector3()) / 2);
+                        if (distance < minDistance)
+                        {
+                            minDistance = distance;
+                            resultSceneObject = obj;
+                        }
+                    }
+                }
+                else if (obj is IPlane3D)
+                {
+                    IPlane3D plane = (IPlane3D)obj;
+                    foreach (TrianglePlane3D trianglePlane in plane.TrianglePlanes)
+                    {
+                        Vector3 p1 = trianglePlane.Point1.ToVector3();
+                        Vector3 p2 = trianglePlane.Point2.ToVector3();
+                        Vector3 p3 = trianglePlane.Point3.ToVector3();
+
+                        if (Raylib.GetRayCollisionTriangle(ray, p1, p2, p3).Hit)
+                        {
+                            float distance = Vector3.Distance(Camera.Position, (p1 + p2 + p3) / 3);
+                            if (distance < minDistance)
+                            {
+                                minDistance = distance;
+                                resultSceneObject = obj;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return resultSceneObject;
+        }
+
+        private BoundingBox GetBoundingBox(IPoint3D point)
+        {
+            float vertexOffset = 0.02f;
+            float radius = point.Radius;
+            Vector3 pointVector = point.ToVector3();
+
+            return new BoundingBox(
+                    pointVector - new Vector3(radius + vertexOffset, radius + vertexOffset, radius + vertexOffset),
+                    pointVector + new Vector3(radius + vertexOffset, radius + vertexOffset, radius + vertexOffset)
+            );
+        }
+
+        private BoundingBox GetBoundingBox(ILine3D line)
+        {
+            float edgeThickness = 0.01f; // Thickness for collision detection
+            Vector3 lineStart = line.StartPoint.ToVector3();
+            Vector3 lineEnd = line.EndPoint.ToVector3();
+
+            return new BoundingBox(
+                    Vector3.Min(lineStart, lineEnd) - new Vector3(edgeThickness, edgeThickness, edgeThickness),
+                    Vector3.Max(lineStart, lineEnd) + new Vector3(edgeThickness, edgeThickness, edgeThickness)
+            );
+        }
+
+        //private void RaycastPoint3D(IPoint3D point, Ray ray)
+        //{
+        //    if (Raylib.GetRayCollisionBox(ray, vertexBoundingBox).Hit)
+        //    {
+        //        float distance = Vector3.Distance(Camera.Position, pointVector);
+        //        if (distance < minDistance)
+        //        {
+        //            minDistance = distance;
+        //            selectedVertex.Item1 = point;
+        //            selectedVertex.Item2 = minDistance;
+        //        }
+        //    }
+        //}
+
+        private SceneObject3D? FindClosestSelectedObject(params SceneObject3D?[] objects)
+        {
+            if (objects.Length > 1)
+            {
+                float minDistance = float.MaxValue;
+                SceneObject3D resultSelectedObject = null;
+
+                foreach (SceneObject3D obj in objects)
+                {
+                    if (obj != null)
+                    {
+                        float distance = Vector3.Distance(Camera.Position, obj.Position);
+                        if (distance < minDistance)
+                        {
+                            minDistance = distance;
+                            resultSelectedObject = obj;
+                        }
+                    }
+                }
+
+                return resultSelectedObject;
+            }
+
+            return objects[0];
+        }
+
+
         public bool IsFaceVisible(Plane3D face)
         {
             Vector3 faceNormal = face.CalculateNormal(); // Implement normal calculation
@@ -127,6 +280,11 @@ namespace Core.Models.Graphics.Rendering
                     drawableObject.Draw(this);
                 }
             }
+
+            //if (selectedObject != null)
+            //{
+            //    selectedObject.Draw(this);
+            //}
         }
 
         public void DrawPoint3D(Vector3 position, float radius, Color color, int circleSegments = 36)

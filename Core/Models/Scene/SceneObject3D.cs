@@ -5,7 +5,7 @@ using Color = Raylib_cs.Color;
 
 namespace Core.Models.Scene
 {
-    public abstract class SceneObject3D : SceneObject, IDrawable, ITransformable3D, IColorable
+    public abstract class SceneObject3D : SceneObject, IDrawable, ITransformable3D, ISelectedColorable
     {
         protected Vector3 position = Vector3.Zero;
         protected Vector3 rotation = Vector3.UnitY;
@@ -18,9 +18,57 @@ namespace Core.Models.Scene
         public Vector3 Scale { get { return scale; } set { scale = value; } }
         public Vector3 Translation { get { return translation; } set { translation = value; } }
         public Color Color { get { return color; } set { color = value; } }
+        public virtual Color SelectedColor { get; set; } = Color.Red;
+        public virtual Color NonSelectedColor { get; set; } = Color.Black;
         public Vector3 Center => GetCenter();
 
-        public bool IsDrawable { get; set; } = true;
+        private bool isDrawable = false;
+        public bool IsDrawable {
+            get 
+            {
+                return isDrawable;
+            }
+            set 
+            {
+                isDrawable = value;
+                if (isDrawable) 
+                {
+                    OnSelected?.Invoke(this, EventArgs.Empty);
+                } 
+                else
+                {
+                    OnDeselected?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        protected bool isSelected = false;
+        public virtual bool IsSelected { 
+            get
+            {
+                return isSelected;
+            }
+            set 
+            {
+                isSelected = value;
+                if (isSelected) 
+                {
+                    color = SelectedColor;
+                }
+                else
+                {
+                    color = NonSelectedColor;
+                }
+            }
+        }
+
+        public event EventHandler? OnSelected;
+        public event EventHandler? OnDeselected;
+
+        public SceneObject3D()
+        {
+            color = NonSelectedColor;
+        }
 
         public abstract void Draw(IRenderer renderer);
 

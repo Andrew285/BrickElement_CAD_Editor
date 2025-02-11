@@ -1,5 +1,4 @@
-﻿using Core.Models.Geometry.Primitive;
-using Core.Models.Geometry.Primitive.Plane;
+﻿using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Graphics.Cameras;
 using Core.Models.Scene;
 using System.Numerics;
@@ -19,6 +18,6 @@ namespace Core.Models.Graphics.Rendering
         public void DrawText(string text, int posX, int posY, int fontSize, Color color);
         public Vector2 GetWorldToScreen(Vector3 value);
         public bool IsFaceVisible(Plane3D face);
-
+        public SceneObject3D? RaycastObjects3D(List<SceneObject3D> objects);
     }
 }

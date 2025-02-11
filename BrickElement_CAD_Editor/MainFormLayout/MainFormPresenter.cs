@@ -1,7 +1,7 @@
-﻿using Core.Models.Graphics.Rendering;
+﻿using App.Tools;
+using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Raylib_cs;
-using System.Security.Cryptography.X509Certificates;
 using UI.MainFormLayout.MiddleViewLayout.SceneViewLayout;
 
 namespace UI.MainFormLayout
@@ -14,13 +14,13 @@ namespace UI.MainFormLayout
         public MainViewPresenter MainViewPresenter { get; set; }
         private SceneViewPresenter SceneViewPresenter => MainViewPresenter.MiddleViewPresenter.SceneViewPresenter;
 
-        public MainFormPresenter(IMainForm mainForm, IRenderer renderer, IScene scene)
+        public MainFormPresenter(IMainForm mainForm, IRenderer renderer, IScene scene, ToolManager toolManager)
         {
             this.mainForm = mainForm;
             this.renderer = renderer;
             this.scene = scene;
 
-            MainViewPresenter = new MainViewPresenter(mainForm.MainView, renderer, scene);
+            MainViewPresenter = new MainViewPresenter(mainForm.MainView, renderer, scene, toolManager);
             mainForm.OnLoaded += HandleOnLoaded;
         }
 

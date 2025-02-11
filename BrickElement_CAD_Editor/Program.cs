@@ -1,8 +1,10 @@
-﻿using BrickElement_CAD_Editor;
+﻿using App.Tools;
+using BrickElement_CAD_Editor;
 using Core.Models.Graphics.Cameras;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using UI.MainFormLayout;
+using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 using UI.Utils.ConsoleLogging;
 
 namespace UI
@@ -51,7 +53,10 @@ namespace UI
             IScene scene = new Scene();
             scene.Camera = camera;
 
-            new MainFormPresenter(view, renderer, scene);
+            IPropertyView propertyView = view.MainView.MiddleView.PropertyView;
+            ToolManager toolManager = new ToolManager(new SelectionTool(scene, renderer, propertyView));
+
+            new MainFormPresenter(view, renderer, scene, toolManager);
 
             Application.Run((MainForm)view.Control);
         }

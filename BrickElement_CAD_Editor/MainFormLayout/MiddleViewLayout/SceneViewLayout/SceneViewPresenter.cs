@@ -13,12 +13,12 @@ namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
         private ToolManager toolManager;
         //private IContextMenuView contextMenuView;
 
-        public SceneViewPresenter(ISceneView sceneView, IRenderer renderer, IScene scene)
+        public SceneViewPresenter(ISceneView sceneView, IRenderer renderer, IScene scene, ToolManager toolManager)
         {
             this.sceneView = sceneView;
             this.renderer = renderer;
             this.scene = scene;
-            this.toolManager = new ToolManager(new SelectionTool(scene));
+            this.toolManager = toolManager;
 
             //contextMenuView = new ContextMenuSceneView(scene, render);
             //sceneView.OnContextMenuShowed += ShowContextMenu;
@@ -50,11 +50,11 @@ namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
 
         public void HandleMouseClick()
         {
-            if (Raylib.IsMouseButtonDown(MouseButton.Left))
+            if (Raylib.IsMouseButtonPressed(MouseButton.Left))
             {
                 toolManager.HandleMouseClick(MouseButton.Left, Raylib.GetMouseX(), Raylib.GetMouseY());
             }
-            else if (Raylib.IsMouseButtonDown(MouseButton.Right))
+            else if (Raylib.IsMouseButtonPressed(MouseButton.Right))
             {
                 toolManager.HandleMouseClick(MouseButton.Right, Raylib.GetMouseX(), Raylib.GetMouseY());
             }

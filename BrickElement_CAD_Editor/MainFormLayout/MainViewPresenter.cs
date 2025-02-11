@@ -1,4 +1,5 @@
 ﻿
+using App.Tools;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using UI.MainFormLayout.MenuViewLayout;
@@ -9,16 +10,17 @@ namespace UI.MainFormLayout
     public class MainViewPresenter
     {
         private IMainView mainView;
+        private ToolManager toolManager;
 
         public MenuViewPresenter MenuViewPresenter { get; set; }
         public MiddleViewPresenter MiddleViewPresenter { get; set; }
 
-        public MainViewPresenter(IMainView view, IRenderer renderer, IScene scene)
+        public MainViewPresenter(IMainView view, IRenderer renderer, IScene scene, ToolManager toolManager)
         {
             mainView = view;
 
             MenuViewPresenter = new MenuViewPresenter(mainView.MenuView);
-            MiddleViewPresenter = new MiddleViewPresenter(view.MiddleView, renderer, scene);
+            MiddleViewPresenter = new MiddleViewPresenter(view.MiddleView, renderer, scene, toolManager);
         }
     }
 }
