@@ -300,4 +300,13 @@
   <data name="Property_Name" xml:space="preserve">
     <value>Назва</value>
   </data>
+  <data name="PropertyCategory_General" xml:space="preserve">
+    <value>Загальне</value>
+  </data>
+  <data name="Description_Position_by_axis" xml:space="preserve">
+    <value>Позиція об'єкту по осі</value>
+  </data>
+  <data name="Property_Appearance" xml:space="preserve">
+    <value>Зовнішній вигляд</value>
+  </data>
 </root>

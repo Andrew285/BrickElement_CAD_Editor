@@ -91,20 +91,29 @@ namespace Core.Models.Geometry.Primitive.Plane
             if (trianglePlanes.Count == 0)
                 return new Vector3(0, 0, 0); // Default normal if no triangles exist
 
-            // Take the first triangle for normal calculation
-            BasePoint3D p1 = trianglePlanes[0].Point1;
-            BasePoint3D p2 = trianglePlanes[0].Point2;
-            BasePoint3D p3 = trianglePlanes[0].Point3;
+            Vector3 totalNormal = Vector3.Zero;
 
-            // Calculate two edge vectors
-            Vector3 edge1 = new Vector3(p2.X - p1.X, p2.Y - p1.Y, p2.Z - p1.Z);
-            Vector3 edge2 = new Vector3(p3.X - p1.X, p3.Y - p1.Y, p3.Z - p1.Z);
+            foreach (var triangle in trianglePlanes)
+            {
+                // Take three points from the triangle
+                BasePoint3D p1 = triangle.Point1;
+                BasePoint3D p2 = triangle.Point2;
+                BasePoint3D p3 = triangle.Point3;
 
-            // Compute cross product (gives normal vector)
-            Vector3 normal = Vector3.Cross(edge1, edge2);
+                // Calculate two edge vectors
+                Vector3 edge1 = new Vector3(p2.X - p1.X, p2.Y - p1.Y, p2.Z - p1.Z);
+                Vector3 edge2 = new Vector3(p3.X - p1.X, p3.Y - p1.Y, p3.Z - p1.Z);
 
-            // Normalize the normal vector to unit length
-            return Vector3.Normalize(normal);
+                // Compute cross product to get normal of this triangle
+                Vector3 normal = Vector3.Cross(edge1, edge2);
+
+                // Add this normal to totalNormal (summation)
+                totalNormal += normal;
+            }
+
+            // Normalize the summed normal to get the final unit normal
+            return Vector3.Normalize(totalNormal);
         }
+
     }
 }

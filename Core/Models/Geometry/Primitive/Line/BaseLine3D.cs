@@ -1,17 +1,18 @@
 ﻿using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using System.Net;
 
 namespace Core.Models.Geometry.Primitive.Line
 {
-    public abstract class BaseLine3D: SceneObject3D, ILine3D
+    public abstract class BaseLine3D : SceneObject3D, ILine3D
     {
         protected IPoint3D startPoint;
         IPoint3D ILine3D.StartPoint => startPoint;
 
         protected IPoint3D endPoint;
         IPoint3D ILine3D.EndPoint => endPoint;
+
+        public BaseLine3D(): base() { }
 
         public override void Draw(IRenderer renderer)
         {

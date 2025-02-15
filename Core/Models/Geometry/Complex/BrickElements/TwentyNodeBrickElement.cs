@@ -87,7 +87,6 @@ namespace Core.Models.Geometry.Complex.BrickElements
 
             if (AreFacesDrawable)
             {
-                //DrawSceneObjects(renderer, faces);
                 DrawFaces(renderer, faces);
             }
 

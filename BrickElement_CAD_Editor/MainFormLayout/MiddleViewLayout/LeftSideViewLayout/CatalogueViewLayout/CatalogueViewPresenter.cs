@@ -58,7 +58,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             //GenerateCubes();
         }
 
-        public void GenerateCubes(int count = 10)
+        public void GenerateCubes(int count = 20)
         {
             float cubeSize = 1.0f;   // Size of each cube
             float gap = 1.2f;        // Gap between cubes

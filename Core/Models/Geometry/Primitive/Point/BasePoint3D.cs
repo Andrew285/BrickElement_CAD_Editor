@@ -1,5 +1,7 @@
 ﻿using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
+using Core.Resources;
+using Core.Services;
 using System.ComponentModel;
 using System.Numerics;
 
@@ -13,16 +15,53 @@ namespace Core.Models.Geometry.Primitive.Point
         private const int MAX_CIRCLE_SEGMENTS = 36;
         private const int MIN_CIRCLE_SEGMENTS = 6;
 
-        [Category("General"), Description("The name of the object.")]
-        public float X { get { return Position.X; } }
+        [LocalizedCategory(PropertyConstants.C_POSITION)]
+        [LocalizedDescription(PropertyConstants.D_POSITION_BY_AXIS)]
+        public float X
+        {
+            get
+            {
+                return Position.X;
+            }
+            set
+            {
+                Vector3 newPosition = new Vector3(value, Position.Y, Position.Z);
+                OnPositionChanged(newPosition);
+            }
+        }
 
-        [Category("General"), Description("The name of the object.")]
-        public float Y { get { return Position.Y; } }
+        [LocalizedCategory(PropertyConstants.C_POSITION)]
+        [LocalizedDescription(PropertyConstants.D_POSITION_BY_AXIS)]
+        public float Y
+        {
+            get
+            {
+                return Position.Y;
+            }
+            set
+            {
+                Vector3 newPosition = new Vector3(Position.X, value, Position.Z);
+                OnPositionChanged(newPosition);
+            }
+        }
 
-        [Category("General"), Description("The name of the object.")]
-        public float Z { get { return Position.Z; } }
+        [LocalizedCategory(PropertyConstants.C_POSITION)]
+        [LocalizedDescription(PropertyConstants.D_POSITION_BY_AXIS)]
+        public float Z
+        {
+            get
+            {
+                return Position.Z;
+            }
+            set
+            {
+                Vector3 newPosition = new Vector3(Position.X, Position.Y, value);
+                OnPositionChanged(newPosition);
+            }
+        }
 
-        public float Radius { get; } = 0.1f;
+        [LocalizedCategory(PropertyConstants.C_APPEARANCE)]
+        public float Radius { get; set; } = 0.1f;
 
         public BasePoint3D() : base()
         {
@@ -42,6 +81,42 @@ namespace Core.Models.Geometry.Primitive.Point
         public Vector3 ToVector3()
         {
             return Position;
+        }
+        
+        public void OnPositionChanged(Vector3 newPosition)
+        {
+            Position = newPosition;
+        }
+    }
+
+    public class LocalizedCategoryAttribute : CategoryAttribute
+    {
+        public LocalizedCategoryAttribute(string resourceKey)
+            : base(GetLocalizedString(resourceKey))
+        {
+        }
+
+        private static string GetLocalizedString(string resourceKey)
+        {
+            return LanguageService.GetInstance().GetString(resourceKey);
+        }
+    }
+
+    public class LocalizedDescriptionAttribute : DescriptionAttribute
+    {
+        private readonly string _resourceKey;
+
+        public LocalizedDescriptionAttribute(string resourceKey)
+        {
+            _resourceKey = resourceKey;
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return LanguageService.GetInstance().GetString(_resourceKey);
+            }
         }
     }
 }

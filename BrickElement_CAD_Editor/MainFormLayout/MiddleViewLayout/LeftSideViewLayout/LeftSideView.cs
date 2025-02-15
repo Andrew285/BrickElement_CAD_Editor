@@ -53,5 +53,11 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout
                 catalogueViewPosition.Item2
             );
         }
+
+        public void Refresh()
+        {
+            SceneTreeView?.Refresh();
+            CatalogueView?.Refresh();
+        }
     }
 }

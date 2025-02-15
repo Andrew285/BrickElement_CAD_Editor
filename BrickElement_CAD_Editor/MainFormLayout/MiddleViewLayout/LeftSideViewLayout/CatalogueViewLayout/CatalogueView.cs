@@ -119,4 +119,8 @@ public class CatalogueView : PanelView, ICatalogueView
 
         return panelItem;
     }
+
+    public void Refresh()
+    {
+    }
 }

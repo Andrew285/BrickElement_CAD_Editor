@@ -5,9 +5,9 @@ namespace UI.MainFormLayout.MenuViewLayout
     public interface IMenuView: IView<MenuStrip>
     {
         // FILE MENU ITEMS
-        event EventHandler? ExportMenuItemClicked;
-        event EventHandler? OpenFileMenuItemClicked;
-        event EventHandler? SaveFileMenuItemClicked;
-        event EventHandler? ExitProgramMenuItemClicked;
+        public event EventHandler? ExportMenuItemClicked;
+        public event EventHandler? OpenFileMenuItemClicked;
+        public event EventHandler? SaveFileMenuItemClicked;
+        public event EventHandler? ExitProgramMenuItemClicked;
     }
 }

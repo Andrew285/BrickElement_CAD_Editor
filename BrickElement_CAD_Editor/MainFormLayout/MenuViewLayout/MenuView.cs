@@ -13,6 +13,13 @@ namespace UI.MainFormLayout.MenuViewLayout
         public event EventHandler? SaveFileMenuItemClicked;
         public event EventHandler? ExitProgramMenuItemClicked;
 
+        private ToolStripMenuItem _fileMenuItem;
+        private ToolStripMenuItem _openMenuItem;
+        private ToolStripMenuItem _saveMenuItem;
+        private ToolStripMenuItem _exportMenuItem;
+        private ToolStripMenuItem _exportObjMenuItem;
+        private ToolStripMenuItem _exitMenuItem;
+
         public MenuView()
         {
             _menuStrip = new MenuStrip();
@@ -26,26 +33,63 @@ namespace UI.MainFormLayout.MenuViewLayout
 
         public void InitializeFileMenuItem()
         {
-            string fileMenuText = _language.GetString("MenuItem_File");
-            string openText = _language.GetString("OpenMenu");
-            string saveText = _language.GetString("SaveMenu");
-            string exportText = _language.GetString("ExportMenu");
-            string objText = _language.GetString("ObjFormat");
-            string exitText = _language.GetString("ExitMenu");
+            _fileMenuItem = new ToolStripMenuItem();
+            _openMenuItem = new ToolStripMenuItem();
+            _saveMenuItem = new ToolStripMenuItem();
+            _exportMenuItem = new ToolStripMenuItem();
+            _exportObjMenuItem = new ToolStripMenuItem();
+            _exitMenuItem = new ToolStripMenuItem();
 
-            ToolStripMenuItem fileMenuItem = new ToolStripMenuItem(fileMenuText);
-            ToolStripMenuItem exportMenuItem = new ToolStripMenuItem(exportText);
-            exportMenuItem.DropDownItems.Add(objText, null, ExportMenuItemClicked);
+            // Assign event handlers
+            _openMenuItem.Click += OnOpenFileMenuItemClicked;
+            _saveMenuItem.Click += SaveFileMenuItemClicked;
+            _exportObjMenuItem.Click += ExportMenuItemClicked;
+            _exitMenuItem.Click += ExitProgramMenuItemClicked;
 
-            // Add sub-items to the "File" menu
-            fileMenuItem.DropDownItems.Add(openText, null, OpenFileMenuItemClicked);
-            fileMenuItem.DropDownItems.Add(saveText, null, SaveFileMenuItemClicked);
-            fileMenuItem.DropDownItems.Add(exportMenuItem);
-            fileMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            fileMenuItem.DropDownItems.Add(exitText, null, ExitProgramMenuItemClicked);
-            _menuStrip.Items.Add(fileMenuItem);
+            // Create structure
+            _exportMenuItem.DropDownItems.Add(_exportObjMenuItem);
+            _fileMenuItem.DropDownItems.Add(_openMenuItem);
+            _fileMenuItem.DropDownItems.Add(_saveMenuItem);
+            _fileMenuItem.DropDownItems.Add(_exportMenuItem);
+            _fileMenuItem.DropDownItems.Add(new ToolStripSeparator());
+            _fileMenuItem.DropDownItems.Add(_exitMenuItem);
+
+            _menuStrip.Items.Add(_fileMenuItem);
+
+            // Set initial text
+            SetOrUpdateMenuTexts();
         }
 
+        private void SetOrUpdateMenuTexts()
+        {
+            LanguageService lang = LanguageService.GetInstance();
+            _fileMenuItem.Text = lang.GetString("MenuItem_File");
+            _openMenuItem.Text = lang.GetString("OpenMenu");
+            _saveMenuItem.Text = lang.GetString("SaveMenu");
+            _exportMenuItem.Text = lang.GetString("ExportMenu");
+            _exportObjMenuItem.Text = lang.GetString("ObjFormat");
+            _exitMenuItem.Text = lang.GetString("ExitMenu");
+        }
+
+        private void OnOpenFileMenuItemClicked(object sender, EventArgs e)
+        {
+            OpenFileMenuItemClicked.Invoke(sender, e);
+        }
+
+        public void Refresh()
+        {
+            SetOrUpdateMenuTexts();
+        }
+
+        //private void SaveFileMenuItemClicked(object sender, EventArgs e)
+        //{
+        //    MessageBox.Show("Save File Clicked!");
+        //}
+
+        //private void ExportMenuItemClicked(object sender, EventArgs e)
+        //{
+        //    MessageBox.Show("Export to OBJ Clicked!");
+        //}
 
         //public void InitializeSceneMenuItem()
         //{

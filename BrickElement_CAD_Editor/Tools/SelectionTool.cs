@@ -1,5 +1,6 @@
 ﻿using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
+using Core.Services;
 using System.Numerics;
 using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 
@@ -44,6 +45,7 @@ namespace App.Tools
                 }
             }
 
+            //LanguageService.GetInstance().ChangeLanguage(Language.UKRAINIAN);
         }
 
         public override void HandleMiddleMouseButtonClick(Vector2 mouseDelta)

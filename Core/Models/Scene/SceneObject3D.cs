@@ -5,7 +5,7 @@ using Color = Raylib_cs.Color;
 
 namespace Core.Models.Scene
 {
-    public abstract class SceneObject3D : SceneObject, IDrawable, ITransformable3D, ISelectedColorable
+    public abstract class SceneObject3D : SceneObject, IDrawable, ITransformable3D, ISelectedColorable, IMoveable3D
     {
         protected Vector3 position = Vector3.Zero;
         protected Vector3 rotation = Vector3.UnitY;
@@ -64,6 +64,7 @@ namespace Core.Models.Scene
 
         public event EventHandler? OnSelected;
         public event EventHandler? OnDeselected;
+        public event Action<Vector3> OnMoved;
 
         public SceneObject3D()
         {
@@ -80,6 +81,11 @@ namespace Core.Models.Scene
         public void SetColor(Color color)
         {
             Color = color;
+        }
+
+        public virtual void Move(Vector3 moveVector) 
+        {
+            OnMoved.Invoke(moveVector);
         }
     }
 }

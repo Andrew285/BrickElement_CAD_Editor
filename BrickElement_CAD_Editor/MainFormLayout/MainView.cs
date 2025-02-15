@@ -1,5 +1,4 @@
-﻿using BrickElement_CAD_Editor;
-using UI.MainFormLayout.ExtraToolsViewLayout;
+﻿using UI.MainFormLayout.ExtraToolsViewLayout;
 using UI.MainFormLayout.MenuViewLayout;
 using UI.MainFormLayout.MiddleViewLayout;
 using UI.Utils.ViewLayout.ControlUtil;
@@ -74,6 +73,13 @@ namespace UI.MainFormLayout
                 position.Item1,
                 position.Item2
             );
+        }
+
+        public void Refresh()
+        {
+            MenuView.Refresh();
+            ExtraToolsView.Refresh();
+            MiddleView.Refresh();
         }
     }
 }

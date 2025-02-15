@@ -70,5 +70,12 @@ namespace UI.MainFormLayout.MiddleViewLayout
                 propertyViewPosition.Item2
             );
         }
+
+        public void Refresh()
+        {
+            LeftSideView.Refresh();
+            SceneView.Refresh();
+            PropertyView.Refresh();
+        }
     }
 }

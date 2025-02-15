@@ -13,5 +13,9 @@
                 BackColor = Color.Purple,
             };
         }
+
+        public void Refresh()
+        {
+        }
     }
 }

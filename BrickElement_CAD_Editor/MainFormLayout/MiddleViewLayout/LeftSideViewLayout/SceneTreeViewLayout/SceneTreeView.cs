@@ -32,5 +32,9 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLay
                 treeView.Nodes.Remove(treeView.SelectedNode);
             }
         }
+
+        public void Refresh()
+        {
+        }
     }
 }

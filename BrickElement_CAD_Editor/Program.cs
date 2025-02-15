@@ -3,6 +3,7 @@ using BrickElement_CAD_Editor;
 using Core.Models.Graphics.Cameras;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
+using Core.Services;
 using UI.MainFormLayout;
 using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 using UI.Utils.ConsoleLogging;
@@ -43,6 +44,9 @@ namespace UI
             // Create Console window
             ConsoleAllocator.Create();
 
+            LanguageService languageService = LanguageService.GetInstance();
+            languageService.ChangeLanguage(Language.UKRAINIAN);
+
             // Initialize MainForm
             IMainForm view = new MainForm();
 
@@ -56,7 +60,7 @@ namespace UI
             IPropertyView propertyView = view.MainView.MiddleView.PropertyView;
             ToolManager toolManager = new ToolManager(new SelectionTool(scene, renderer, propertyView));
 
-            new MainFormPresenter(view, renderer, scene, toolManager);
+            new MainFormPresenter(view, renderer, scene, toolManager, languageService);
 
             Application.Run((MainForm)view.Control);
         }

@@ -45,5 +45,9 @@ namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
                 OnMiddleMouseButtonPressed?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        public void Refresh()
+        {
+        }
     }
 }
