@@ -9,13 +9,13 @@ namespace Core.Models.Text.VertexText
     {
         private IRenderer renderer;
 
-        public VertexIndexGroup(List<Point3D> vertices, IRenderer renderer): base()
+        public VertexIndexGroup(List<BasePoint3D> vertices, IRenderer renderer): base()
         {
             this.renderer = renderer;
             labelObjects = InitializeTextObjects(vertices);
         }
 
-        private List<LabelObject> InitializeTextObjects(List<Point3D> vertices)
+        private List<LabelObject> InitializeTextObjects(List<BasePoint3D> vertices)
         {
             List<LabelObject> labelObjects = new List<LabelObject>();
 

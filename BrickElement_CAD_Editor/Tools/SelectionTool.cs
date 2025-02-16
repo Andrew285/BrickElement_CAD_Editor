@@ -30,7 +30,7 @@ namespace App.Tools
         {
             base.HandleLeftMouseButtonClick();
 
-            selectedObject = renderer.RaycastObjects3D(scene.Objects3D);
+            selectedObject = (SceneObject3D)renderer.RaycastObjects3D(scene.Objects3D).Parent;
             if (selectedObject != null) 
             {
                 if (selectedObject.IsSelected)

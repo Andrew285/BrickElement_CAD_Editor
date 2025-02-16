@@ -35,7 +35,6 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             scene.AddObject2D(vertexIndexGroup);
 
 
-
             // CASE 2
 
             //Point3D p1 = new Point3D(-1, 0, 0);

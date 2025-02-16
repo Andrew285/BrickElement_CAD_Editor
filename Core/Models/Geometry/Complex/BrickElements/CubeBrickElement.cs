@@ -13,15 +13,17 @@ namespace Core.Models.Geometry.Complex.BrickElements
             centerVertices = InitializeCenterVertices();
             edges = InitializeEdges();
             faces = InitializeFaces();
+
+            SetParent();
         }
 
-        public List<Point3D> InitializeVertices()
+        public List<BasePoint3D> InitializeVertices()
         {
             float halfSizeX = size.X / 2;
             float halfSizeY = size.Y / 2;
             float halfSizeZ = size.Z / 2;
 
-            return new List<Point3D>()
+            return new List<BasePoint3D>()
             {
                 // Corner vertices
                 new Point3D(new Vector3(-halfSizeX, -halfSizeY, halfSizeZ) + position), // 0
@@ -49,13 +51,13 @@ namespace Core.Models.Geometry.Complex.BrickElements
             };
         }
 
-        public List<Point3D> InitializeCenterVertices()
+        public List<BasePoint3D> InitializeCenterVertices()
         {
             float halfSizeX = size.X / 2;
             float halfSizeY = size.Y / 2;
             float halfSizeZ = size.Z / 2;
 
-            return new List<Point3D>()
+            return new List<BasePoint3D>()
             {
                 new Point3D(new Vector3(0, 0, halfSizeZ) + position),    // 0 : FRONT
                 new Point3D(new Vector3(halfSizeX, 0, 0) + position),    // 1 : RIGHT
@@ -67,9 +69,9 @@ namespace Core.Models.Geometry.Complex.BrickElements
         }
 
 
-        public List<Line3D> InitializeEdges()
+        public List<BaseLine3D> InitializeEdges()
         {
-            return new List<Line3D>()
+            return new List<BaseLine3D>()
             {
                 new Line3D(Vertices[0], Vertices[8]),
                 new Line3D(Vertices[8], Vertices[1]),
@@ -104,9 +106,9 @@ namespace Core.Models.Geometry.Complex.BrickElements
             };
         }
 
-        public List<Plane3D> InitializeFaces()
+        public List<BasePlane3D> InitializeFaces()
         {
-            return new List<Plane3D>
+            return new List<BasePlane3D>
             {
                 ///       FRONT FACE
                 /// 
@@ -287,5 +289,22 @@ namespace Core.Models.Geometry.Complex.BrickElements
             };
         }
 
+        private void SetParent()
+        {
+            foreach (Point3D p in Vertices)
+            {
+                p.Parent = this;
+            }
+
+            foreach (Line3D l in Edges)
+            {
+                l.Parent = this;
+            }
+
+            foreach (Plane3D p in Faces)
+            {
+                p.Parent = this;
+            }
+        }
     }
 }
