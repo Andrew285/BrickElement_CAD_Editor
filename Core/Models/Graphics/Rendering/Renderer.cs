@@ -124,6 +124,7 @@ namespace Core.Models.Graphics.Rendering
             //(SceneObject3D, float) resultSceneObject = (null, -1f);
             SceneObject3D? resultSceneObject = null;
             float minDistance = float.MaxValue;
+            List<SceneObject3D> resultSceneObjects = new List<SceneObject3D>();
 
             foreach (SceneObject3D obj in objects)
             {
@@ -136,8 +137,7 @@ namespace Core.Models.Graphics.Rendering
                     SceneObject3D? selectedFace = Raycast(meshObj.Faces, ray);
 
                     resultSceneObject = FindClosestSelectedObject(selectedVertex, selectedEdge, selectedFace);
-                    break;
-
+                    resultSceneObjects.Add(resultSceneObject);
                     //if (resultSceneObject != null)
                     //    return resultSceneObject;
                 }
@@ -153,6 +153,7 @@ namespace Core.Models.Graphics.Rendering
                         {
                             minDistance = distance;
                             resultSceneObject = obj;
+                            resultSceneObjects.Add(resultSceneObject);
                         }
                     }
                 }
@@ -168,6 +169,7 @@ namespace Core.Models.Graphics.Rendering
                         {
                             minDistance = distance;
                             resultSceneObject = obj;
+                            resultSceneObjects.Add(resultSceneObject);
                         }
                     }
                 }
@@ -187,13 +189,14 @@ namespace Core.Models.Graphics.Rendering
                             {
                                 minDistance = distance;
                                 resultSceneObject = obj;
+                                resultSceneObjects.Add(resultSceneObject);
                             }
                         }
                     }
                 }
             }
 
-            return resultSceneObject;
+            return FindClosestSelectedObject(resultSceneObjects.ToArray());
         }
 
         private BoundingBox GetBoundingBox(IPoint3D point)
@@ -236,6 +239,11 @@ namespace Core.Models.Graphics.Rendering
 
         private SceneObject3D? FindClosestSelectedObject(params SceneObject3D?[] objects)
         {
+            if (objects.Length == 1)
+            {
+                return objects[0];
+            }
+
             if (objects.Length > 1)
             {
                 float minDistance = float.MaxValue;
@@ -257,7 +265,7 @@ namespace Core.Models.Graphics.Rendering
                 return resultSelectedObject;
             }
 
-            return objects[0];
+            return null;
         }
 
 

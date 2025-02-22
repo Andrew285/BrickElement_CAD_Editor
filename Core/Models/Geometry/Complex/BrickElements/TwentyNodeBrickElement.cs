@@ -105,6 +105,24 @@ namespace Core.Models.Geometry.Complex.BrickElements
             }
         }
 
+        public override bool IsSelected
+        {
+            get => base.IsSelected;
+            set
+            {
+                base.IsSelected = value;
+                SetEdgesAreSelected(isSelected);
+            }
+        }
+
+
+        private void SetEdgesAreSelected(bool isSeleted)
+        {
+            foreach (var obj in edges)
+            {
+                obj.IsSelected = isSeleted;
+            }
+        }
 
         public TwentyNodeBrickElement(Vector3 position, Vector3 size)
         {
@@ -120,15 +138,15 @@ namespace Core.Models.Geometry.Complex.BrickElements
 
         public override void Draw(IRenderer renderer)
         {
-            //if (AreVerticesDrawable)
-            //{
-            //    DrawSceneObjects(renderer, vertices);
-            //}
+            if (AreVerticesDrawable)
+            {
+                DrawSceneObjects(renderer, vertices);
+            }
 
-            //if (AreCenterVerticesDrawable)
-            //{
-            //    DrawSceneObjects(renderer, centerVertices);
-            //}
+            if (AreCenterVerticesDrawable)
+            {
+                DrawSceneObjects(renderer, centerVertices);
+            }
 
             if (AreEdgesDrawable)
             {
@@ -174,6 +192,21 @@ namespace Core.Models.Geometry.Complex.BrickElements
 
             faces.Clear();
             centerVertices.Clear();
+        }
+
+        public override void Move(Vector3 moveVector)
+        {
+            base.Move(moveVector);
+
+            foreach (Point3D vertex in vertices)
+            {
+                vertex.Move(moveVector);
+            }
+
+            foreach (Point3D vertex in centerVertices)
+            {
+                vertex.Move(moveVector);
+            }
         }
     }
 }

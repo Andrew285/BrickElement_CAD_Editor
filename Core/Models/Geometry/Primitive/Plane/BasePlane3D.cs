@@ -3,7 +3,6 @@ using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using System.Numerics;
 
-
 namespace Core.Models.Geometry.Primitive.Plane
 {
     public abstract class BasePlane3D : SceneObject3D, IPlane3D
@@ -55,6 +54,31 @@ namespace Core.Models.Geometry.Primitive.Plane
         {
             vertices = new List<BasePoint3D>();
             trianglePlanes = new List<TrianglePlane3D>();
+            position = GetCenter();
+        }
+
+        public BasePlane3D(List<TrianglePlane3D> planes) : base()
+        {
+            trianglePlanes = planes;
+            vertices = GetUniqueVertices(trianglePlanes);
+            position = GetCenter();
+        }
+
+        public override Vector3 GetCenter()
+        {
+            if (vertices.Count == 0)
+            {
+                return Vector3.Zero;
+            }
+
+            Vector3 centerPoint = Vector3.Zero;
+
+            foreach (Point3D p in vertices)
+            {
+                centerPoint += p.Position;
+            }
+
+            return centerPoint / vertices.Count;
         }
 
         public override void Draw(IRenderer renderer)
@@ -115,5 +139,14 @@ namespace Core.Models.Geometry.Primitive.Plane
             return Vector3.Normalize(totalNormal);
         }
 
+        public override void Move(Vector3 moveVector)
+        {
+            base.Move(moveVector);
+
+            foreach (Point3D vertex in vertices)
+            {
+                vertex.Move(moveVector);
+            }
+        }
     }
 }

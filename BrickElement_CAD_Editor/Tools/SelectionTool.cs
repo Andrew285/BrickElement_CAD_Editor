@@ -1,6 +1,5 @@
 ﻿using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using Core.Services;
 using System.Numerics;
 using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 
@@ -13,6 +12,7 @@ namespace App.Tools
         private IPropertyView propertyView;
 
         private SceneObject3D? selectedObject;
+        private SceneObject3D? previoiusSelectedObject;
         public event Action<SceneObject3D> OnObjectSelected;
         public event Action<SceneObject3D> OnObjectDeselected;
 
@@ -30,19 +30,30 @@ namespace App.Tools
         {
             base.HandleLeftMouseButtonClick();
 
-            selectedObject = (SceneObject3D)renderer.RaycastObjects3D(scene.Objects3D).Parent;
-            if (selectedObject != null) 
+            previoiusSelectedObject = selectedObject;
+            selectedObject = renderer.RaycastObjects3D(scene.Objects3D);
+
+            if (previoiusSelectedObject != null)
             {
-                if (selectedObject.IsSelected)
-                {
-                    selectedObject.IsSelected = false;
-                    OnObjectDeselected?.Invoke(selectedObject);
-                }
-                else
-                {
-                    selectedObject.IsSelected = true;
-                    OnObjectSelected?.Invoke(selectedObject);
-                }
+                previoiusSelectedObject.IsSelected = false;
+                OnObjectDeselected?.Invoke(previoiusSelectedObject);
+            }
+
+            if (selectedObject == null)
+            {
+                return;
+            }
+
+            selectedObject = (SceneObject3D)selectedObject.Parent;
+            if (selectedObject.IsSelected)
+            {
+                selectedObject.IsSelected = false;
+                OnObjectDeselected?.Invoke(selectedObject);
+            }
+            else
+            {
+                selectedObject.IsSelected = true;
+                OnObjectSelected?.Invoke(selectedObject);
             }
 
             //LanguageService.GetInstance().ChangeLanguage(Language.UKRAINIAN);

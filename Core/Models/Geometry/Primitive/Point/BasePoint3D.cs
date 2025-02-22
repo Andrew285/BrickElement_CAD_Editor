@@ -15,49 +15,23 @@ namespace Core.Models.Geometry.Primitive.Point
         private const int MAX_CIRCLE_SEGMENTS = 36;
         private const int MIN_CIRCLE_SEGMENTS = 6;
 
-        [LocalizedCategory(PropertyConstants.C_POSITION)]
-        [LocalizedDescription(PropertyConstants.D_POSITION_BY_AXIS)]
+        // Optionally, create "get" methods for individual components if needed
+        [Browsable(false)]
         public float X
         {
-            get
-            {
-                return Position.X;
-            }
-            set
-            {
-                Vector3 newPosition = new Vector3(value, Position.Y, Position.Z);
-                OnPositionChanged(newPosition);
-            }
+            get => Position.X;
         }
 
-        [LocalizedCategory(PropertyConstants.C_POSITION)]
-        [LocalizedDescription(PropertyConstants.D_POSITION_BY_AXIS)]
+        [Browsable(false)]
         public float Y
         {
-            get
-            {
-                return Position.Y;
-            }
-            set
-            {
-                Vector3 newPosition = new Vector3(Position.X, value, Position.Z);
-                OnPositionChanged(newPosition);
-            }
+            get => Position.Y;
         }
 
-        [LocalizedCategory(PropertyConstants.C_POSITION)]
-        [LocalizedDescription(PropertyConstants.D_POSITION_BY_AXIS)]
+        [Browsable(false)]
         public float Z
         {
-            get
-            {
-                return Position.Z;
-            }
-            set
-            {
-                Vector3 newPosition = new Vector3(Position.X, Position.Y, value);
-                OnPositionChanged(newPosition);
-            }
+            get => Position.Z;
         }
 
         [LocalizedCategory(PropertyConstants.C_APPEARANCE)]
@@ -81,11 +55,6 @@ namespace Core.Models.Geometry.Primitive.Point
         public Vector3 ToVector3()
         {
             return Position;
-        }
-        
-        public void OnPositionChanged(Vector3 newPosition)
-        {
-            Position = newPosition;
         }
     }
 

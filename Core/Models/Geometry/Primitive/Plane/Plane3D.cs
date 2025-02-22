@@ -2,10 +2,6 @@
 {
     public class Plane3D : BasePlane3D
     {
-        public Plane3D(List<TrianglePlane3D> planes): base()
-        {
-            trianglePlanes = planes;
-            vertices = GetUniqueVertices(trianglePlanes);
-        }
+        public Plane3D(List<TrianglePlane3D> planes): base(planes) { }
     }
 }
