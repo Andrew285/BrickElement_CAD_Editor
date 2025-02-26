@@ -1,5 +1,4 @@
 ﻿using Core.Models.Geometry.Complex.BrickElements;
-using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
@@ -28,12 +27,12 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
         {
             // CASE 1
 
-            //CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(3, 3, 3));
-            ////cbe.AreTriangleFacesDrawable = true;
-            //scene.AddObject3D(cbe);
+            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(3, 3, 3));
+            //cbe.AreTriangleFacesDrawable = true;
+            scene.AddObject3D(cbe);
 
-            //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Vertices, renderer);
-            //scene.AddObject2D(vertexIndexGroup);
+            VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Vertices, renderer);
+            scene.AddObject2D(vertexIndexGroup);
 
 
             // CASE 2
@@ -56,26 +55,6 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             // CASE 3
 
             //GenerateCubes();
-
-
-            // CASE 4
-
-            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(3, 3, 3));
-            //Plane3D face = cbe.Faces[1];
-            //TwentyNodeBrickElement newCbe = BrickElementInitializator.CreateFrom(face, cbe);
-            scene.AddObject3D(cbe);
-            //scene.AddObject3D(newCbe);
-
-
-            //CubeBrickElement cbe = new CubeBrickElement(new Vector3(-5, 0, 0), new Vector3(3, 3, 3));
-            //CubeBrickElement cbe2 = new CubeBrickElement(new Vector3(5, 0, 0), new Vector3(3, 3, 3));
-            //scene.AddObject3D(cbe);
-            //scene.AddObject3D(cbe2);
-
-            //BrickElementSurface surface = SurfaceInitializator.CreateFromBrickElements(cbe, cbe2);
-
-            //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Vertices, renderer);
-            //scene.AddObject2D(vertexIndexGroup);
         }
 
         public void GenerateCubes(int count = 20)

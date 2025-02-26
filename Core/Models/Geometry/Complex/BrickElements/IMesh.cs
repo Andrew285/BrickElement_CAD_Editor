@@ -6,8 +6,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
 {
     public interface IMesh
     {
-        public List<Point3D> Vertices { get; }
+        public List<BasePoint3D> Vertices { get; }
         public List<BaseLine3D> Edges { get; }
-        public List<Plane3D> Faces { get; }
+        public List<BasePlane3D> Faces { get; }
     }
 }

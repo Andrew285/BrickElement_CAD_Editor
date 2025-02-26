@@ -54,7 +54,7 @@ namespace Core.Services
 
         public IMesh GenerateDividedMesh()
         {
-            List<Point3D> vertices = GenerateVertices();
+            List<BasePoint3D> vertices = GenerateVertices();
             List<BaseLine3D> edges = GenerateEdges();
 
             Mesh mesh = new Mesh();
@@ -64,9 +64,9 @@ namespace Core.Services
             return mesh;
         }
 
-        private List<Point3D> GenerateVertices()
+        private List<BasePoint3D> GenerateVertices()
         {
-            List<Point3D> vertices = new List<Point3D>();
+            List<BasePoint3D> vertices = new List<BasePoint3D>();
             for (int y = 0; y < verticesCountByY; y++)
             {
                 List<byte[]> patterns = ChoosePattern(y);

@@ -7,13 +7,13 @@ namespace Core.Models.Geometry.Primitive.Plane
 {
     public class TrianglePlane3D : SceneObject3D
     {
-        public Point3D Point1 { get; }
-        public Point3D Point2 { get; }
-        public Point3D Point3 { get; }
+        public BasePoint3D Point1 { get; }
+        public BasePoint3D Point2 { get; }
+        public BasePoint3D Point3 { get; }
 
         public bool AreLinesDrawable { get; set; } = false;
 
-        public override Color NonSelectedColor { get; set; } = new Color(23, 34, 12, 50);
+        public override Color NonSelectedColor { get; set; } = Color.LightGray;
 
         public TrianglePlane3D(): base()
         {
@@ -22,7 +22,7 @@ namespace Core.Models.Geometry.Primitive.Plane
             Point3 = new Point3D(0, 1, 1);
         }
 
-        public TrianglePlane3D(Point3D p1, Point3D p2, Point3D p3): this()
+        public TrianglePlane3D(BasePoint3D p1, BasePoint3D p2, BasePoint3D p3): this()
         {
             Point1 = p1;
             Point2 = p2;

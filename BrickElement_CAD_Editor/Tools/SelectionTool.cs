@@ -44,7 +44,7 @@ namespace App.Tools
                 return;
             }
 
-            //selectedObject = (SceneObject3D)selectedObject.Parent;
+            selectedObject = (SceneObject3D)selectedObject.Parent;
             if (selectedObject.IsSelected)
             {
                 selectedObject.IsSelected = false;

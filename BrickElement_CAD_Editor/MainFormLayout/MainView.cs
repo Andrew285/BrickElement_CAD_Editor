@@ -16,10 +16,10 @@ namespace UI.MainFormLayout
         private const float menuViewHeightPercentage = 3f;
         private readonly (int, int) menuViewPosition = (0, 0);
 
-        private const float extraToolsViewHeightPercentage = 5f;
+        private const float extraToolsViewHeightPercentage = 3.5f;
         private readonly (int, int) extraToolsPosition = (0, 1);
 
-        private const float middleViewHeightPercentage = 78f;
+        private const float middleViewHeightPercentage = 80f;
         private (int, int) middleViewRowColsCount = (1, 3);
         private readonly (int, int) middleViewPosition = (0, 2);
 
