@@ -136,6 +136,15 @@ namespace Core.Models.Geometry.Complex.BrickElements
             this.size = size;
         }
 
+        public TwentyNodeBrickElement(List<BasePoint3D> vertices, List<BasePoint3D> centerVertices, List<BaseLine3D> edges, List<BasePlane3D> faces)
+        {
+            this.vertices = vertices;
+            this.centerVertices = centerVertices;
+            this.edges = edges;
+            this.faces = faces;
+            triangleFaces = new List<TrianglePlane3D>();
+        }
+
         public override void Draw(IRenderer renderer)
         {
             if (AreVerticesDrawable)
@@ -179,6 +188,11 @@ namespace Core.Models.Geometry.Complex.BrickElements
                 if (renderer.IsFaceVisible(obj))
                 {
                     obj.Draw(renderer);
+
+                    Vector3 normal = obj.CalculateNormal();
+                    Vector3 centerPoint = obj.GetCenter();
+                    Line3D normLine = new Line3D(centerPoint, centerPoint + normal * 2);
+                    normLine.Draw(renderer);
                 }
             }
         }

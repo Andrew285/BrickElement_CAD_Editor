@@ -56,6 +56,8 @@ namespace Core.Models.Geometry.Primitive.Point
         {
             return Position;
         }
+
+        public abstract BasePoint3D Clone();
     }
 
     public class LocalizedCategoryAttribute : CategoryAttribute

@@ -1,4 +1,5 @@
-﻿using Core.Models.Geometry.Primitive.Point;
+﻿using Core.Models.Geometry.Primitive.Plane.Face;
+using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using System.Numerics;
@@ -12,6 +13,8 @@ namespace Core.Models.Geometry.Primitive.Plane
 
         public List<BasePoint3D> Vertices { get { return vertices; } }
         public List<TrianglePlane3D> TrianglePlanes { get { return trianglePlanes; } }
+
+        public FaceType FaceType { get; set; } = FaceType.NONE;
 
         public bool AreTriangleFacesDrawable
         {

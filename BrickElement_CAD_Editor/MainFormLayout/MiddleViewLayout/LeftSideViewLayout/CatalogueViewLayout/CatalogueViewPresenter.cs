@@ -1,6 +1,4 @@
 ﻿using Core.Models.Geometry.Complex.BrickElements;
-using Core.Models.Geometry.Primitive.Plane;
-using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Models.Text.VertexText;
@@ -31,8 +29,14 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             //cbe.AreTriangleFacesDrawable = true;
             scene.AddObject3D(cbe);
 
-            VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Vertices, renderer);
-            scene.AddObject2D(vertexIndexGroup);
+            //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Vertices, renderer);
+            //scene.AddObject2D(vertexIndexGroup);
+
+            TwentyNodeBrickElement? newBe = BrickElementInitializator.CreateFrom(cbe.Faces[5], cbe);
+            scene.AddObject3D(newBe);
+
+            VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(newBe.Vertices, renderer);
+            scene.AddObject2D(vertexIndexGroup2);
 
 
             // CASE 2
