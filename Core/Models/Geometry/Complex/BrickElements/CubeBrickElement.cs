@@ -17,13 +17,13 @@ namespace Core.Models.Geometry.Complex.BrickElements
             SetParent();
         }
 
-        public List<BasePoint3D> InitializeVertices()
+        public List<Point3D> InitializeVertices()
         {
             float halfSizeX = size.X / 2;
             float halfSizeY = size.Y / 2;
             float halfSizeZ = size.Z / 2;
 
-            return new List<BasePoint3D>()
+            return new List<Point3D>()
             {
                 // Corner vertices
                 new Point3D(new Vector3(-halfSizeX, -halfSizeY, halfSizeZ) + position), // 0
@@ -51,13 +51,13 @@ namespace Core.Models.Geometry.Complex.BrickElements
             };
         }
 
-        public List<BasePoint3D> InitializeCenterVertices()
+        public List<Point3D> InitializeCenterVertices()
         {
             float halfSizeX = size.X / 2;
             float halfSizeY = size.Y / 2;
             float halfSizeZ = size.Z / 2;
 
-            return new List<BasePoint3D>()
+            return new List<Point3D>()
             {
                 new Point3D(new Vector3(0, 0, halfSizeZ) + position),    // 0 : FRONT
                 new Point3D(new Vector3(halfSizeX, 0, 0) + position),    // 1 : RIGHT
@@ -106,194 +106,209 @@ namespace Core.Models.Geometry.Complex.BrickElements
             };
         }
 
-        public List<BasePlane3D> InitializeFaces()
-        {
-            return new List<BasePlane3D>
-            {
-                ///       FRONT FACE
-                /// 
-                ///     4 - - 16- - 5
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     12- - 0 - - 13
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     0 - - 8 - - 1
+        //public List<BasePlane3D> InitializeFaces()
+        //{
+        //    return new List<BasePlane3D>
+        //    {
+        //        ///       FRONT FACE
+        //        /// 
+        //        ///     4 - - 16- - 5
+        //        ///     |   / | \   |
+        //        ///     | /   |   \ |
+        //        ///     12- - 0 - - 13
+        //        ///     | \   |   / |
+        //        ///     |   \ | /   |
+        //        ///     0 - - 8 - - 1
 
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[0], Vertices[12], Vertices[8]),
-                    new TrianglePlane3D(Vertices[12], Vertices[0], Vertices[8]),
+        //        new Plane3D(new List<TrianglePlane3D>
+        //        {
+        //            // Left Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[0], Vertices[12], Vertices[8]),
+        //            new TrianglePlane3D(Vertices[12], Vertices[0], Vertices[8]),
 
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[0], Vertices[8], Vertices[13]),
-                    new TrianglePlane3D(Vertices[8], Vertices[1], Vertices[13]),
+        //            // Right Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[0], Vertices[8], Vertices[13]),
+        //            new TrianglePlane3D(Vertices[8], Vertices[1], Vertices[13]),
 
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[0], Vertices[13], Vertices[16]),
-                    new TrianglePlane3D(Vertices[16], Vertices[13], Vertices[5]),
+        //            // Right Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[0], Vertices[13], Vertices[16]),
+        //            new TrianglePlane3D(Vertices[16], Vertices[13], Vertices[5]),
 
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[0], Vertices[16], Vertices[12]),
-                    new TrianglePlane3D(Vertices[16], Vertices[4], Vertices[12]),
-                }),
-
-
-                ///       RIGHT FACE
-                /// 
-                ///     5 - - 17- - 6
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     13- - 1 - - 14
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     1 - - 9 - - 2
-                ///     
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[1], Vertices[13], Vertices[9]),
-                    new TrianglePlane3D(Vertices[13], Vertices[1], Vertices[9]),
-
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[1], Vertices[9], Vertices[14]),
-                    new TrianglePlane3D(Vertices[14], Vertices[9], Vertices[2]),
-
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[1], Vertices[14], Vertices[17]),
-                    new TrianglePlane3D(Vertices[14], Vertices[6], Vertices[17]),
-
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[1], Vertices[17], Vertices[13]),
-                    new TrianglePlane3D(Vertices[17], Vertices[5], Vertices[13]),
-                }),
+        //            // Left Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[0], Vertices[16], Vertices[12]),
+        //            new TrianglePlane3D(Vertices[16], Vertices[4], Vertices[12]),
+        //        }),
 
 
-                ///       BACK FACE
-                /// 
-                ///     6 - - 18 -- 7
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     14- - 2 - - 15
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     2 - - 10 -- 3
-                ///     
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[2], Vertices[14], Vertices[10]),
-                    new TrianglePlane3D(Vertices[14], Vertices[2], Vertices[10]),
+        //        ///       RIGHT FACE
+        //        /// 
+        //        ///     5 - - 17- - 6
+        //        ///     |   / | \   |
+        //        ///     | /   |   \ |
+        //        ///     13- - 1 - - 14
+        //        ///     | \   |   / |
+        //        ///     |   \ | /   |
+        //        ///     1 - - 9 - - 2
+        //        ///     
+        //        new Plane3D(new List<TrianglePlane3D>
+        //        {
+        //            // Left Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[1], Vertices[13], Vertices[9]),
+        //            new TrianglePlane3D(Vertices[13], Vertices[1], Vertices[9]),
 
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[2], Vertices[10], Vertices[15]),
-                    new TrianglePlane3D(Vertices[15], Vertices[10], Vertices[3]),
+        //            // Right Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[1], Vertices[9], Vertices[14]),
+        //            new TrianglePlane3D(Vertices[14], Vertices[9], Vertices[2]),
 
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[2], Vertices[15], Vertices[18]),
-                    new TrianglePlane3D(Vertices[18], Vertices[15], Vertices[7]),
+        //            // Right Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[1], Vertices[14], Vertices[17]),
+        //            new TrianglePlane3D(Vertices[14], Vertices[6], Vertices[17]),
 
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[2], Vertices[18], Vertices[14]),
-                    new TrianglePlane3D(Vertices[18], Vertices[6], Vertices[14]),
-                }),
+        //            // Left Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[1], Vertices[17], Vertices[13]),
+        //            new TrianglePlane3D(Vertices[17], Vertices[5], Vertices[13]),
+        //        }),
+
+
+        //        ///       BACK FACE
+        //        /// 
+        //        ///     6 - - 18 -- 7
+        //        ///     |   / | \   |
+        //        ///     | /   |   \ |
+        //        ///     14- - 2 - - 15
+        //        ///     | \   |   / |
+        //        ///     |   \ | /   |
+        //        ///     2 - - 10 -- 3
+        //        ///     
+        //        new Plane3D(new List<TrianglePlane3D>
+        //        {
+        //            // Left Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[2], Vertices[14], Vertices[10]),
+        //            new TrianglePlane3D(Vertices[14], Vertices[2], Vertices[10]),
+
+        //            // Right Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[2], Vertices[10], Vertices[15]),
+        //            new TrianglePlane3D(Vertices[15], Vertices[10], Vertices[3]),
+
+        //            // Right Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[2], Vertices[15], Vertices[18]),
+        //            new TrianglePlane3D(Vertices[18], Vertices[15], Vertices[7]),
+
+        //            // Left Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[2], Vertices[18], Vertices[14]),
+        //            new TrianglePlane3D(Vertices[18], Vertices[6], Vertices[14]),
+        //        }),
 
                 
-                ///       LEFT FACE
-                /// 
-                ///     7 - - 19 -- 4
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     15 -- 3 -- 12
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     3 - - 11 -- 0
-                ///     
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[3], Vertices[15], Vertices[11]),
-                    new TrianglePlane3D(Vertices[15], Vertices[3], Vertices[11]),
+        //        ///       LEFT FACE
+        //        /// 
+        //        ///     7 - - 19 -- 4
+        //        ///     |   / | \   |
+        //        ///     | /   |   \ |
+        //        ///     15 -- 3 -- 12
+        //        ///     | \   |   / |
+        //        ///     |   \ | /   |
+        //        ///     3 - - 11 -- 0
+        //        ///     
+        //        new Plane3D(new List<TrianglePlane3D>
+        //        {
+        //            // Left Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[3], Vertices[15], Vertices[11]),
+        //            new TrianglePlane3D(Vertices[15], Vertices[3], Vertices[11]),
 
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[3], Vertices[11], Vertices[12]),
-                    new TrianglePlane3D(Vertices[12], Vertices[11], Vertices[0]),
+        //            // Right Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[3], Vertices[11], Vertices[12]),
+        //            new TrianglePlane3D(Vertices[12], Vertices[11], Vertices[0]),
 
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[3], Vertices[12], Vertices[19]),
-                    new TrianglePlane3D(Vertices[19], Vertices[12], Vertices[4]),
+        //            // Right Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[3], Vertices[12], Vertices[19]),
+        //            new TrianglePlane3D(Vertices[19], Vertices[12], Vertices[4]),
 
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[3], Vertices[19], Vertices[15]),
-                    new TrianglePlane3D(Vertices[19], Vertices[7], Vertices[15]),
-                }),
+        //            // Left Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[3], Vertices[19], Vertices[15]),
+        //            new TrianglePlane3D(Vertices[19], Vertices[7], Vertices[15]),
+        //        }),
 
-                ///       BOTTOM FACE
-                /// 
-                ///     2 - - 10 -- 3
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     9 - - 4 - - 11
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     1 - - 8 - - 0
-                ///  
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[4], Vertices[9], Vertices[8]),
-                    new TrianglePlane3D(Vertices[9], Vertices[1], Vertices[8]),
+        //        ///       BOTTOM FACE
+        //        /// 
+        //        ///     2 - - 10 -- 3
+        //        ///     |   / | \   |
+        //        ///     | /   |   \ |
+        //        ///     9 - - 4 - - 11
+        //        ///     | \   |   / |
+        //        ///     |   \ | /   |
+        //        ///     1 - - 8 - - 0
+        //        ///  
+        //        new Plane3D(new List<TrianglePlane3D>
+        //        {
+        //            // Left Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[4], Vertices[9], Vertices[8]),
+        //            new TrianglePlane3D(Vertices[9], Vertices[1], Vertices[8]),
 
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[4], Vertices[8], Vertices[11]),
-                    new TrianglePlane3D(Vertices[11], Vertices[8], Vertices[0]),
+        //            // Right Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[4], Vertices[8], Vertices[11]),
+        //            new TrianglePlane3D(Vertices[11], Vertices[8], Vertices[0]),
 
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[4], Vertices[11], Vertices[10]),
-                    new TrianglePlane3D(Vertices[11], Vertices[3], Vertices[10]),
+        //            // Right Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[4], Vertices[11], Vertices[10]),
+        //            new TrianglePlane3D(Vertices[11], Vertices[3], Vertices[10]),
 
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[4], Vertices[10], Vertices[9]),
-                    new TrianglePlane3D(Vertices[9], Vertices[10], Vertices[2]),
-                }),
+        //            // Left Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[4], Vertices[10], Vertices[9]),
+        //            new TrianglePlane3D(Vertices[9], Vertices[10], Vertices[2]),
+        //        }),
 
-                ///       TOP FACE
-                /// 
-                ///     7 - - 18 -- 6
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     19 -- 5 - - 17
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     4 - - 16 -- 5
-                /// 
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[5], Vertices[19], Vertices[16]),
-                    new TrianglePlane3D(Vertices[19], Vertices[4], Vertices[16]),
+        //        ///       TOP FACE
+        //        /// 
+        //        ///     7 - - 18 -- 6
+        //        ///     |   / | \   |
+        //        ///     | /   |   \ |
+        //        ///     19 -- 5 - - 17
+        //        ///     | \   |   / |
+        //        ///     |   \ | /   |
+        //        ///     4 - - 16 -- 5
+        //        /// 
+        //        new Plane3D(new List<TrianglePlane3D>
+        //        {
+        //            // Left Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[5], Vertices[19], Vertices[16]),
+        //            new TrianglePlane3D(Vertices[19], Vertices[4], Vertices[16]),
 
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[5], Vertices[16], Vertices[17]),
-                    new TrianglePlane3D(Vertices[16], Vertices[5], Vertices[17]),
+        //            // Right Bottom Corner Square
+        //            new TrianglePlane3D(CenterVertices[5], Vertices[16], Vertices[17]),
+        //            new TrianglePlane3D(Vertices[16], Vertices[5], Vertices[17]),
 
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[5], Vertices[17], Vertices[18]),
-                    new TrianglePlane3D(Vertices[17], Vertices[6], Vertices[18]),
+        //            // Right Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[5], Vertices[17], Vertices[18]),
+        //            new TrianglePlane3D(Vertices[17], Vertices[6], Vertices[18]),
 
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[5], Vertices[18], Vertices[19]),
-                    new TrianglePlane3D(Vertices[18], Vertices[7], Vertices[19]),
-                })
+        //            // Left Top Corner Square
+        //            new TrianglePlane3D(CenterVertices[5], Vertices[18], Vertices[19]),
+        //            new TrianglePlane3D(Vertices[18], Vertices[7], Vertices[19]),
+        //        })
+        //    };
+        //}
+
+
+        public List<Plane3D> InitializeFaces()
+        {
+            return new List<Plane3D>
+            {
+                FaceManager.Create(vertices, FaceType.FRONT),
+                FaceManager.Create(vertices, FaceType.RIGHT),
+                FaceManager.Create(vertices, FaceType.BACK),
+                FaceManager.Create(vertices, FaceType.LEFT),
+                FaceManager.Create(vertices, FaceType.BOTTOM),
+                FaceManager.Create(vertices, FaceType.TOP),
             };
         }
 
         private void SetParent()
         {
-            foreach (Point3D p in Vertices)
+            for (int i = 0; i < Vertices.Count; i++)
             {
-                p.Parent = this;
+                Vertices[i].Parent = this;
+                Vertices[i].LocalIndex = i;
             }
 
             foreach (Line3D l in Edges)

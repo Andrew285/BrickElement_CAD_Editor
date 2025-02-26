@@ -8,9 +8,9 @@ namespace Core.Models.Geometry.Primitive.Plane
     public abstract class BasePlane3D : SceneObject3D, IPlane3D
     {
         protected List<TrianglePlane3D> trianglePlanes;
-        protected List<BasePoint3D> vertices;
+        protected List<Point3D> vertices;
 
-        public List<BasePoint3D> Vertices { get { return vertices; } }
+        public List<Point3D> Vertices { get { return vertices; } }
         public List<TrianglePlane3D> TrianglePlanes { get { return trianglePlanes; } }
 
         public bool AreTriangleFacesDrawable
@@ -52,7 +52,7 @@ namespace Core.Models.Geometry.Primitive.Plane
 
         public BasePlane3D(): base()
         {
-            vertices = new List<BasePoint3D>();
+            vertices = new List<Point3D>();
             trianglePlanes = new List<TrianglePlane3D>();
             position = GetCenter();
         }
@@ -62,6 +62,11 @@ namespace Core.Models.Geometry.Primitive.Plane
             trianglePlanes = planes;
             vertices = GetUniqueVertices(trianglePlanes);
             position = GetCenter();
+        }
+
+        public BasePlane3D(List<BasePoint3D> vertices)
+        {
+
         }
 
         public override Vector3 GetCenter()
@@ -89,9 +94,9 @@ namespace Core.Models.Geometry.Primitive.Plane
             }
         }
 
-        public List<BasePoint3D> GetUniqueVertices(List<TrianglePlane3D> planes)
+        public List<Point3D> GetUniqueVertices(List<TrianglePlane3D> planes)
         {
-            List<BasePoint3D> uniquePoints = new List<BasePoint3D>();
+            List<Point3D> uniquePoints = new List<Point3D>();
             foreach (TrianglePlane3D plane in planes)
             {
                 IsPointUnique(uniquePoints, plane.Point1);
@@ -99,7 +104,7 @@ namespace Core.Models.Geometry.Primitive.Plane
                 IsPointUnique(uniquePoints, plane.Point3);
             }
 
-            void IsPointUnique(List<BasePoint3D> uniquePoints, BasePoint3D planePoint)
+            void IsPointUnique(List<Point3D> uniquePoints, Point3D planePoint)
             {
                 if (!uniquePoints.Any(p => p.ID == planePoint.ID))
                 {

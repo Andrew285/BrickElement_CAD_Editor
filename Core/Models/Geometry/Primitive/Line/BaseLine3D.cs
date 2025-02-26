@@ -28,6 +28,7 @@ namespace Core.Models.Geometry.Primitive.Line
             position = GetCenter();
         }
 
+        public BaseLine3D(Vector3 startPoint, Vector3 endPoint): this(new Point3D(startPoint), new Point3D(endPoint)) { }
 
         public override Vector3 GetCenter()
         {

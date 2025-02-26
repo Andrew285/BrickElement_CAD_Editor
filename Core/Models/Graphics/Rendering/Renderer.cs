@@ -6,10 +6,8 @@ using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Cameras;
 using Core.Models.Scene;
 using Raylib_cs;
-using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using Color = Raylib_cs.Color;
 
 namespace Core.Models.Graphics.Rendering
