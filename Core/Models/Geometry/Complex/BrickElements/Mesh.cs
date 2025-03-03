@@ -4,19 +4,32 @@ using Core.Models.Geometry.Primitive.Point;
 
 namespace Core.Models.Geometry.Complex.BrickElements
 {
-    public class Mesh : IMesh
+    public struct Mesh : IMesh
     {
-        public List<BasePoint3D> Vertices {  get; set; }
+        // Vertices
+        public List<BasePoint3D> VerticesList {  get; set; } = new List<BasePoint3D>();
 
-        public List<BaseLine3D> Edges { get; set; }
+        public HashSet<BasePoint3D> VerticesSet {  get; set; } = new HashSet<BasePoint3D>();
 
-        public List<BasePlane3D> Faces { get; set; }
+        public int VerticesCount => VerticesList.Count;
 
-        public Mesh() 
-        {
-            Vertices = new List<BasePoint3D>();
-            Edges = new List<BaseLine3D>();
-            Faces = new List<BasePlane3D>();
-        }
+
+        // Edges
+        public List<BaseLine3D> EdgesList { get; set; } = new List<BaseLine3D>();
+
+        public HashSet<BaseLine3D> EdgesSet { get; set; } = new HashSet<BaseLine3D>();
+
+        public int EdgesCount => EdgesList.Count;
+
+
+        // Faces
+        public List<BasePlane3D> FacesList { get; set; } = new List<BasePlane3D>();
+
+        public HashSet<BasePlane3D> FacesSet { get; set; } = new HashSet<BasePlane3D>();
+
+        public int FacesCount => FacesList.Count;
+
+
+        public Mesh() { }
     }
 }

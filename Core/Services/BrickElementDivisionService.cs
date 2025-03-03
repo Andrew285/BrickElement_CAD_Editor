@@ -58,8 +58,11 @@ namespace Core.Services
             List<BaseLine3D> edges = GenerateEdges();
 
             Mesh mesh = new Mesh();
-            mesh.Vertices = vertices;
-            mesh.Edges = edges;
+            mesh.VerticesList = vertices;
+            mesh.EdgesList = edges;
+
+            mesh.VerticesSet = vertices.ToHashSet();
+            mesh.EdgesSet = edges.ToHashSet();
 
             return mesh;
         }

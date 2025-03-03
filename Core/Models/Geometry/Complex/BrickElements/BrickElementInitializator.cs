@@ -3,7 +3,6 @@ using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Plane.Face;
 using Core.Models.Geometry.Primitive.Point;
 using System.Numerics;
-using System.Windows.Forms.VisualStyles;
 
 namespace Core.Models.Geometry.Complex.BrickElements
 {
@@ -11,7 +10,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
     {
         public static TwentyNodeBrickElement? CreateFrom(BasePlane3D face, TwentyNodeBrickElement be)
         {
-            List<BasePoint3D> vertices = FaceManager.GetFacePoints(face.FaceType, be.Vertices);
+            List<BasePoint3D> vertices = FaceManager.GetFacePoints(face.FaceType, be.Mesh.VerticesList);
             if (vertices.Count == 8)
             {
                 Vector3 normal = face.CalculateNormal();
@@ -50,7 +49,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
 
                     BasePoint3D secondVertex = vertex.Clone();
                     //secondVertex.LocalIndex = secondFaceLocalIndex;
-                    secondVertex.Position += normal * 3f;
+                    secondVertex.Position += normal * 1f;
                     resultVertices[secondFaceLocalIndex] = secondVertex;
 
                     //secondPlanePoints.Add(secondVertex);
@@ -68,7 +67,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
                         int localIndex = middleFacesVerticesIndices[middleIndex];
 
                         BasePoint3D middleVertex = vertex.Clone();
-                        middleVertex.Position += normal * 1.5f;
+                        middleVertex.Position += normal * 0.5f;
                         resultVertices[localIndex] = middleVertex;
                     }
                 }
@@ -361,17 +360,17 @@ namespace Core.Models.Geometry.Complex.BrickElements
 
         public static void SetParent(TwentyNodeBrickElement be)
         {
-            foreach (Point3D p in be.Vertices)
+            foreach (Point3D p in be.Mesh.VerticesList)
             {
                 p.Parent = be;
             }
 
-            foreach (Line3D l in be.Edges)
+            foreach (Line3D l in be.Mesh.EdgesList)
             {
                 l.Parent = be;
             }
 
-            foreach (Plane3D p in be.Faces)
+            foreach (Plane3D p in be.Mesh.FacesList)
             {
                 p.Parent = be;
             }

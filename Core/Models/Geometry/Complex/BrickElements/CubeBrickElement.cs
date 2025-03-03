@@ -7,14 +7,19 @@ namespace Core.Models.Geometry.Complex.BrickElements
     {
         public CubeBrickElement(Vector3 position, Vector3 size): base(position, size)
         {
-            vertices = InitializeVertices();
+            Mesh.VerticesList = InitializeVertices();
             //centerVertices = InitializeCenterVertices();
             //edges = InitializeEdges();
             //faces = InitializeFaces();
 
-            centerVertices = BrickElementInitializator.InitializeCenterVertices(vertices);
-            edges = BrickElementInitializator.InitializeEdges(vertices);
-            faces = BrickElementInitializator.InitializeFaces(vertices, centerVertices);
+            CenterVertices = BrickElementInitializator.InitializeCenterVertices(Mesh.VerticesList);
+            Mesh.EdgesList = BrickElementInitializator.InitializeEdges(Mesh.VerticesList);
+            Mesh.FacesList = BrickElementInitializator.InitializeFaces(Mesh.VerticesList, CenterVertices);
+
+            Mesh.VerticesSet = Mesh.VerticesList.ToHashSet();
+            Mesh.EdgesSet = Mesh.EdgesList.ToHashSet();
+            Mesh.FacesSet = Mesh.FacesList.ToHashSet();
+
             BrickElementInitializator.SetParent(this);
         }
 

@@ -1,0 +1,98 @@
+﻿using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Surfaces;
+using System.Numerics;
+
+namespace Tests.Core.Models.Geometry.Complex.Surfaces
+{
+    public class BrickElementSurfaceTest
+    {
+        [SetUp]
+        public void Setup()
+        {
+
+        }
+
+        [Test]
+        public void InitializingTest()
+        {
+            BrickElementSurface brickElementSurfaceTest = new BrickElementSurface();
+
+            Assert.IsNotNull(brickElementSurfaceTest);
+            Assert.IsNotNull(brickElementSurfaceTest.Mesh.VerticesList);
+            Assert.IsNotNull(brickElementSurfaceTest.Mesh.EdgesList);
+            Assert.IsNotNull(brickElementSurfaceTest.Mesh.FacesList);
+        }
+
+
+        #region Add
+
+        [Test]
+        public void AddOneCubeTest()
+        {
+            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+            BrickElementSurface brickElementSurface = new BrickElementSurface();
+
+            brickElementSurface.AddBrickElement(cbe);
+
+            Assert.That(brickElementSurface.BrickElements.Count, Is.EqualTo(1));
+            Assert.That(brickElementSurface.Mesh.VerticesCount, Is.EqualTo(20));
+            Assert.That(brickElementSurface.Mesh.EdgesCount, Is.EqualTo(24));
+            Assert.That(brickElementSurface.Mesh.FacesCount, Is.EqualTo(6));
+            Assert.IsNotNull(brickElementSurface.BrickElements[0]);
+        }
+
+        [Test]
+        public void AddTwoCubesTest()
+        {
+            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+            //TwentyNodeBrickElement? cbe2 = BrickElementInitializator.CreateFrom(cbe.Faces[1], cbe);
+            BrickElementSurface brickElementSurface = new BrickElementSurface();
+
+            brickElementSurface.AddBrickElement(cbe);
+            brickElementSurface.AddBrickElementToFace(cbe.Mesh.FacesList[1]);
+
+            Assert.That(brickElementSurface.BrickElements.Count, Is.EqualTo(2));
+            Assert.That(brickElementSurface.Mesh.VerticesCount, Is.EqualTo(32));
+            Assert.That(brickElementSurface.Mesh.EdgesCount, Is.EqualTo(40));
+            Assert.That(brickElementSurface.Mesh.FacesCount, Is.EqualTo(11));
+        }
+
+        #endregion
+
+
+        #region Remove
+
+        //[Test]
+        //public void RemoveOnlyCubeTest()
+        //{
+        //    CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+        //    BrickElementSurface brickElementSurface = new BrickElementSurface();
+        //    brickElementSurface.Add(cbe);
+
+        //    cbe.Remove(1);
+
+        //    Assert.That(brickElementSurface.BrickElements.Count, Is.EqualTo(0));
+        //    Assert.That(brickElementSurface.Vertices.Count, Is.EqualTo(0));
+        //    Assert.That(brickElementSurface.Edges.Count, Is.EqualTo(0));
+        //    Assert.That(brickElementSurface.Faces.Count, Is.EqualTo(0));
+        //}
+
+        //public void RemoveOneCubeFromTwoTest()
+        //{
+        //    CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+        //    TwentyNodeBrickElement? cbe2 = BrickElementInitializator.CreateFrom(cbe.Faces[1], cbe);
+        //    BrickElementSurface brickElementSurface = new BrickElementSurface();
+        //    brickElementSurface.Add(cbe);
+        //    brickElementSurface.Add(cbe);
+
+        //    cbe.Remove(1);
+
+        //    Assert.That(brickElementSurface.BrickElements.Count, Is.EqualTo(1));
+        //    Assert.That(brickElementSurface.Vertices.Count, Is.EqualTo(20));
+        //    Assert.That(brickElementSurface.Edges.Count, Is.EqualTo(24));
+        //    Assert.That(brickElementSurface.Faces.Count, Is.EqualTo(6));
+        //}
+
+        #endregion
+    }
+}

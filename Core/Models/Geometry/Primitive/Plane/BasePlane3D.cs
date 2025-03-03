@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace Core.Models.Geometry.Primitive.Plane
 {
-    public abstract class BasePlane3D : SceneObject3D, IPlane3D
+    public abstract class BasePlane3D : SceneObject3D, IPlane3D, IEquatable<BasePlane3D>
     {
         protected List<TrianglePlane3D> trianglePlanes;
         protected List<BasePoint3D> vertices;
@@ -65,6 +65,12 @@ namespace Core.Models.Geometry.Primitive.Plane
             trianglePlanes = planes;
             vertices = GetUniqueVertices(trianglePlanes);
             position = GetCenter();
+
+            // Order Vertices
+            vertices = vertices.OrderBy(p => p.X)
+                 .ThenBy(p => p.Y)
+                 .ThenBy(p => p.Z)
+                 .ToList();
         }
 
         public override Vector3 GetCenter()
@@ -150,6 +156,28 @@ namespace Core.Models.Geometry.Primitive.Plane
             {
                 vertex.Move(moveVector);
             }
+        }
+
+        public override int GetHashCode()
+        {
+            return Vertices.Aggregate(17, (current, point) => current * 31 + point.GetHashCode());
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as BasePlane3D);
+        }
+
+        public bool Equals(BasePlane3D other)
+        {
+            if (other is null) return false;
+            if (Vertices.Count != other.Vertices.Count) return false;
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                if (!Vertices[i].Equals(other.Vertices[i]))
+                    return false;
+            }
+            return true;
         }
     }
 }

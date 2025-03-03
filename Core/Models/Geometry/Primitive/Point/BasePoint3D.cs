@@ -7,7 +7,7 @@ using System.Numerics;
 
 namespace Core.Models.Geometry.Primitive.Point
 {
-    public abstract class BasePoint3D : SceneObject3D, IPoint3D
+    public abstract class BasePoint3D : SceneObject3D, IPoint3D, IComparable<BasePoint3D>
     {
         public const float MIN_RADIUS = 0.01f;
         public const float MAX_RADIS = 0.1f;
@@ -58,6 +58,26 @@ namespace Core.Models.Geometry.Primitive.Point
         }
 
         public abstract BasePoint3D Clone();
+
+        public int CompareTo(BasePoint3D other)
+        {
+            int cmp = X.CompareTo(other.X);
+            if (cmp != 0) return cmp;
+            cmp = Y.CompareTo(other.Y);
+            if (cmp != 0) return cmp;
+            return Z.CompareTo(other.Z);
+        }
+
+        public override int GetHashCode() => HashCode.Combine(X, Y, Z);
+
+        public override bool Equals(object obj)
+        {
+            if (obj is BasePoint3D other)
+            {
+                return X == other.X && Y == other.Y && Z == other.Z;
+            }
+            return false;
+        }
     }
 
     public class LocalizedCategoryAttribute : CategoryAttribute

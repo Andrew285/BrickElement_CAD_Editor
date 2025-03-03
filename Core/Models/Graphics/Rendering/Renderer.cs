@@ -1,4 +1,5 @@
 ﻿using Core.Models.Geometry;
+using Core.Models.Geometry.Complex;
 using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
@@ -128,13 +129,12 @@ namespace Core.Models.Graphics.Rendering
 
             foreach (SceneObject3D obj in objects)
             {
-                if (obj is IMesh)
+                if (obj is MeshObject3D)
                 {
-                    IMesh meshObj = (IMesh)obj;
-
-                    SceneObject3D? selectedVertex = Raycast(meshObj.Vertices, ray);
-                    SceneObject3D? selectedEdge = Raycast(meshObj.Edges, ray);
-                    SceneObject3D? selectedFace = Raycast(meshObj.Faces, ray);
+                    MeshObject3D meshObject3D = (MeshObject3D)obj;
+                    SceneObject3D? selectedVertex = Raycast(meshObject3D.Mesh.VerticesList, ray);
+                    SceneObject3D? selectedEdge = Raycast(meshObject3D.Mesh.EdgesList, ray);
+                    SceneObject3D? selectedFace = Raycast(meshObject3D.Mesh.FacesList, ray);
 
                     resultSceneObject = FindClosestSelectedObject(selectedVertex, selectedEdge, selectedFace);
                     resultSceneObjects.Add(resultSceneObject);

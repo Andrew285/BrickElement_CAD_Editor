@@ -1,4 +1,5 @@
 ﻿using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Models.Text.VertexText;
@@ -25,20 +26,75 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
         {
             // CASE 1
 
-            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(3, 3, 3));
-            //cbe.AreTriangleFacesDrawable = true;
-            scene.AddObject3D(cbe);
+            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+            ////cbe.AreTriangleFacesDrawable = true;
+            //scene.AddObject3D(cbe);
 
-            //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Vertices, renderer);
-            //scene.AddObject2D(vertexIndexGroup);
+            ////VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Vertices, renderer);
+            ////scene.AddObject2D(vertexIndexGroup);
 
-            TwentyNodeBrickElement? newBe = BrickElementInitializator.CreateFrom(cbe.Faces[5], cbe);
-            scene.AddObject3D(newBe);
+            ////TwentyNodeBrickElement? newBe = BrickElementInitializator.CreateFrom(cbe.Faces[5], cbe);
+            ////scene.AddObject3D(newBe);
 
-            VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(newBe.Vertices, renderer);
+            ////VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(newBe.Vertices, renderer);
+            ////scene.AddObject2D(vertexIndexGroup2);
+
+            BrickElementSurface surface = new BrickElementSurface();
+            surface.AddBrickElement(cbe);
+            //TwentyNodeBrickElement newBe = surface.AddBrickElementToFace(cbe.Mesh.FacesList[1]);
+            //surface.AddBrickElementToFace(cbe.Mesh.FacesList[5]);
+            //surface.AddBrickElementToFace(newBe.Mesh.FacesList[5]);
+            //scene.AddObject3D(surface);
+
+            //VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(surface.GlobalVertexIndices.Keys.ToList(), renderer);
+            //scene.AddObject2D(vertexIndexGroup2);
+            ///
+            /// 
+            ////surface.AddBrickElementToFace(cbe.Mesh.FacesList[3]);
+            ////scene.AddObject3D(surface);
+
+            TwentyNodeBrickElement be = cbe;
+            for (int i = 0; i < 50; i++)
+            {
+                be = surface.AddBrickElementToFace(be.Mesh.FacesList[3]);
+            }
+
+            TwentyNodeBrickElement be2 = cbe;
+            for (int i = 0; i < 50; i++)
+            {
+                be2 = surface.AddBrickElementToFace(be2.Mesh.FacesList[1]);
+            }
+
+            TwentyNodeBrickElement be3 = cbe;
+            for (int i = 0; i < 50; i++)
+            {
+                be3 = surface.AddBrickElementToFace(be3.Mesh.FacesList[0]);
+            }
+
+            TwentyNodeBrickElement be4 = cbe;
+            for (int i = 0; i < 50; i++)
+            {
+                be4 = surface.AddBrickElementToFace(be4.Mesh.FacesList[2]);
+            }
+
+            TwentyNodeBrickElement be5 = cbe;
+            for (int i = 0; i < 50; i++)
+            {
+                be5 = surface.AddBrickElementToFace(be5.Mesh.FacesList[4]);
+            }
+
+
+            TwentyNodeBrickElement be6 = cbe;
+            for (int i = 0; i < 50; i++)
+            {
+                be6 = surface.AddBrickElementToFace(be6.Mesh.FacesList[5]);
+            }
+
+
+            VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(surface.GlobalVertexIndices.Keys.ToList(), renderer);
             scene.AddObject2D(vertexIndexGroup2);
 
-
+            scene.AddObject3D(surface);
             // CASE 2
 
             //Point3D p1 = new Point3D(-1, 0, 0);
