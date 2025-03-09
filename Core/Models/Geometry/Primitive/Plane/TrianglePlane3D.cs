@@ -11,7 +11,7 @@ namespace Core.Models.Geometry.Primitive.Plane
         public BasePoint3D Point2 { get; }
         public BasePoint3D Point3 { get; }
 
-        public bool AreLinesDrawable { get; set; } = false;
+        public bool AreLinesDrawable { get; set; } = true;
 
         public override Color NonSelectedColor { get; set; } = Color.LightGray;
 
@@ -37,6 +37,7 @@ namespace Core.Models.Geometry.Primitive.Plane
             }
 
             renderer.DrawTriangle3D(Point1.ToVector3(), Point2.ToVector3(), Point3.ToVector3(), color);
+            //renderer.DrawGradientTriangle(Point1.ToVector3(), Color.Red, Point2.ToVector3(), Color.Blue, Point3.ToVector3(), Color.Green);
         }
 
         public void DrawLines(IRenderer renderer)

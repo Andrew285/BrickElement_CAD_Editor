@@ -337,6 +337,31 @@ namespace Core.Models.Graphics.Rendering
             Raylib.DrawTriangle3D(v1, v2, v3, color);
         }
 
+        public void DrawGradientTriangle(Vector3 v1, Color c1, Vector3 v2, Color c2, Vector3 v3, Color c3)
+        {
+            Rlgl.Begin(Raylib_cs.DrawMode.Triangles);
+
+            //Rlgl.Color4f(c1.R, c1.G, c1.B, c1.A);
+            //Rlgl.Vertex3f(v1.X, v1.Y, v1.Z);
+
+            //Rlgl.Color4f(c2.R, c2.G, c2.B, c2.A);
+            //Rlgl.Vertex3f(v2.X, v2.Y, v2.Z);
+
+            //Rlgl.Color4f(c3.R, c3.G, c3.B, c3.A);
+            //Rlgl.Vertex3f(v3.X, v3.Y, v3.Z);
+
+            Rlgl.Color4f(c1.R / 255f, c1.G / 255f, c1.B / 255f, c1.A / 255f);
+            Rlgl.Vertex3f(v1.X, v1.Y, v1.Z);
+
+            Rlgl.Color4f(c2.R / 255f, c2.G / 255f, c2.B / 255f, c2.A / 255f);
+            Rlgl.Vertex3f(v2.X, v2.Y, v2.Z);
+
+            Rlgl.Color4f(c3.R / 255f, c3.G / 255f, c3.B / 255f, c3.A / 255f);
+            Rlgl.Vertex3f(v3.X, v3.Y, v3.Z);
+
+            Rlgl.End();
+        }
+
         public void DrawText(string text, int posX, int posY, int fontSize, Color color)
         {
             Raylib.DrawText(text, posX, posY, fontSize, color);

@@ -2,11 +2,12 @@
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
+using Raylib_cs;
 using System.Numerics;
 
 namespace Core.Models.Geometry.Primitive.Plane
 {
-    public abstract class BasePlane3D : SceneObject3D, IPlane3D, IEquatable<BasePlane3D>
+    public abstract class BasePlane3D : SceneObject3D, IPlane3D, IEquatable<BasePlane3D>, IAttachable
     {
         protected List<TrianglePlane3D> trianglePlanes;
         protected List<BasePoint3D> vertices;
@@ -50,6 +51,20 @@ namespace Core.Models.Geometry.Primitive.Plane
                 {
                     trianglePlane.IsSelected = value;
                 }
+            }
+        }
+
+        private bool isAttached = false;
+        public bool IsAttached
+        {
+            get
+            {
+                return isAttached;
+            }
+            set
+            {
+                isAttached = value;
+                if (isAttached) Attach(); else Detach();
             }
         }
 
@@ -178,6 +193,24 @@ namespace Core.Models.Geometry.Primitive.Plane
                     return false;
             }
             return true;
+        }
+
+        public void Attach()
+        {
+            NonSelectedColor = Raylib_cs.Color.Blue;
+            foreach (TrianglePlane3D trianglePlane in trianglePlanes)
+            {
+                trianglePlane.NonSelectedColor = NonSelectedColor;
+            }
+        }
+
+        public void Detach()
+        {
+            NonSelectedColor = NonSelectedColor;
+            foreach (TrianglePlane3D trianglePlane in trianglePlanes)
+            {
+                trianglePlane.NonSelectedColor = NonSelectedColor;
+            }
         }
     }
 }

@@ -39,8 +39,8 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             ////VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(newBe.Vertices, renderer);
             ////scene.AddObject2D(vertexIndexGroup2);
 
-            BrickElementSurface surface = new BrickElementSurface();
-            surface.AddBrickElement(cbe);
+            //BrickElementSurface surface = new BrickElementSurface();
+            //surface.AddBrickElement(cbe);
             //TwentyNodeBrickElement newBe = surface.AddBrickElementToFace(cbe.Mesh.FacesList[1]);
             //surface.AddBrickElementToFace(cbe.Mesh.FacesList[5]);
             //surface.AddBrickElementToFace(newBe.Mesh.FacesList[5]);
@@ -53,48 +53,49 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             ////surface.AddBrickElementToFace(cbe.Mesh.FacesList[3]);
             ////scene.AddObject3D(surface);
 
-            TwentyNodeBrickElement be = cbe;
-            for (int i = 0; i < 50; i++)
-            {
-                be = surface.AddBrickElementToFace(be.Mesh.FacesList[3]);
-            }
+            //TwentyNodeBrickElement be = cbe;
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    be = surface.AddBrickElementToFace(be.Mesh.FacesList[3]);
+            //}
 
-            TwentyNodeBrickElement be2 = cbe;
-            for (int i = 0; i < 50; i++)
-            {
-                be2 = surface.AddBrickElementToFace(be2.Mesh.FacesList[1]);
-            }
+            //TwentyNodeBrickElement be2 = cbe;
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    be2 = surface.AddBrickElementToFace(be2.Mesh.FacesList[1]);
+            //}
 
-            TwentyNodeBrickElement be3 = cbe;
-            for (int i = 0; i < 50; i++)
-            {
-                be3 = surface.AddBrickElementToFace(be3.Mesh.FacesList[0]);
-            }
+            //TwentyNodeBrickElement be3 = cbe;
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    be3 = surface.AddBrickElementToFace(be3.Mesh.FacesList[0]);
+            //}
 
-            TwentyNodeBrickElement be4 = cbe;
-            for (int i = 0; i < 50; i++)
-            {
-                be4 = surface.AddBrickElementToFace(be4.Mesh.FacesList[2]);
-            }
+            //TwentyNodeBrickElement be4 = cbe;
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    be4 = surface.AddBrickElementToFace(be4.Mesh.FacesList[2]);
+            //}
 
-            TwentyNodeBrickElement be5 = cbe;
-            for (int i = 0; i < 50; i++)
-            {
-                be5 = surface.AddBrickElementToFace(be5.Mesh.FacesList[4]);
-            }
-
-
-            TwentyNodeBrickElement be6 = cbe;
-            for (int i = 0; i < 50; i++)
-            {
-                be6 = surface.AddBrickElementToFace(be6.Mesh.FacesList[5]);
-            }
+            //TwentyNodeBrickElement be5 = cbe;
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    be5 = surface.AddBrickElementToFace(be5.Mesh.FacesList[4]);
+            //}
 
 
-            VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(surface.GlobalVertexIndices.Keys.ToList(), renderer);
+            //TwentyNodeBrickElement be6 = cbe;
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    be6 = surface.AddBrickElementToFace(be6.Mesh.FacesList[5]);
+            //}
+
+            scene.AddObject3D(cbe);
+
+            VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(cbe.Mesh.VerticesList, renderer);
             scene.AddObject2D(vertexIndexGroup2);
 
-            scene.AddObject3D(surface);
+            //scene.AddObject3D(surface);
             // CASE 2
 
             //Point3D p1 = new Point3D(-1, 0, 0);

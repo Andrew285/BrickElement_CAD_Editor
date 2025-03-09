@@ -2,6 +2,10 @@
 {
     public interface IAttachable
     {
+        bool IsAttached { get; set; }
+
         void Attach();
+
+        void Detach();
     }
 }
