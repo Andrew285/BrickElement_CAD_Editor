@@ -74,6 +74,8 @@ namespace Core.Models.Geometry.Complex.Surfaces
                 facesMap[face].Add(brickElementCounter);
             }
 
+            OptimiseMesh();
+
             //Create New BrickElement with new Vertices
             TwentyNodeBrickElement? newBE = BrickElementInitializator.CreateFrom(newPointsForBE);
             BrickElements.Add(brickElementCounter, newBE);
@@ -99,6 +101,33 @@ namespace Core.Models.Geometry.Complex.Surfaces
             }
 
             return newBrickElement;
+        }
+
+        public void OptimiseMesh()
+        {
+            foreach (var face in facesMap)
+            {
+                if (face.Value.Count > 1)
+                {
+                    face.Key.IsDrawable = false;
+                }
+            }
+
+            foreach (var edge in edgesMap)
+            {
+                if (edge.Value.Count > 3)
+                {
+                    edge.Key.IsDrawable = false;
+                }
+            }
+
+            foreach (var vertex in verticesMap)
+            {
+                if (vertex.Value.Count > 3)
+                {
+                    vertex.Key.IsDrawable = false;
+                }
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Core.Models.Scene
         public virtual Color NonSelectedColor { get; set; } = Color.Black;
         public Vector3 Center => GetCenter();
 
-        private bool isDrawable = false;
+        private bool isDrawable = true;
         public bool IsDrawable {
             get 
             {
