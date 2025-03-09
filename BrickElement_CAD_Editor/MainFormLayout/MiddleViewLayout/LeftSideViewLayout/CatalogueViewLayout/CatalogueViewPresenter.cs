@@ -1,4 +1,5 @@
-﻿using Core.Models.Geometry.Complex.BrickElements;
+﻿using Core.Maths;
+using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
@@ -91,6 +92,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             //}
 
             scene.AddObject3D(cbe);
+            //Dictionary<Vector3, Dictionary<int, List<float>>> dfiabg = FEM.CalculateDerivativesOf(cbe);
 
             VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(cbe.Mesh.VerticesList, renderer);
             scene.AddObject2D(vertexIndexGroup2);
