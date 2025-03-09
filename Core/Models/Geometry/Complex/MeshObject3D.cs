@@ -97,10 +97,10 @@ namespace Core.Models.Geometry.Complex
                 {
                     obj.Draw(renderer);
 
-                    Vector3 normal = obj.CalculateNormal();
-                    Vector3 centerPoint = obj.GetCenter();
-                    Line3D normLine = new Line3D(centerPoint, centerPoint + normal * 2);
-                    normLine.Draw(renderer);
+                    //Vector3 normal = obj.CalculateNormal();
+                    //Vector3 centerPoint = obj.GetCenter();
+                    //Line3D normLine = new Line3D(centerPoint, centerPoint + normal * 2);
+                    //normLine.Draw(renderer);
                 }
             }
         }

@@ -40,8 +40,8 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             ////VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(newBe.Vertices, renderer);
             ////scene.AddObject2D(vertexIndexGroup2);
 
-            //BrickElementSurface surface = new BrickElementSurface();
-            //surface.AddBrickElement(cbe);
+            BrickElementSurface surface = new BrickElementSurface();
+            surface.AddBrickElement(cbe);
             //TwentyNodeBrickElement newBe = surface.AddBrickElementToFace(cbe.Mesh.FacesList[1]);
             //surface.AddBrickElementToFace(cbe.Mesh.FacesList[5]);
             //surface.AddBrickElementToFace(newBe.Mesh.FacesList[5]);
@@ -91,11 +91,11 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             //    be6 = surface.AddBrickElementToFace(be6.Mesh.FacesList[5]);
             //}
 
-            scene.AddObject3D(cbe);
+            scene.AddObject3D(surface);
             //Dictionary<Vector3, Dictionary<int, List<float>>> dfiabg = FEM.CalculateDerivativesOf(cbe);
 
-            VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(cbe.Mesh.VerticesList, renderer);
-            scene.AddObject2D(vertexIndexGroup2);
+            //VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(cbe.Mesh.VerticesList, renderer);
+            //scene.AddObject2D(vertexIndexGroup2);
 
             //scene.AddObject3D(surface);
             // CASE 2

@@ -30,8 +30,8 @@ public class ExtraToolsView : IExtraToolsView
     {
         // Initialize ImageList for icons
         imageList = new ImageList();
-        imageList.ImageSize = new Size(24, 24); // Increase icon size
-        imageList.Images.Add("add", Image.FromFile("D:\\Downloads\\icons8-settings-48.png"));
+        imageList.ImageSize = new Size(30, 30); // Increase icon size
+        imageList.Images.Add("add", Image.FromFile("D:\\Downloads\\pixil-frame-0 (3).png"));
         imageList.Images.Add("edit", Image.FromFile("D:\\Downloads\\Adding_Cube.png"));
         imageList.Images.Add("settings", Image.FromFile("D:\\Downloads\\Adding_Cube.png"));
         imageList.Images.Add("delete", Image.FromFile("D:\\Downloads\\Adding_Cube.png"));
@@ -43,9 +43,9 @@ public class ExtraToolsView : IExtraToolsView
             Dock = DockStyle.Top,
             GripStyle = ToolStripGripStyle.Hidden,
             BackColor = Color.WhiteSmoke,
-            ImageScalingSize = new Size(24, 24), // Increase icon size
+            ImageScalingSize = new Size(30, 30), // Increase icon size
             AutoSize = false, // Prevent automatic resizing
-            Height = 30 // Set fixed height to accommodate larger icons
+            Height = 38 // Set fixed height to accommodate larger icons
         };
 
         //LoadBasicToolset(); // Load default buttons

@@ -9,6 +9,7 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
         private IExtraToolsView extraToolsView;
         private ToolManager toolManager;
         private IScene scene;
+        AddCubeToFaceAction addCubeToFaceAction;
 
         private bool isSelectionToolModeUpdating = false;
 
@@ -29,7 +30,7 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
         public void AddBrickElementToFace(object sender, EventArgs e)
         {
             SelectionTool selectionTool = (SelectionTool)toolManager.CurrentTool;
-            AddCubeToFaceAction addCubeToFaceAction = new AddCubeToFaceAction(scene, selectionTool);
+            addCubeToFaceAction = new AddCubeToFaceAction(scene, selectionTool);
         }
 
         public void ChangeTool(BaseTool tool)
