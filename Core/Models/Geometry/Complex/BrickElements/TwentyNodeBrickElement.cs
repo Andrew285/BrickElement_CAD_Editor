@@ -74,9 +74,9 @@ namespace Core.Models.Geometry.Complex.BrickElements
 
         private void SetEdgesAreSelected(bool isSeleted)
         {
-            foreach (var obj in Mesh.EdgesList)
+            foreach (var obj in Mesh.Edges)
             {
-                obj.IsSelected = isSeleted;
+                obj.Key.IsSelected = isSeleted;
             }
         }
 
@@ -111,8 +111,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
             IMesh mesh = divisionService.GenerateDividedMesh();
             Mesh = mesh;
 
-            Mesh.FacesList.Clear();
-            Mesh.FacesSet.Clear();
+            Mesh.Faces.Clear();
             CenterVertices.Clear();
         }
 
@@ -120,7 +119,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
         {
             base.Move(moveVector);
 
-            foreach (Point3D vertex in Mesh.VerticesList)
+            foreach (Point3D vertex in Mesh.Vertices.Keys)
             {
                 vertex.Move(moveVector);
             }

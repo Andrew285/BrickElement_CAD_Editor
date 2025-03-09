@@ -35,14 +35,14 @@ namespace Core.Models.Geometry.Primitive.Plane.Face
             { FaceType.BOTTOM, FaceType.TOP },
         };
 
-        public static List<BasePoint3D> GetFacePoints(FaceType faceType, List<BasePoint3D> brickElementPoints)
+        public static List<BasePoint3D> GetFacePoints(FaceType faceType, IEnumerable<BasePoint3D> brickElementPoints)
         {
             List<int> faceIndices = faceVerticesIndices[faceType];
             List<BasePoint3D> resultPoints = new List<BasePoint3D>();
 
             foreach (int index in faceIndices)
             {
-                resultPoints.Add(brickElementPoints[index]);
+                resultPoints.Add(brickElementPoints.ElementAt(index));
             }
 
             return resultPoints;
@@ -63,7 +63,7 @@ namespace Core.Models.Geometry.Primitive.Plane.Face
             return oppositeFaceType[face];
         }
 
-        public static BasePoint3D GetCenterOf(FaceType face, List<BasePoint3D> brickElementVertices)
+        public static BasePoint3D GetCenterOf(FaceType face, IEnumerable<BasePoint3D> brickElementVertices)
         {
             List<BasePoint3D> faceVertices = GetFacePoints(face, brickElementVertices);
             return new Point3D(CalculateCenter(faceVertices));

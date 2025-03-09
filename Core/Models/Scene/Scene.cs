@@ -56,7 +56,7 @@ namespace Core.Models.Scene
 
                     if (obj is BasePlane3D face)
                     {
-                        if (surface.Mesh.FacesSet.Contains(face))
+                        if (surface.Mesh.Faces.ContainsKey(face))
                         {
                             resultSurface = surface;
                             break;

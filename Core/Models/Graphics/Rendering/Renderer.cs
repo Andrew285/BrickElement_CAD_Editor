@@ -120,7 +120,7 @@ namespace Core.Models.Graphics.Rendering
             return Raycast(objects, ray);
         }
 
-        public SceneObject3D? Raycast<T>(List<T> objects, Ray ray) where T: SceneObject3D
+        public SceneObject3D? Raycast<T>(IEnumerable<T> objects, Ray ray) where T: SceneObject3D
         {
             //(SceneObject3D, float) resultSceneObject = (null, -1f);
             SceneObject3D? resultSceneObject = null;
@@ -132,9 +132,9 @@ namespace Core.Models.Graphics.Rendering
                 if (obj is MeshObject3D)
                 {
                     MeshObject3D meshObject3D = (MeshObject3D)obj;
-                    SceneObject3D? selectedVertex = Raycast(meshObject3D.Mesh.VerticesList, ray);
-                    SceneObject3D? selectedEdge = Raycast(meshObject3D.Mesh.EdgesList, ray);
-                    SceneObject3D? selectedFace = Raycast(meshObject3D.Mesh.FacesList, ray);
+                    SceneObject3D? selectedVertex = Raycast(meshObject3D.Mesh.Vertices.Keys, ray);
+                    SceneObject3D? selectedEdge = Raycast(meshObject3D.Mesh.Edges.Keys, ray);
+                    SceneObject3D? selectedFace = Raycast(meshObject3D.Mesh.Faces.Keys, ray);
 
                     resultSceneObject = FindClosestSelectedObject(selectedVertex, selectedEdge, selectedFace);
                     resultSceneObjects.Add(resultSceneObject);

@@ -74,7 +74,7 @@ namespace Core.Maths
 
         public static Dictionary<Vector3, Dictionary<int, List<float>>> CalculateDerivativesOf(TwentyNodeBrickElement brickElement)
         {
-            List<BasePoint3D> vertices = brickElement.Mesh.VerticesList;
+            Dictionary<BasePoint3D, int> vertices = brickElement.Mesh.Vertices;
 
             // result derivatives values
             Dictionary<Vector3, Dictionary<int, List<float>>> DFIABG = new Dictionary<Vector3, Dictionary<int, List<float>>>();
@@ -96,7 +96,7 @@ namespace Core.Maths
                             for (int i = 0; i < vertices.Count; i++)
                             {
                                 // get current vertex
-                                BasePoint3D vertex = vertices[0];
+                                BasePoint3D vertex = vertices.ElementAt(0).Key;
 
                                 // find appropriate function from dictionary
                                 Func<Vector3, Vector3, double> derivativeFunction = cornerDerivativeFunctions[0];

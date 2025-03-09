@@ -1,4 +1,6 @@
-﻿using Core.Models.Geometry.Primitive.Point;
+﻿using Core.Models.Geometry.Primitive.Line;
+using Core.Models.Geometry.Primitive.Plane;
+using Core.Models.Geometry.Primitive.Point;
 using System.Numerics;
 
 namespace Core.Models.Geometry.Complex.BrickElements
@@ -7,18 +9,17 @@ namespace Core.Models.Geometry.Complex.BrickElements
     {
         public CubeBrickElement(Vector3 position, Vector3 size): base(position, size)
         {
-            Mesh.VerticesList = InitializeVertices();
+            Mesh.Vertices = MeshExtensions.ConvertObjectToDictionary(InitializeVertices());
             //centerVertices = InitializeCenterVertices();
             //edges = InitializeEdges();
             //faces = InitializeFaces();
 
-            CenterVertices = BrickElementInitializator.InitializeCenterVertices(Mesh.VerticesList);
-            Mesh.EdgesList = BrickElementInitializator.InitializeEdges(Mesh.VerticesList);
-            Mesh.FacesList = BrickElementInitializator.InitializeFaces(Mesh.VerticesList, CenterVertices);
+            CenterVertices = BrickElementInitializator.InitializeCenterVertices(Mesh.Vertices.Keys);
+            List<BaseLine3D> edges = BrickElementInitializator.InitializeEdges(Mesh.Vertices.Keys.ToList());
+            List<BasePlane3D> faces = BrickElementInitializator.InitializeFaces(Mesh.Vertices.Keys.ToList(), CenterVertices);
 
-            Mesh.VerticesSet = Mesh.VerticesList.ToHashSet();
-            Mesh.EdgesSet = Mesh.EdgesList.ToHashSet();
-            Mesh.FacesSet = Mesh.FacesList.ToHashSet();
+            Mesh.Edges = MeshExtensions.ConvertObjectToDictionary(edges);
+            Mesh.Faces = MeshExtensions.ConvertObjectToDictionary(faces);
 
             BrickElementInitializator.SetParent(this);
         }

@@ -4,7 +4,6 @@ using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using System.Numerics;
 
 namespace Core.Models.Geometry.Complex
 {
@@ -47,14 +46,15 @@ namespace Core.Models.Geometry.Complex
 
         public MeshObject3D(List<BasePoint3D> vertices, List<BaseLine3D> edges, List<BasePlane3D> faces)
         {
+            Dictionary<BasePoint3D, int> verticesDictionary = MeshExtensions.ConvertObjectToDictionary(vertices);
+            Dictionary<BaseLine3D, int> edgesDictionary = MeshExtensions.ConvertObjectToDictionary(edges);
+            Dictionary<BasePlane3D, int> facesDictionary = MeshExtensions.ConvertObjectToDictionary(faces);
+
             Mesh = new Mesh
             {
-                VerticesList = vertices,
-                VerticesSet = vertices.ToHashSet(),
-                EdgesList = edges,
-                EdgesSet = edges.ToHashSet(),
-                FacesList = faces,
-                FacesSet = faces.ToHashSet()
+                Vertices = verticesDictionary,
+                Edges = edgesDictionary,
+                Faces = facesDictionary
             };
         }
 
@@ -62,17 +62,17 @@ namespace Core.Models.Geometry.Complex
         {
             if (AreVerticesDrawable)
             {
-                DrawSceneObjects(renderer, Mesh.VerticesList);
+                DrawSceneObjects(renderer, Mesh.Vertices.Keys);
             }
 
             if (AreEdgesDrawable)
             {
-                DrawSceneObjects(renderer, Mesh.EdgesList);
+                DrawSceneObjects(renderer, Mesh.Edges.Keys);
             }
 
             if (AreFacesDrawable)
             {
-                DrawFaces(renderer, Mesh.FacesList);
+                DrawFaces(renderer, Mesh.Faces.Keys);
             }
 
             //if (AreTriangleFacesDrawable)
@@ -81,7 +81,7 @@ namespace Core.Models.Geometry.Complex
             //}
         }
 
-        protected void DrawSceneObjects<T>(IRenderer renderer, List<T> objects) where T : SceneObject3D
+        protected void DrawSceneObjects<T>(IRenderer renderer, IEnumerable<T> objects) where T : SceneObject3D
         {
             foreach (var obj in objects)
             {
@@ -92,7 +92,8 @@ namespace Core.Models.Geometry.Complex
             }
         }
 
-        protected void DrawFaces(IRenderer renderer, List<BasePlane3D> objects)
+
+        protected void DrawFaces(IRenderer renderer, IEnumerable<BasePlane3D> objects)
         {
             foreach (Plane3D obj in objects)
             {

@@ -32,13 +32,13 @@ namespace Core.Models.Geometry.Complex.Surfaces
             brickElementCounter++;
 
             // Add Vertices
-            HashSet<BasePoint3D> beVertices = newBrickElement.Mesh.VerticesSet;
-            foreach (BasePoint3D vertex in beVertices)
+            Dictionary<BasePoint3D, int> beVertices = newBrickElement.Mesh.Vertices;
+            foreach (var vertexPair in beVertices)
             {
-                if (!Mesh.VerticesSet.Contains(vertex))
+                BasePoint3D vertex = vertexPair.Key;
+                if (!Mesh.Vertices.ContainsKey(vertex))
                 {
-                    Mesh.VerticesSet.Add(vertex);
-                    Mesh.VerticesList.Add(vertex);
+                    Mesh.Vertices.Add(vertex, vertexPair.Value);
                     verticesMap.Add(vertex, new HashSet<int>());
                 }
 
@@ -47,13 +47,13 @@ namespace Core.Models.Geometry.Complex.Surfaces
             }
 
             // Add Edges
-            HashSet<BaseLine3D> beEdges = newBrickElement.Mesh.EdgesSet;
-            foreach (BaseLine3D edge in beEdges)
+            Dictionary<BaseLine3D, int> beEdges = newBrickElement.Mesh.Edges;
+            foreach (var edgePair in beEdges)
             {
-                if (!Mesh.EdgesSet.Contains(edge))
+                BaseLine3D edge = edgePair.Key;
+                if (!Mesh.Edges.ContainsKey(edge))
                 {
-                    Mesh.EdgesSet.Add(edge);
-                    Mesh.EdgesList.Add(edge);
+                    Mesh.Edges.Add(edge, edgePair.Value);
                     edgesMap.Add(edge, new HashSet<int>());
                 }
 
@@ -61,13 +61,13 @@ namespace Core.Models.Geometry.Complex.Surfaces
             }
 
             // Add Faces
-            HashSet<BasePlane3D> beFaces = newBrickElement.Mesh.FacesSet;
-            foreach (BasePlane3D face in beFaces)
+            Dictionary<BasePlane3D, int> beFaces = newBrickElement.Mesh.Faces;
+            foreach (var facePair in beFaces)
             {
-                if (!Mesh.FacesSet.Contains(face))
+                BasePlane3D face = facePair.Key;
+                if (!Mesh.Faces.ContainsKey(face))
                 {
-                    Mesh.FacesSet.Add(face);
-                    Mesh.FacesList.Add(face);
+                    Mesh.Faces.Add(face, facePair.Value);
                     facesMap.Add(face, new HashSet<int>());
                 }
 
@@ -81,12 +81,12 @@ namespace Core.Models.Geometry.Complex.Surfaces
             BrickElements.Add(brickElementCounter, newBE);
 
             // Generate Global Indices
-            GlobalVertexIndices = globalIndexManager.GenerateGlobalVertices(Mesh.VerticesList);
+            GlobalVertexIndices = globalIndexManager.GenerateGlobalVertices(Mesh.Vertices);
         }
 
         public TwentyNodeBrickElement AddBrickElementToFace(BasePlane3D faceToAttach)
         {
-            if (!Mesh.FacesSet.Contains(faceToAttach))
+            if (!Mesh.Faces.ContainsKey(faceToAttach))
             {
                 return null;
             }
@@ -115,7 +115,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
             foreach (var edge in edgesMap)
             {
-                if (edge.Value.Count > 3)
+                if (edge.Value.Count > 5)
                 {
                     edge.Key.IsDrawable = false;
                 }
@@ -123,7 +123,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
             foreach (var vertex in verticesMap)
             {
-                if (vertex.Value.Count > 3)
+                if (vertex.Value.Count > 5)
                 {
                     vertex.Key.IsDrawable = false;
                 }

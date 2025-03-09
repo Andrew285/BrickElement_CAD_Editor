@@ -6,21 +6,17 @@ namespace Core.Models.Geometry.Complex.BrickElements
 {
     public interface IMesh
     {
-        // Vertices
-        public List<BasePoint3D> VerticesList { get; set; }
-        public HashSet<BasePoint3D> VerticesSet { get; set; }
-        public int VerticesCount { get; }
+        // Vertices (Dictionary with index)
+        Dictionary<BasePoint3D, int> Vertices { get; set; }
+        int VerticesCount { get; }
 
-        // Edges
-        public List<BaseLine3D> EdgesList { get; set; }
-        public HashSet<BaseLine3D> EdgesSet { get; set; }
-        public int EdgesCount { get; }
+        // Edges (Dictionary with index)
+        Dictionary<BaseLine3D, int> Edges { get; set; }
+        int EdgesCount { get; }
 
-
-        // Faces
-        public List<BasePlane3D> FacesList { get; set; }
-        public HashSet<BasePlane3D> FacesSet { get; set; }
-        public int FacesCount { get; }
+        // Faces (Dictionary with index)
+        Dictionary<BasePlane3D, int> Faces { get; set; }
+        int FacesCount { get; }
 
     }
 }

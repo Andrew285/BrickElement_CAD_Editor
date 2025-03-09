@@ -10,7 +10,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
     {
         public static TwentyNodeBrickElement? CreateFrom(BasePlane3D face, TwentyNodeBrickElement be)
         {
-            List<BasePoint3D> vertices = FaceManager.GetFacePoints(face.FaceType, be.Mesh.VerticesList);
+            List<BasePoint3D> vertices = FaceManager.GetFacePoints(face.FaceType, be.Mesh.Vertices.Keys);
             if (vertices.Count == 8)
             {
                 Vector3 normal = face.CalculateNormal();
@@ -102,7 +102,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
             return null;
         }
 
-        public static List<BasePoint3D> InitializeCenterVertices(List<BasePoint3D> vertices)
+        public static List<BasePoint3D> InitializeCenterVertices(IEnumerable<BasePoint3D> vertices)
         {
             //float halfSizeX = size.X / 2;
             //float halfSizeY = size.Y / 2;
@@ -360,19 +360,19 @@ namespace Core.Models.Geometry.Complex.BrickElements
 
         public static void SetParent(TwentyNodeBrickElement be)
         {
-            foreach (Point3D p in be.Mesh.VerticesList)
+            foreach (var p in be.Mesh.Vertices)
             {
-                p.Parent = be;
+                p.Key.Parent = be;
             }
 
-            foreach (Line3D l in be.Mesh.EdgesList)
+            foreach (var l in be.Mesh.Edges)
             {
-                l.Parent = be;
+                l.Key.Parent = be;
             }
 
-            foreach (Plane3D p in be.Mesh.FacesList)
+            foreach (var p in be.Mesh.Faces)
             {
-                p.Parent = be;
+                p.Key.Parent = be;
             }
         }
     }

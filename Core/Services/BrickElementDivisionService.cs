@@ -1,4 +1,5 @@
-﻿using Core.Models.Geometry.Complex.BrickElements;
+﻿using Core.Models.Geometry.Complex;
+using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Point;
 using System.Numerics;
@@ -58,11 +59,8 @@ namespace Core.Services
             List<BaseLine3D> edges = GenerateEdges();
 
             Mesh mesh = new Mesh();
-            mesh.VerticesList = vertices;
-            mesh.EdgesList = edges;
-
-            mesh.VerticesSet = vertices.ToHashSet();
-            mesh.EdgesSet = edges.ToHashSet();
+            mesh.Vertices = MeshExtensions.ConvertObjectToDictionary(vertices);
+            mesh.Edges = MeshExtensions.ConvertObjectToDictionary(edges);
 
             return mesh;
         }
