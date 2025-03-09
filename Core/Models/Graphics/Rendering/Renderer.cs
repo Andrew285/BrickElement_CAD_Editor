@@ -202,7 +202,7 @@ namespace Core.Models.Graphics.Rendering
         private BoundingBox GetBoundingBox(IPoint3D point)
         {
             float vertexOffset = 0.02f;
-            float radius = point.Radius;
+            float radius = 0.002f;
             Vector3 pointVector = point.ToVector3();
 
             return new BoundingBox(

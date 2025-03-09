@@ -1,4 +1,7 @@
-﻿using Core.Models.Graphics.Cameras;
+﻿using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Surfaces;
+using Core.Models.Geometry.Primitive.Plane;
+using Core.Models.Graphics.Cameras;
 
 namespace Core.Models.Scene
 {
@@ -39,6 +42,39 @@ namespace Core.Models.Scene
         public bool RemoveObject2D(SceneObject2D obj)
         {
             return objects2D.Remove(obj);
+        }
+
+        public BrickElementSurface? GetSurfaceOf(SceneObject3D obj)
+        {
+            BrickElementSurface resultSurface = null;
+
+            foreach (SceneObject3D object3D in Objects3D)
+            {
+                if (object3D is BrickElementSurface)
+                {
+                    BrickElementSurface surface = (BrickElementSurface)object3D;
+
+                    if (obj is BasePlane3D face)
+                    {
+                        if (surface.Mesh.FacesSet.Contains(face))
+                        {
+                            resultSurface = surface;
+                            break;
+                        }
+                    }
+
+                    if (obj is TwentyNodeBrickElement be)
+                    {
+                        if (surface.BrickElements.ContainsValue(be))
+                        {
+                            resultSurface = surface;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return resultSurface;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Core.Models.Geometry.Primitive.Plane
         public BasePoint3D Point2 { get; }
         public BasePoint3D Point3 { get; }
 
-        public bool AreLinesDrawable { get; set; } = true;
+        public bool AreLinesDrawable { get; set; } = false;
 
         public override Color NonSelectedColor { get; set; } = Color.LightGray;
 

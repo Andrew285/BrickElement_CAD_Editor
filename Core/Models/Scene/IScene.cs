@@ -1,4 +1,5 @@
-﻿using Core.Models.Graphics.Cameras;
+﻿using Core.Models.Geometry.Complex.Surfaces;
+using Core.Models.Graphics.Cameras;
 
 namespace Core.Models.Scene
 {
@@ -15,6 +16,8 @@ namespace Core.Models.Scene
 
         public void AddObject2D(SceneObject2D obj);
         public bool RemoveObject2D(SceneObject2D obj);
+
+        public BrickElementSurface? GetSurfaceOf(SceneObject3D obj);
 
     }
 }

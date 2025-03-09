@@ -58,7 +58,9 @@ namespace UI
             scene.Camera = camera;
 
             IPropertyView propertyView = view.MainView.MiddleView.PropertyView;
-            ToolManager toolManager = new ToolManager(new SelectionTool(scene, renderer, propertyView));
+
+            ToolManager toolManager = new ToolManager();
+            toolManager.SetTool(new SelectionTool(scene, renderer, propertyView));
 
             new MainFormPresenter(view, renderer, scene, toolManager, languageService);
 

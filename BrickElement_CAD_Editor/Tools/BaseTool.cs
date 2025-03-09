@@ -4,16 +4,24 @@ using UI.Utils.Input;
 
 namespace App.Tools
 {
-    public class BaseTool: IInputHandler
+    public enum ToolType
     {
+        SELECTION,
+        LINE
+    }
+
+    public abstract class BaseTool: IInputHandler, ITool
+    {
+        public abstract ToolType Type { get; set; }
+
         public BaseTool() 
         {
         
         }
 
-        public void HandleKeyPress(KeyboardKey key)
+        public virtual void HandleKeyPress()
         {
-            throw new NotImplementedException();
+            
         }
 
         public void HandleMouseClick(MouseButton button, int x, int y)

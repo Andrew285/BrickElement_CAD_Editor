@@ -41,6 +41,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
             while (!Raylib.WindowShouldClose())
             {
                 HandleMouseClick();
+                HandleKeyboardClick();
 
                 renderer.Camera.Update();
                 renderer.Render(scene);
@@ -52,16 +53,21 @@ namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
         {
             if (Raylib.IsMouseButtonPressed(MouseButton.Left))
             {
-                toolManager.HandleMouseClick(MouseButton.Left, Raylib.GetMouseX(), Raylib.GetMouseY());
+                toolManager.CurrentTool.HandleMouseClick(MouseButton.Left, Raylib.GetMouseX(), Raylib.GetMouseY());
             }
             else if (Raylib.IsMouseButtonPressed(MouseButton.Right))
             {
-                toolManager.HandleMouseClick(MouseButton.Right, Raylib.GetMouseX(), Raylib.GetMouseY());
+                toolManager.CurrentTool.HandleMouseClick(MouseButton.Right, Raylib.GetMouseX(), Raylib.GetMouseY());
             }
             else if (Raylib.IsMouseButtonDown(MouseButton.Middle))
             {
-                toolManager.HandleMouseMove(Raylib.GetMouseDelta());
+                toolManager.CurrentTool.HandleMouseMove(Raylib.GetMouseDelta());
             }
+        }
+
+        public void HandleKeyboardClick()
+        {
+            toolManager.CurrentTool.HandleKeyPress();
         }
     }
 }

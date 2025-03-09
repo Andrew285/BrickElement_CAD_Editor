@@ -1,5 +1,6 @@
 ﻿using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
+using Raylib_cs;
 using System.Numerics;
 using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 
@@ -13,6 +14,11 @@ namespace App.Tools
 
         private SceneObject3D? selectedObject;
         private SceneObject3D? previoiusSelectedObject;
+
+        public override ToolType Type { get; set; } = ToolType.SELECTION;
+        public SelectionToolMode SelectionToolMode { get; set; } = SelectionToolMode.OBJECT_SELECTION;
+
+        public event Action<SelectionToolMode> OnSelectionToolModeChanged;
         public event Action<SceneObject3D> OnObjectSelected;
         public event Action<SceneObject3D> OnObjectDeselected;
 
@@ -24,6 +30,18 @@ namespace App.Tools
 
             OnObjectSelected += propertyView.ShowProperties;
             OnObjectDeselected += propertyView.HideProperties;
+        }
+
+        public void ChangeMode(SelectionToolMode mode)
+        {
+            SelectionToolMode = mode;
+            OnSelectionToolModeChanged?.Invoke(SelectionToolMode);
+        }
+
+        public void ToogleSelectionToolMode()
+        {
+            if (SelectionToolMode == SelectionToolMode.OBJECT_SELECTION) ChangeMode(SelectionToolMode.COMPONENT_SELECTION);
+            else ChangeMode(SelectionToolMode.OBJECT_SELECTION);
         }
 
         public override void HandleLeftMouseButtonClick()
@@ -44,7 +62,7 @@ namespace App.Tools
                 return;
             }
 
-            selectedObject = (SceneObject3D)selectedObject.Parent;
+            selectedObject = (SelectionToolMode == SelectionToolMode.OBJECT_SELECTION) ? (SceneObject3D)selectedObject.Parent : selectedObject;
             if (selectedObject.IsSelected)
             {
                 selectedObject.IsSelected = false;
@@ -64,6 +82,16 @@ namespace App.Tools
             base.HandleMiddleMouseButtonClick(mouseDelta);
 
             scene?.Camera?.UpdateRotation(mouseDelta);
+        }
+
+        public override void HandleKeyPress()
+        {
+            base.HandleKeyPress();
+
+            if (Raylib.IsKeyPressed(KeyboardKey.Tab))
+            {
+                ToogleSelectionToolMode();   
+            }
         }
     }
 }

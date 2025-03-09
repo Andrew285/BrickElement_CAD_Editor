@@ -5,38 +5,35 @@ namespace App.Tools
 {
     public class ToolManager
     {
-        public BaseTool currentTool { get; set; }
+        public BaseTool CurrentTool { get; set; }
 
-        public event Action<MouseButton, int, int> OnMouseClick;
-        public event Action<Vector2> OnMouseMove;
-        public event Action<KeyboardKey> OnKeyPress;
-
-        public ToolManager(BaseTool initialTool)
-        {
-            currentTool = initialTool;
-        }
+        public event Action<BaseTool>? OnToolChanged;
+        //public event Action<MouseButton, int, int> OnMouseClick;
+        //public event Action<Vector2> OnMouseMove;
+        //public event Action<KeyboardKey> OnKeyPress;
 
         public void SetTool(BaseTool newTool)
         {
-            currentTool = newTool;
+            CurrentTool = newTool;
+            OnToolChanged?.Invoke(CurrentTool);
         }
 
-        public void HandleMouseClick(MouseButton button, int x, int y)
-        {
-            OnMouseClick?.Invoke(button, x, y);
-            currentTool?.HandleMouseClick(button, x, y);
-        }
+        //public void HandleMouseClick(MouseButton button, int x, int y)
+        //{
+        //    OnMouseClick?.Invoke(button, x, y);
+        //    CurrentTool?.HandleMouseClick(button, x, y);
+        //}
 
-        public void HandleMouseMove(Vector2 mouseDelta)
-        {
-            OnMouseMove?.Invoke(mouseDelta);
-            currentTool?.HandleMouseMove(mouseDelta);
-        }
+        //public void HandleMouseMove(Vector2 mouseDelta)
+        //{
+        //    OnMouseMove?.Invoke(mouseDelta);
+        //    CurrentTool?.HandleMouseMove(mouseDelta);
+        //}
 
-        public void HandleKeyPress(KeyboardKey key)
-        {
-            OnKeyPress?.Invoke(key);
-            currentTool?.HandleKeyPress(key);
-        }
+        //public void HandleKeyPress(KeyboardKey key)
+        //{
+        //    OnKeyPress?.Invoke(key);
+        //    CurrentTool?.HandleKeyPress(key);
+        //}
     }
 }
