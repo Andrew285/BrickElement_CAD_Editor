@@ -10,7 +10,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
     {
         public static TwentyNodeBrickElement? CreateFrom(BasePlane3D face, TwentyNodeBrickElement be)
         {
-            List<BasePoint3D> vertices = FaceManager.GetFacePoints(face.FaceType, be.Mesh.Vertices.Keys);
+            List<BasePoint3D> vertices = FaceManager.GetFacePoints(face.FaceType, be.Mesh.VerticesDictionary.Values);
             if (vertices.Count == 8)
             {
                 Vector3 normal = face.CalculateNormal();
@@ -360,19 +360,20 @@ namespace Core.Models.Geometry.Complex.BrickElements
 
         public static void SetParent(TwentyNodeBrickElement be)
         {
-            foreach (var p in be.Mesh.Vertices)
+            // TODO Parent is not attached to Set
+            foreach (var p in be.Mesh.VerticesDictionary)
             {
-                p.Key.Parent = be;
+                p.Value.Parent = be;
             }
 
-            foreach (var l in be.Mesh.Edges)
+            foreach (var l in be.Mesh.EdgesDictionary)
             {
-                l.Key.Parent = be;
+                l.Value.Parent = be;
             }
 
-            foreach (var p in be.Mesh.Faces)
+            foreach (var p in be.Mesh.FacesDictionary)
             {
-                p.Key.Parent = be;
+                p.Value.Parent = be;
             }
         }
     }

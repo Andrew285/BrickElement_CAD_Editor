@@ -59,8 +59,8 @@ namespace Core.Services
             List<BaseLine3D> edges = GenerateEdges();
 
             Mesh mesh = new Mesh();
-            mesh.Vertices = MeshExtensions.ConvertObjectToDictionary(vertices);
-            mesh.Edges = MeshExtensions.ConvertObjectToDictionary(edges);
+            mesh.AddRange(vertices);
+            mesh.AddRange(edges);
 
             return mesh;
         }

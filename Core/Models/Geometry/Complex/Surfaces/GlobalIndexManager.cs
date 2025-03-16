@@ -1,5 +1,4 @@
 ﻿using Core.Models.Geometry.Primitive.Point;
-using System.Drawing.Text;
 using System.Numerics;
 
 namespace Core.Models.Geometry.Complex.Surfaces
@@ -13,14 +12,14 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
         }
 
-        public Dictionary<BasePoint3D, int> GenerateGlobalVertices(Dictionary<BasePoint3D, int> vertices)
+        public Dictionary<Guid, int> GenerateGlobalVertices(Dictionary<Guid, BasePoint3D> vertices)
         {
             Dictionary<Vector3, List<BasePoint3D>> verticesByLayer = new Dictionary<Vector3, List<BasePoint3D>>();
             Vector3 minLayer = Vector3.Zero;
 
             foreach (var vertexPair in vertices)
             {
-                BasePoint3D vertex = vertexPair.Key;
+                BasePoint3D vertex = vertexPair.Value;
                 Vector3 layer = GetLayerOf(vertex);
                 minLayer = minLayer == Vector3.Zero ? layer : UpdateMinLayer(minLayer, layer);
 
@@ -48,16 +47,16 @@ namespace Core.Models.Geometry.Complex.Surfaces
              );
         }
 
-        private Dictionary<BasePoint3D, int> CombineLayers(IOrderedEnumerable<Vector3> sortedLayers, Dictionary<Vector3, List<BasePoint3D>> verticesByLayers)
+        private Dictionary<Guid, int> CombineLayers(IOrderedEnumerable<Vector3> sortedLayers, Dictionary<Vector3, List<BasePoint3D>> verticesByLayers)
         {
-            Dictionary<BasePoint3D, int> resultVertices = new Dictionary<BasePoint3D, int>();
+            Dictionary<Guid, int> resultVertices = new Dictionary<Guid, int>();
 
             int counter = 0;
             foreach (Vector3 layer in sortedLayers)
             {
                 foreach (BasePoint3D vertex in verticesByLayers[layer])
                 {
-                    resultVertices.Add(vertex, counter);
+                    resultVertices.Add(vertex.ID, counter);
                     counter++;
                 }
             }

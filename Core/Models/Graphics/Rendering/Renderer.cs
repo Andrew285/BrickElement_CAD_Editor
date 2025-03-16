@@ -132,9 +132,9 @@ namespace Core.Models.Graphics.Rendering
                 if (obj is MeshObject3D)
                 {
                     MeshObject3D meshObject3D = (MeshObject3D)obj;
-                    SceneObject3D? selectedVertex = Raycast(meshObject3D.Mesh.Vertices.Keys, ray);
-                    SceneObject3D? selectedEdge = Raycast(meshObject3D.Mesh.Edges.Keys, ray);
-                    SceneObject3D? selectedFace = Raycast(meshObject3D.Mesh.Faces.Keys, ray);
+                    SceneObject3D? selectedVertex = Raycast(meshObject3D.Mesh.VerticesSet, ray);
+                    SceneObject3D? selectedEdge = Raycast(meshObject3D.Mesh.EdgesSet, ray);
+                    SceneObject3D? selectedFace = Raycast(meshObject3D.Mesh.FacesSet, ray);
 
                     resultSceneObject = FindClosestSelectedObject(selectedVertex, selectedEdge, selectedFace);
                     resultSceneObjects.Add(resultSceneObject);

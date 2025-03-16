@@ -9,17 +9,17 @@ namespace Core.Models.Geometry.Complex.BrickElements
     {
         public CubeBrickElement(Vector3 position, Vector3 size): base(position, size)
         {
-            Mesh.Vertices = MeshExtensions.ConvertObjectToDictionary(InitializeVertices());
+            Mesh.AddRange(InitializeVertices());
             //centerVertices = InitializeCenterVertices();
             //edges = InitializeEdges();
             //faces = InitializeFaces();
 
-            CenterVertices = BrickElementInitializator.InitializeCenterVertices(Mesh.Vertices.Keys);
-            List<BaseLine3D> edges = BrickElementInitializator.InitializeEdges(Mesh.Vertices.Keys.ToList());
-            List<BasePlane3D> faces = BrickElementInitializator.InitializeFaces(Mesh.Vertices.Keys.ToList(), CenterVertices);
+            CenterVertices = BrickElementInitializator.InitializeCenterVertices(Mesh.VerticesSet);
+            List<BaseLine3D> edges = BrickElementInitializator.InitializeEdges(Mesh.VerticesSet.ToList());
+            List<BasePlane3D> faces = BrickElementInitializator.InitializeFaces(Mesh.VerticesSet.ToList(), CenterVertices);
 
-            Mesh.Edges = MeshExtensions.ConvertObjectToDictionary(edges);
-            Mesh.Faces = MeshExtensions.ConvertObjectToDictionary(faces);
+            Mesh.AddRange(edges);
+            Mesh.AddRange(faces);
 
             BrickElementInitializator.SetParent(this);
         }

@@ -1,6 +1,7 @@
 ﻿using Core.Maths;
 using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
+using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Models.Text.VertexText;
@@ -47,7 +48,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             //surface.AddBrickElementToFace(newBe.Mesh.FacesList[5]);
             //scene.AddObject3D(surface);
 
-            //VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(surface.GlobalVertexIndices.Keys.ToList(), renderer);
+            //VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(surface.GlobalVertexIndices.Values.ToList(), renderer);
             //scene.AddObject2D(vertexIndexGroup2);
             ///
             /// 

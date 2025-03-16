@@ -68,7 +68,12 @@ namespace Core.Models.Geometry.Primitive.Point
             return Z.CompareTo(other.Z);
         }
 
-        public override int GetHashCode() => HashCode.Combine(X, Y, Z);
+        public override int GetHashCode() 
+        {
+            return HashCode.Combine(X, Y, Z);
+            //return ID.GetHashCode();
+            //return HashCode.Combine(ID, X, Y, Z);
+        }
 
         public override bool Equals(object obj)
         {

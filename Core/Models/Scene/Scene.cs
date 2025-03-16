@@ -56,7 +56,21 @@ namespace Core.Models.Scene
 
                     if (obj is BasePlane3D face)
                     {
-                        if (surface.Mesh.Faces.ContainsKey(face))
+                        //if (surface.Mesh.Faces.ElementAt(0).Key.Equals(face))
+                        //{
+
+                        //    Console.WriteLine("First Cube: " + surface.Mesh.Faces.ElementAt(0).Key.GetHashCode());
+                        //    Console.WriteLine("Second Cube: " + face.GetHashCode());
+                        //}
+
+                        foreach (BasePlane3D faceKey in surface.Mesh.FacesSet)
+                        {
+                            Console.WriteLine("Face: " + faceKey.GetHashCode());
+                            Console.WriteLine("Is same: " + faceKey.Equals(face));
+                        }
+                        Console.WriteLine("Another Face: " + face.GetHashCode());
+
+                        if (surface.Mesh.FacesDictionary.ContainsKey(face.ID))
                         {
                             resultSurface = surface;
                             break;

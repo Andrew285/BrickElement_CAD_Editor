@@ -4,6 +4,7 @@ using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Raylib_cs;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Core.Models.Geometry.Primitive.Plane
 {
@@ -175,25 +176,64 @@ namespace Core.Models.Geometry.Primitive.Plane
 
         public override int GetHashCode()
         {
-            return Vertices.Aggregate(17, (current, point) => current * 31 + point.GetHashCode());
+            //return Vertices.Aggregate(17, (current, point) => current * 31 + point.GetHashCode());
+            //return RuntimeHelpers.GetHashCode(Vertices);
+
+            //unchecked
+            //{
+            //    int hash = 17;
+            //    foreach (var vertex in Vertices)
+            //    {
+            //        hash = hash * 31 + vertex.GetHashCode();
+            //    }
+            //    return hash;
+            //}
+
+            unchecked
+            {
+                int hash = 17;
+                foreach (var vertex in Vertices) // Сортуємо
+                {
+                    int vertexHashCode = vertex.GetHashCode();
+                    hash = hash * 31 + vertexHashCode;
+                    //Console.WriteLine(String.Format("Face ID: {0}, Hash: {1}", ID, hash));
+                }
+                return hash;
+            }
         }
+
+        //public override bool Equals(object obj)
+        //{
+        //    return Equals(obj as BasePlane3D);
+        //}
+
+        //public bool Equals(BasePlane3D other)
+        //{
+        //    if (other is null) return false;
+        //    if (Vertices.Count != other.Vertices.Count) return false;
+        //    for (int i = 0; i < Vertices.Count; i++)
+        //    {
+        //        if (!Vertices[i].Equals(other.Vertices[i]))
+        //            return false;
+        //    }
+        //    return true;
+        //}
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as BasePlane3D);
+            if (obj is BasePlane3D other)
+            {
+                return Equals(other);
+            }
+            return false;
         }
 
         public bool Equals(BasePlane3D other)
         {
             if (other is null) return false;
-            if (Vertices.Count != other.Vertices.Count) return false;
-            for (int i = 0; i < Vertices.Count; i++)
-            {
-                if (!Vertices[i].Equals(other.Vertices[i]))
-                    return false;
-            }
-            return true;
+            return new HashSet<BasePoint3D>(Vertices).SetEquals(other.Vertices);
         }
+
 
         public void Attach()
         {

@@ -7,16 +7,28 @@ namespace Core.Models.Geometry.Complex.BrickElements
     public interface IMesh
     {
         // Vertices (Dictionary with index)
-        Dictionary<BasePoint3D, int> Vertices { get; set; }
+        Dictionary<Guid, BasePoint3D> VerticesDictionary { get; set; }
+        HashSet<BasePoint3D> VerticesSet { get; set; }
         int VerticesCount { get; }
 
+
         // Edges (Dictionary with index)
-        Dictionary<BaseLine3D, int> Edges { get; set; }
+        Dictionary<Guid, BaseLine3D> EdgesDictionary { get; set; }
+        HashSet<BaseLine3D> EdgesSet { get; set; }
         int EdgesCount { get; }
 
+
         // Faces (Dictionary with index)
-        Dictionary<BasePlane3D, int> Faces { get; set; }
+        Dictionary<Guid, BasePlane3D> FacesDictionary { get; set; }
+        HashSet<BasePlane3D> FacesSet { get; set; }
         int FacesCount { get; }
 
+        void AddRange(List<BasePoint3D> vertices);
+        void AddRange(List<BaseLine3D> edges);
+        void AddRange(List<BasePlane3D> faces);
+
+        bool Add(BasePoint3D vertex);
+        bool Add(BaseLine3D edge);
+        bool Add(BasePlane3D face);
     }
 }

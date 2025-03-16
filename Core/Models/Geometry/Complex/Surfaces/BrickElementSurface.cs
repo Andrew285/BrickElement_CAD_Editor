@@ -2,20 +2,22 @@
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
+using System.Collections.Generic;
+using System.Windows.Forms.VisualStyles;
 
 namespace Core.Models.Geometry.Complex.Surfaces
 {
     public class BrickElementSurface: MeshObject3D
     {
-        private Dictionary<BasePoint3D, HashSet<int>> verticesMap {  get; set; } = new Dictionary<BasePoint3D, HashSet<int>>();
+        private Dictionary<Guid, HashSet<int>> verticesMap {  get; set; } = new Dictionary<Guid, HashSet<int>>();
 
-        private Dictionary<BaseLine3D, HashSet<int>> edgesMap { get; set; } = new Dictionary<BaseLine3D, HashSet<int>>();
+        private Dictionary<Guid, HashSet<int>> edgesMap { get; set; } = new Dictionary<Guid, HashSet<int>>();
 
-        public Dictionary<BasePlane3D, HashSet<int>> facesMap { get; set; } = new Dictionary<BasePlane3D, HashSet<int>>();
+        public Dictionary<Guid, HashSet<int>> facesMap { get; set; } = new Dictionary<Guid, HashSet<int>>();
 
         public Dictionary<int, TwentyNodeBrickElement> BrickElements { get; set; } = new Dictionary<int, TwentyNodeBrickElement>();
 
-        public Dictionary<BasePoint3D, int> GlobalVertexIndices { get; private set; } = new Dictionary<BasePoint3D, int>();
+        public Dictionary<Guid, int> GlobalVertexIndices { get; private set; } = new Dictionary<Guid, int>();
 
         private int brickElementCounter = -1;
 
@@ -32,46 +34,53 @@ namespace Core.Models.Geometry.Complex.Surfaces
             brickElementCounter++;
 
             // Add Vertices
-            Dictionary<BasePoint3D, int> beVertices = newBrickElement.Mesh.Vertices;
-            foreach (var vertexPair in beVertices)
+            HashSet<BasePoint3D> beVertices = newBrickElement.Mesh.VerticesSet;
+            foreach (var vertex in beVertices)
             {
-                BasePoint3D vertex = vertexPair.Key;
-                if (!Mesh.Vertices.ContainsKey(vertex))
+                if (Mesh.Add(vertex))
                 {
-                    Mesh.Vertices.Add(vertex, vertexPair.Value);
-                    verticesMap.Add(vertex, new HashSet<int>());
+                    verticesMap.Add(vertex.ID, new HashSet<int>());
                 }
 
-                verticesMap[vertex].Add(brickElementCounter);
+                if (Mesh.VerticesSet.Contains(vertex)) 
+                {
+                    // TODO Try to optimise a bit
+                    Guid id = Mesh.VerticesDictionary.FirstOrDefault(kv => kv.Value.Equals(vertex)).Key;
+                    verticesMap[id].Add(brickElementCounter);
+                }
                 newPointsForBE.Add(vertex);
             }
 
             // Add Edges
-            Dictionary<BaseLine3D, int> beEdges = newBrickElement.Mesh.Edges;
-            foreach (var edgePair in beEdges)
+            HashSet<BaseLine3D> beEdges = newBrickElement.Mesh.EdgesSet;
+            foreach (var edge in beEdges)
             {
-                BaseLine3D edge = edgePair.Key;
-                if (!Mesh.Edges.ContainsKey(edge))
+                if (Mesh.Add(edge))
                 {
-                    Mesh.Edges.Add(edge, edgePair.Value);
-                    edgesMap.Add(edge, new HashSet<int>());
+                    edgesMap.Add(edge.ID, new HashSet<int>());
                 }
 
-                edgesMap[edge].Add(brickElementCounter);
+                if (Mesh.EdgesSet.Contains(edge))
+                {
+                     Guid id = Mesh.EdgesDictionary.FirstOrDefault(kv => kv.Value.Equals(edge)).Key;
+                    edgesMap[id].Add(brickElementCounter);
+                }
             }
 
             // Add Faces
-            Dictionary<BasePlane3D, int> beFaces = newBrickElement.Mesh.Faces;
-            foreach (var facePair in beFaces)
+            HashSet<BasePlane3D> beFaces = newBrickElement.Mesh.FacesSet;
+            foreach (var face in beFaces)
             {
-                BasePlane3D face = facePair.Key;
-                if (!Mesh.Faces.ContainsKey(face))
+                if (Mesh.Add(face))
                 {
-                    Mesh.Faces.Add(face, facePair.Value);
-                    facesMap.Add(face, new HashSet<int>());
+                    facesMap.Add(face.ID, new HashSet<int>());
                 }
 
-                facesMap[face].Add(brickElementCounter);
+                if (Mesh.FacesSet.Contains(face))
+                {
+                    Guid id = Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
+                    facesMap[id].Add(brickElementCounter);
+                }
             }
 
             OptimiseMesh();
@@ -81,17 +90,17 @@ namespace Core.Models.Geometry.Complex.Surfaces
             BrickElements.Add(brickElementCounter, newBE);
 
             // Generate Global Indices
-            GlobalVertexIndices = globalIndexManager.GenerateGlobalVertices(Mesh.Vertices);
+            GlobalVertexIndices = globalIndexManager.GenerateGlobalVertices(Mesh.VerticesDictionary);
         }
 
         public TwentyNodeBrickElement AddBrickElementToFace(BasePlane3D faceToAttach)
         {
-            if (!Mesh.Faces.ContainsKey(faceToAttach))
+            if (!Mesh.FacesDictionary.ContainsKey(faceToAttach.ID))
             {
                 return null;
             }
 
-            int beIndex = facesMap[faceToAttach].ElementAt(0);
+            int beIndex = facesMap[faceToAttach.ID].ElementAt(0);
             TwentyNodeBrickElement beToAttach = BrickElements[beIndex];
             TwentyNodeBrickElement? newBrickElement = BrickElementInitializator.CreateFrom(faceToAttach, beToAttach);
 
@@ -109,23 +118,23 @@ namespace Core.Models.Geometry.Complex.Surfaces
             {
                 if (face.Value.Count > 1)
                 {
-                    face.Key.IsDrawable = false;
+                    Mesh.FacesDictionary[face.Key].IsDrawable = false;
                 }
             }
 
             foreach (var edge in edgesMap)
             {
-                if (edge.Value.Count > 5)
+                if (edge.Value.Count > 3)
                 {
-                    edge.Key.IsDrawable = false;
+                    Mesh.EdgesDictionary[edge.Key].IsDrawable = false;
                 }
             }
 
             foreach (var vertex in verticesMap)
             {
-                if (vertex.Value.Count > 5)
+                if (vertex.Value.Count > 3)
                 {
-                    vertex.Key.IsDrawable = false;
+                    Mesh.VerticesDictionary[vertex.Key].IsDrawable = false;
                 }
             }
         }
