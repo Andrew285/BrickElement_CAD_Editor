@@ -18,48 +18,48 @@ namespace Core.Models.Geometry.Complex.BrickElements
         private Vector3 Size { get { return size; } }
 
         private Vector3 divisionValue = Vector3.One;
-        
-        //public float DivideX
-        //{
-        //    get
-        //    {
-        //        return divisionValue.X;
-        //    }
 
-        //    set
-        //    {
-        //        divisionValue = new Vector3(value, divisionValue.Y, divisionValue.Z);
-        //        Divide(divisionValue);
-        //    }
-        //}
+        public float DivideX
+        {
+            get
+            {
+                return divisionValue.X;
+            }
 
-        //public float DivideY
-        //{
-        //    get
-        //    {
-        //        return divisionValue.Y;
-        //    }
+            set
+            {
+                divisionValue = new Vector3(value, divisionValue.Y, divisionValue.Z);
+                Divide(divisionValue);
+            }
+        }
 
-        //    set
-        //    {
-        //        divisionValue = new Vector3(divisionValue.X, value, divisionValue.Z);
-        //        Divide(divisionValue);
-        //    }
-        //}
+        public float DivideY
+        {
+            get
+            {
+                return divisionValue.Y;
+            }
 
-        //public float DivideZ
-        //{
-        //    get
-        //    {
-        //        return divisionValue.Z;
-        //    }
+            set
+            {
+                divisionValue = new Vector3(divisionValue.X, value, divisionValue.Z);
+                Divide(divisionValue);
+            }
+        }
 
-        //    set
-        //    {
-        //        divisionValue = new Vector3(divisionValue.X, divisionValue.Y, value);
-        //        Divide(divisionValue);
-        //    }
-        //}
+        public float DivideZ
+        {
+            get
+            {
+                return divisionValue.Z;
+            }
+
+            set
+            {
+                divisionValue = new Vector3(divisionValue.X, divisionValue.Y, value);
+                Divide(divisionValue);
+            }
+        }
 
         public override bool IsSelected
         {

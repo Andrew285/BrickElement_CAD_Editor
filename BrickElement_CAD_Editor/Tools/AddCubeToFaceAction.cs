@@ -1,4 +1,5 @@
-﻿using Core.Models.Geometry.Complex.Surfaces;
+﻿using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Scene;
 
@@ -23,6 +24,17 @@ namespace App.Tools
                 if (surface != null)
                 {
                     surface.AddBrickElementToFace(face);
+                }
+                else
+                {
+                    TwentyNodeBrickElement? newBe = BrickElementInitializator.CreateFrom(face, (TwentyNodeBrickElement)obj.Parent);
+                    if (newBe != null)
+                    {
+                        BrickElementSurface newSurface = new BrickElementSurface();
+                        newSurface.AddBrickElement((TwentyNodeBrickElement)obj.Parent);
+                        newSurface.AddBrickElement(newBe);
+                        scene.AddObject3D(newSurface);
+                    }
                 }
             }
         }

@@ -45,7 +45,7 @@ namespace Core.Models.Graphics.Rendering
         {
             Raylib.SetConfigFlags(ConfigFlags.UndecoratedWindow);
             Raylib.InitWindow(renderTarget.Width, renderTarget.Height, "Rayforms test");
-            //Raylib.SetTargetFPS(60);
+            Raylib.SetTargetFPS(60);
 
             unsafe
             {
