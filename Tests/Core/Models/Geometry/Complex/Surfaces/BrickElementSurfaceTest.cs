@@ -18,9 +18,14 @@ namespace Tests.Core.Models.Geometry.Complex.Surfaces
             BrickElementSurface brickElementSurfaceTest = new BrickElementSurface();
 
             Assert.IsNotNull(brickElementSurfaceTest);
-            Assert.IsNotNull(brickElementSurfaceTest.Mesh.VerticesList);
-            Assert.IsNotNull(brickElementSurfaceTest.Mesh.EdgesList);
-            Assert.IsNotNull(brickElementSurfaceTest.Mesh.FacesList);
+            Assert.IsNotNull(brickElementSurfaceTest.Mesh.VerticesSet);
+            Assert.IsNotNull(brickElementSurfaceTest.Mesh.VerticesDictionary);
+
+            Assert.IsNotNull(brickElementSurfaceTest.Mesh.EdgesSet);
+            Assert.IsNotNull(brickElementSurfaceTest.Mesh.EdgesDictionary);
+
+            Assert.IsNotNull(brickElementSurfaceTest.Mesh.FacesSet);
+            Assert.IsNotNull(brickElementSurfaceTest.Mesh.FacesDictionary);
         }
 
 
@@ -49,7 +54,7 @@ namespace Tests.Core.Models.Geometry.Complex.Surfaces
             BrickElementSurface brickElementSurface = new BrickElementSurface();
 
             brickElementSurface.AddBrickElement(cbe);
-            brickElementSurface.AddBrickElementToFace(cbe.Mesh.FacesList[1]);
+            brickElementSurface.AddBrickElementToFace(cbe.Mesh.FacesSet.ElementAt(1));
 
             Assert.That(brickElementSurface.BrickElements.Count, Is.EqualTo(2));
             Assert.That(brickElementSurface.Mesh.VerticesCount, Is.EqualTo(32));

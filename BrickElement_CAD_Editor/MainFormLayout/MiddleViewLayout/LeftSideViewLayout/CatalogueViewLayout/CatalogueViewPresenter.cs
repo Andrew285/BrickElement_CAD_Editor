@@ -28,7 +28,54 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
         {
             // CASE 1
 
-            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+            CubeBrickElement cbe000 = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+            CubeBrickElement cbe100 = new CubeBrickElement(new Vector3(1, 0, 0), new Vector3(1, 1, 1));
+            CubeBrickElement cbe010 = new CubeBrickElement(new Vector3(0, 1, 0), new Vector3(1, 1, 1));
+            CubeBrickElement cbe110 = new CubeBrickElement(new Vector3(1, 1, 0), new Vector3(1, 1, 1));
+            CubeBrickElement cbe001 = new CubeBrickElement(new Vector3(0, 0, 1), new Vector3(1, 1, 1));
+            CubeBrickElement cbe101 = new CubeBrickElement(new Vector3(1, 0, 1), new Vector3(1, 1, 1));
+            CubeBrickElement cbe011 = new CubeBrickElement(new Vector3(0, 1, 1), new Vector3(1, 1, 1));
+            CubeBrickElement cbe111 = new CubeBrickElement(new Vector3(1, 1, 1), new Vector3(1, 1, 1));
+
+            BrickElementSurface surface = new BrickElementSurface();
+            surface.AddBrickElement(cbe000);
+            surface.AddBrickElement(cbe100);
+            surface.AddBrickElement(cbe010);
+            surface.AddBrickElement(cbe110);
+            surface.AddBrickElement(cbe001);
+            surface.AddBrickElement(cbe101);
+            surface.AddBrickElement(cbe011);
+            surface.AddBrickElement(cbe111);
+
+            scene.AddObject3D(surface);
+
+            VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(surface.GetGlobalVertices(), renderer);
+            scene.AddObject2D(vertexIndexGroup);
+
+
+
+            TwentyNodeBrickElement standartCube = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
+            Dictionary<Vector3, Dictionary<int, List<float>>> dfiabg = FEM.CalculateDFIABG(standartCube);
+
+            var yakobians000 = FEM.CalculateYakobians(surface.BrickElements[0], dfiabg);
+            var yakobians100 = FEM.CalculateYakobians(surface.BrickElements[1], dfiabg);
+            var yakobians200 = FEM.CalculateYakobians(surface.BrickElements[2], dfiabg);
+            var yakobians300 = FEM.CalculateYakobians(surface.BrickElements[3], dfiabg);
+            var yakobians010 = FEM.CalculateYakobians(surface.BrickElements[4], dfiabg);
+            var yakobians110 = FEM.CalculateYakobians(surface.BrickElements[5], dfiabg);
+
+
+            float det1 = FEM.Determinant3x3(yakobians000[1]);
+            float det2 = FEM.Determinant3x3(yakobians100[1]);
+            float det3 = FEM.Determinant3x3(yakobians200[1]);
+            float det4 = FEM.Determinant3x3(yakobians300[1]);
+            float det5 = FEM.Determinant3x3(yakobians010[1]);
+            float det6 = FEM.Determinant3x3(yakobians110[1]);
+
+            Console.WriteLine(dfiabg);
+
+
+
             ////cbe.AreTriangleFacesDrawable = true;
             //scene.AddObject3D(cbe);
 
@@ -41,8 +88,8 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             ////VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(newBe.Vertices, renderer);
             ////scene.AddObject2D(vertexIndexGroup2);
 
-            BrickElementSurface surface = new BrickElementSurface();
-            surface.AddBrickElement(cbe);
+            //BrickElementSurface surface = new BrickElementSurface();
+            //surface.AddBrickElement(cbe);
             //TwentyNodeBrickElement newBe = surface.AddBrickElementToFace(cbe.Mesh.FacesList[1]);
             //surface.AddBrickElementToFace(cbe.Mesh.FacesList[5]);
             //surface.AddBrickElementToFace(newBe.Mesh.FacesList[5]);
@@ -92,8 +139,22 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             //    be6 = surface.AddBrickElementToFace(be6.Mesh.FacesList[5]);
             //}
 
-            scene.AddObject3D(surface);
-            //Dictionary<Vector3, Dictionary<int, List<float>>> dfiabg = FEM.CalculateDerivativesOf(cbe);
+            //scene.AddObject3D(surface);
+
+
+            // ----- YAKOBIANS --------
+            //TwentyNodeBrickElement standartCube = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+            //Dictionary<Vector3, Dictionary<int, List<float>>> dfiabg = FEM.CalculateDerivativesOf(standartCube);
+            //var yakobians = FEM.CalculateYakobians(cbe, dfiabg);
+            //var yakobians2 = FEM.CalculateYakobians(cbe2, dfiabg);
+
+
+            //float det1 = FEM.Determinant3x3(yakobians[0]);
+            //float det2 = FEM.Determinant3x3(yakobians2[0]);
+
+            //Console.WriteLine(dfiabg);
+
+
 
             //VertexIndexGroup vertexIndexGroup2 = new VertexIndexGroup(cbe.Mesh.VerticesList, renderer);
             //scene.AddObject2D(vertexIndexGroup2);

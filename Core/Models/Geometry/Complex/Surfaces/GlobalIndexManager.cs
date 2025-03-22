@@ -12,14 +12,13 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
         }
 
-        public Dictionary<Guid, int> GenerateGlobalVertices(Dictionary<Guid, BasePoint3D> vertices)
+        public Dictionary<Guid, int> GenerateGlobalVertices(HashSet<BasePoint3D> vertices)
         {
             Dictionary<Vector3, List<BasePoint3D>> verticesByLayer = new Dictionary<Vector3, List<BasePoint3D>>();
             Vector3 minLayer = Vector3.Zero;
 
-            foreach (var vertexPair in vertices)
+            foreach (var vertex in vertices)
             {
-                BasePoint3D vertex = vertexPair.Value;
                 Vector3 layer = GetLayerOf(vertex);
                 minLayer = minLayer == Vector3.Zero ? layer : UpdateMinLayer(minLayer, layer);
 

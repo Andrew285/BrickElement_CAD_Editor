@@ -90,7 +90,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
             BrickElements.Add(brickElementCounter, newBE);
 
             // Generate Global Indices
-            GlobalVertexIndices = globalIndexManager.GenerateGlobalVertices(Mesh.VerticesDictionary);
+            GlobalVertexIndices = globalIndexManager.GenerateGlobalVertices(Mesh.VerticesSet);
         }
 
         public TwentyNodeBrickElement AddBrickElementToFace(BasePlane3D faceToAttach)
@@ -137,6 +137,22 @@ namespace Core.Models.Geometry.Complex.Surfaces
                     Mesh.VerticesDictionary[vertex.Key].IsDrawable = false;
                 }
             }
+        }
+
+        public List<BasePoint3D> GetGlobalVertices()
+        {
+            List<BasePoint3D> globalVertices = new List<BasePoint3D>();
+
+            foreach (var globalVertexPair in GlobalVertexIndices)
+            {
+                BasePoint3D vertex = Mesh.VerticesDictionary[globalVertexPair.Key];
+                if (vertex != null)
+                {
+                    globalVertices.Add(vertex);
+                }
+            }
+
+            return globalVertices;
         }
     }
 }

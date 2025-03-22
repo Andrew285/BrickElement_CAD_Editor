@@ -8,18 +8,32 @@ namespace Core.Maths
     {
         private static double[] constValues = { -Math.Sqrt(0.6), 0, Math.Sqrt(0.6)};
 
+        //private static Dictionary<int, Func<Vector3, Vector3, double>> cornerDerivativeFunctions =
+        //    new Dictionary<int, Func<Vector3, Vector3, double>>
+        //    {
+        //        { 0, (constValue, vertexValue) => (1.0 / 8) * vertexValue.X * (2 * constValue.X * vertexValue.X + constValue.Y * vertexValue.Y + constValue.Z * vertexValue.Z - 1) *
+        //            (1 + constValue.Y * vertexValue.Y) * (1 + constValue.Z * vertexValue.Z)
+        //        },
+        //        { 1, (constValue, vertexValue) => (1.0 / 8) * vertexValue.Y * (constValue.X * vertexValue.X + 2 * constValue.Y * vertexValue.Y + constValue.Z * vertexValue.Z - 1) *
+        //            (1 + constValue.X * vertexValue.X) * (1 + constValue.Z * vertexValue.Z)
+        //        },
+        //        { 2, (constValue, vertexValue) => (1.0 / 8) * vertexValue.Z * (constValue.X * vertexValue.X + constValue.Y * vertexValue.Y + 2 * constValue.Z * vertexValue.Z - 1) *
+        //            (1 + constValue.X * vertexValue.X) * (1 + constValue.Y * vertexValue.Y)
+        //        }
+        //    };
+
         private static Dictionary<int, Func<Vector3, Vector3, double>> cornerDerivativeFunctions =
             new Dictionary<int, Func<Vector3, Vector3, double>>
             {
-                { 0, (constValue, vertexValue) => (1.0 / 8) * vertexValue.X * (2 * constValue.X * vertexValue.X + constValue.Y * vertexValue.Y + constValue.Z * vertexValue.Z - 1) *
-                    (1 + constValue.Y * vertexValue.Y) * (1 + constValue.Z * vertexValue.Z)
+                { 0, (constValue, vertexValue) => (1.0 / 8) * (constValue.Y * vertexValue.Y + 1) * (constValue.Z * vertexValue.Z + 1) *
+                    (vertexValue.X * (vertexValue.X * constValue.X + constValue.Y * vertexValue.Y + constValue.Z * vertexValue.Z - 2) + vertexValue.X * (vertexValue.X * constValue.X + 1))
                 },
-                { 1, (constValue, vertexValue) => (1.0 / 8) * vertexValue.Y * (constValue.X * vertexValue.X + 2 * constValue.Y * vertexValue.Y + constValue.Z * vertexValue.Z - 1) *
-                    (1 + constValue.X * vertexValue.X) * (1 + constValue.Z * vertexValue.Z)
+                { 1, (constValue, vertexValue) => (1.0 / 8) * (constValue.X * vertexValue.X + 1) * (constValue.Z * vertexValue.Z + 1) *
+                    (vertexValue.Y * (vertexValue.Y * constValue.Y + constValue.Z * vertexValue.Z + constValue.X * vertexValue.X - 2) + vertexValue.Y * (vertexValue.Y * constValue.Y + 1))
                 },
-                { 2, (constValue, vertexValue) => (1.0 / 8) * vertexValue.Z * (constValue.X * vertexValue.X + constValue.Y * vertexValue.Y + 2 * constValue.Z * vertexValue.Z - 1) *
-                    (1 + constValue.X * vertexValue.X) * (1 + constValue.Y * vertexValue.Y)
-                }
+                { 2, (constValue, vertexValue) => (1.0 / 8) * (constValue.X * vertexValue.X + 1) * (constValue.Y * vertexValue.Y + 1) *
+                    (vertexValue.Z * (vertexValue.Z * constValue.Z + constValue.Y * vertexValue.Y + constValue.X * vertexValue.X - 2) + vertexValue.Z * (vertexValue.Z * constValue.Z + 1))
+                },
             };
 
         private static Dictionary<int, Func<Vector3, Vector3, double>> middleDerivativeFunctions =
@@ -34,7 +48,7 @@ namespace Core.Maths
                             (1 -
                                 Math.Pow(constValue.X, 2) * Math.Pow(vertexValue.Y, 2) * Math.Pow(vertexValue.Z, 2) - 
                                 Math.Pow(constValue.Y, 2) * Math.Pow(vertexValue.X, 2) * Math.Pow(vertexValue.Z, 2) -
-                                Math.Pow(constValue.Z, 2) * Math.Pow(vertexValue.Z, 2) * Math.Pow(vertexValue.Y, 2)
+                                Math.Pow(constValue.Z, 2) * Math.Pow(vertexValue.X, 2) * Math.Pow(vertexValue.Y, 2)
                             )
                         - (2 * constValue.X * (1 + constValue.X * vertexValue.X) * Math.Pow(vertexValue.Y, 2) * Math.Pow(vertexValue.Z, 2))
                     )
@@ -49,7 +63,7 @@ namespace Core.Maths
                             (1 -
                                 Math.Pow(constValue.X, 2) * Math.Pow(vertexValue.Y, 2) * Math.Pow(vertexValue.Z, 2) -
                                 Math.Pow(constValue.Y, 2) * Math.Pow(vertexValue.X, 2) * Math.Pow(vertexValue.Z, 2) -
-                                Math.Pow(constValue.Z, 2) * Math.Pow(vertexValue.Z, 2) * Math.Pow(vertexValue.Y, 2)
+                                Math.Pow(constValue.Z, 2) * Math.Pow(vertexValue.X, 2) * Math.Pow(vertexValue.Y, 2)
                             )
                         - (2 * constValue.Y * (1 + constValue.Y * vertexValue.Y) * Math.Pow(vertexValue.X, 2) * Math.Pow(vertexValue.Z, 2))
                     )
@@ -64,7 +78,7 @@ namespace Core.Maths
                             (1 -
                                 Math.Pow(constValue.X, 2) * Math.Pow(vertexValue.Y, 2) * Math.Pow(vertexValue.Z, 2) -
                                 Math.Pow(constValue.Y, 2) * Math.Pow(vertexValue.X, 2) * Math.Pow(vertexValue.Z, 2) -
-                                Math.Pow(constValue.Z, 2) * Math.Pow(vertexValue.Z, 2) * Math.Pow(vertexValue.Y, 2)
+                                Math.Pow(constValue.Z, 2) * Math.Pow(vertexValue.X, 2) * Math.Pow(vertexValue.Y, 2)
                             )
                         - (2 * constValue.Z * (1 + constValue.Z * vertexValue.Z) * Math.Pow(vertexValue.X, 2) * Math.Pow(vertexValue.Y, 2))
                     )
@@ -72,7 +86,7 @@ namespace Core.Maths
             };
 
 
-        public static Dictionary<Vector3, Dictionary<int, List<float>>> CalculateDerivativesOf(TwentyNodeBrickElement brickElement)
+        public static Dictionary<Vector3, Dictionary<int, List<float>>> CalculateDFIABG(TwentyNodeBrickElement brickElement)
         {
             Dictionary<Guid, BasePoint3D> vertices = brickElement.Mesh.VerticesDictionary;
 
@@ -96,15 +110,15 @@ namespace Core.Maths
                             for (int i = 0; i < vertices.Count; i++)
                             {
                                 // get current vertex
-                                BasePoint3D vertex = vertices.ElementAt(0).Value;
+                                BasePoint3D vertex = vertices.ElementAt(i).Value;
 
                                 // find appropriate function from dictionary
                                 Func<Vector3, Vector3, double> derivativeFunction = cornerDerivativeFunctions[0];
-                                if (i >= 0 && i < 9)
+                                if (i >= 0 && i < 8)
                                 {
                                     derivativeFunction = cornerDerivativeFunctions[j];
                                 }
-                                else if (i >= 9 && i < 20)
+                                else if (i >= 8 && i < 20)
                                 {
                                     derivativeFunction = middleDerivativeFunctions[j];
                                 }
@@ -118,11 +132,11 @@ namespace Core.Maths
 
 
                                 // add value to array
-                                if (!DFIABG[currentConstValue].ContainsKey(j))
+                                if (!DFIABG[currentConstValue].ContainsKey(i))
                                 {
-                                    DFIABG[currentConstValue].Add(j, new List<float>());
+                                    DFIABG[currentConstValue].Add(i, new List<float>());
                                 }
-                                DFIABG[currentConstValue][j].Add(value);
+                                DFIABG[currentConstValue][i].Add(value);
                             }
                         }
                     }
@@ -130,6 +144,52 @@ namespace Core.Maths
             }
 
             return DFIABG;
+        }
+
+        public static float[][,] CalculateYakobians(TwentyNodeBrickElement be, Dictionary<Vector3, Dictionary<int, List<float>>> derivatives)
+        {
+            float[][,] yakobians = new float[27][,];
+
+            for (int d = 0; d < derivatives.Count; d++)
+            {
+                Vector3 gaussValue = derivatives.ElementAt(d).Key;
+                var derivativesByCube = derivatives.ElementAt(d).Value;
+
+                float[,] yakobian = new float[3, 3];
+
+                // alpha, beta, gamma
+                for (int i = 0; i < 3; i++)
+                {
+                    // x, y, z
+                    for (int j = 0; j < 3; j++)
+                    {
+                        float cubeResult = 0;
+                        for (int k = 0; k < 20; k++)
+                        {
+                            BasePoint3D vertexOfCube = be.Mesh.VerticesSet.ElementAt(k);
+                            float valueByAxis = vertexOfCube[j];
+
+                            float deriv = derivativesByCube[k][i];
+                            float vertexResult = valueByAxis * deriv; // changed i -> j
+                            cubeResult += vertexResult;
+                        }
+
+                        yakobian[i, j] = cubeResult;
+                    }
+                }
+                yakobians[d] = yakobian;
+            }
+            return yakobians;
+        }
+
+        public static float Determinant3x3(float[,] matrix)
+        {
+            if (matrix.GetLength(0) != 3 || matrix.GetLength(1) != 3)
+                throw new ArgumentException("Matrix should be 3x3");
+
+            return matrix[0, 0] * (matrix[1, 1] * matrix[2, 2] - matrix[1, 2] * matrix[2, 1])
+                 - matrix[0, 1] * (matrix[1, 0] * matrix[2, 2] - matrix[1, 2] * matrix[2, 0])
+                 + matrix[0, 2] * (matrix[1, 0] * matrix[2, 1] - matrix[1, 1] * matrix[2, 0]);
         }
     }
 }

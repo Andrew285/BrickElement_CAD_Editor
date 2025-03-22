@@ -83,6 +83,30 @@ namespace Core.Models.Geometry.Primitive.Point
             }
             return false;
         }
+
+        public float this[int key]
+        {
+            get
+            {
+                switch (key)
+                {
+                    case 0: return this.Position.X;
+                    case 1: return this.Position.Y;
+                    case 2: return this.Position.Z;
+                    default: throw new ArgumentException("Index argument is invalid");
+                }
+            }
+            set
+            {
+                switch (key)
+                {
+                    case 0: Position = new Vector3(value, Position.Y, Position.Z); break;
+                    case 1: Position = new Vector3(Position.X, value, Position.Z); break;
+                    case 2: Position = new Vector3(Position.X, Position.Y, value); break;
+                    default: throw new ArgumentException("Index argument is invalid");
+                }
+            }
+        }
     }
 
     public class LocalizedCategoryAttribute : CategoryAttribute
