@@ -72,6 +72,10 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             float det5 = FEM.Determinant3x3(yakobians010[1]);
             float det6 = FEM.Determinant3x3(yakobians110[1]);
 
+
+            var dfixyz = FEM.CalculateDFIXYZ(yakobians000, dfiabg);
+            var mge = FEM.CalculateMGE(yakobians000, dfixyz);
+
             Console.WriteLine(dfiabg);
 
 
