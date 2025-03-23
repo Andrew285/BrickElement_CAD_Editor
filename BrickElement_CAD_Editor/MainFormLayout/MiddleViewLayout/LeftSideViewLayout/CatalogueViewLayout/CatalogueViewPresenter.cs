@@ -5,6 +5,7 @@ using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Models.Text.VertexText;
+using Core.Services;
 using System.Numerics;
 
 namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout
@@ -84,9 +85,12 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             CubeBrickElement cbe = BrickElementInitializator.CreateStandartElement();
             scene.AddObject3D(cbe);
 
-            VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Mesh.VerticesSet.ToList(), renderer);
-            scene.AddObject2D(vertexIndexGroup);
+            //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Mesh.VerticesSet.ToList(), renderer);
+            //scene.AddObject2D(vertexIndexGroup);
 
+
+            //BrickElementDivisionManager br = new BrickElementDivisionManager(scene);
+            //br.Divide(cbe, new Vector3(2, 2, 2));
 
 
             ////cbe.AreTriangleFacesDrawable = true;

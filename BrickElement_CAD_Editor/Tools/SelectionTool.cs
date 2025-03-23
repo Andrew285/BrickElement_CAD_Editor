@@ -12,7 +12,7 @@ namespace App.Tools
         private IRenderer renderer;
         private IPropertyView propertyView;
 
-        private SceneObject3D? selectedObject;
+        public SceneObject3D? SelectedObject;
         private SceneObject3D? previoiusSelectedObject;
 
         public override ToolType Type { get; set; } = ToolType.SELECTION;
@@ -48,8 +48,8 @@ namespace App.Tools
         {
             base.HandleLeftMouseButtonClick();
 
-            previoiusSelectedObject = selectedObject;
-            selectedObject = renderer.RaycastObjects3D(scene.Objects3D);
+            previoiusSelectedObject = SelectedObject;
+            SelectedObject = renderer.RaycastObjects3D(scene.Objects3D);
 
             if (previoiusSelectedObject != null)
             {
@@ -57,21 +57,21 @@ namespace App.Tools
                 OnObjectDeselected?.Invoke(previoiusSelectedObject);
             }
 
-            if (selectedObject == null)
+            if (SelectedObject == null)
             {
                 return;
             }
 
-            selectedObject = (SelectionToolMode == SelectionToolMode.OBJECT_SELECTION) ? (SceneObject3D)selectedObject.Parent : selectedObject;
-            if (selectedObject.IsSelected)
+            SelectedObject = (SelectionToolMode == SelectionToolMode.OBJECT_SELECTION) ? (SceneObject3D)SelectedObject.Parent : SelectedObject;
+            if (SelectedObject.IsSelected)
             {
-                selectedObject.IsSelected = false;
-                OnObjectDeselected?.Invoke(selectedObject);
+                SelectedObject.IsSelected = false;
+                OnObjectDeselected?.Invoke(SelectedObject);
             }
             else
             {
-                selectedObject.IsSelected = true;
-                OnObjectSelected?.Invoke(selectedObject);
+                SelectedObject.IsSelected = true;
+                OnObjectSelected?.Invoke(SelectedObject);
             }
 
             //LanguageService.GetInstance().ChangeLanguage(Language.UKRAINIAN);

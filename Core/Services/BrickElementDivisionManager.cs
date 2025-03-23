@@ -2,11 +2,12 @@
 using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Point;
+using Core.Models.Scene;
 using System.Numerics;
 
 namespace Core.Services
 {
-    public class BrickElementDivisionService
+    public class BrickElementDivisionManager
     {
         int verticesCountByX = 0;
         int verticesCountByY = 0;
@@ -25,16 +26,25 @@ namespace Core.Services
         int cubesCountByZ = 0;
 
         private Vector3 aValues;
-        Dictionary<Vector3, Point3D> vertexDictionary = new Dictionary<Vector3, Point3D>(); // Dictionary<Position, Point>
+        Dictionary<Vector3, BasePoint3D> vertexDictionary = new Dictionary<Vector3, BasePoint3D>(); // Dictionary<Position, Point>
         List<BasePoint3D> vertices = new List<BasePoint3D>();
 
         private byte[] pattern3 = { 0, 0 };
         private byte[] pattern2 = { 1, 0 };
         private byte[] pattern1 = { 1, 1 };
 
-        public BrickElementDivisionService(Vector3 aValues, Vector3 nValues)
+        private IScene scene;
+        public Action<TwentyNodeBrickElement, IMesh, List<TwentyNodeBrickElement>> OnBrickElementDivided;
+
+        public BrickElementDivisionManager(IScene scene)
         {
-            this.aValues = aValues;
+            this.scene = scene;
+            OnBrickElementDivided += this.scene.HandleOnBrickElementDivided;
+        }
+
+        public IMesh Divide(TwentyNodeBrickElement be, Vector3 nValues)
+        {
+            this.aValues = Vector3.One;
 
             cubesCountByX = (int)nValues.X;
             cubesCountByY = (int)nValues.Y;
@@ -51,6 +61,12 @@ namespace Core.Services
             rowsCountByZ = cubesCountByZ + 1;
             rowsCountByY = cubesCountByY + 1;
             rowsCountByX = cubesCountByX + 1;
+
+            IMesh dividedMesh = GenerateDividedMesh();
+            List<TwentyNodeBrickElement> brickElements = GenerateBrickElements(nValues);
+
+            OnBrickElementDivided?.Invoke(be, dividedMesh, brickElements);
+            return dividedMesh;
         }
 
         public IMesh GenerateDividedMesh()
@@ -121,30 +137,90 @@ namespace Core.Services
             foreach (var kvp in vertexDictionary)
             {
                 Vector3 pos = kvp.Key;
-                Point3D currentPoint = kvp.Value;
+                BasePoint3D currentPoint = kvp.Value;
 
                 if (currentPoint == null) continue;
 
                 // Try to connect to the next point in X direction
-                if (vertexDictionary.TryGetValue(new Vector3(pos.X + 1, pos.Y, pos.Z), out Point3D nextX) && nextX != null)
+                if (vertexDictionary.TryGetValue(new Vector3(pos.X + 1, pos.Y, pos.Z), out BasePoint3D nextX) && nextX != null)
                 {
                     edges.Add(new Line3D(currentPoint, nextX));
                 }
 
                 // Try to connect to the next point in Y direction
-                if (vertexDictionary.TryGetValue(new Vector3(pos.X, pos.Y + 1, pos.Z), out Point3D nextY) && nextY != null)
+                if (vertexDictionary.TryGetValue(new Vector3(pos.X, pos.Y + 1, pos.Z), out BasePoint3D nextY) && nextY != null)
                 {
                     edges.Add(new Line3D(currentPoint, nextY));
                 }
 
                 // Try to connect to the next point in Z direction
-                if (vertexDictionary.TryGetValue(new Vector3(pos.X, pos.Y, pos.Z + 1), out Point3D nextZ) && nextZ != null)
+                if (vertexDictionary.TryGetValue(new Vector3(pos.X, pos.Y, pos.Z + 1), out BasePoint3D nextZ) && nextZ != null)
                 {
                     edges.Add(new Line3D(currentPoint, nextZ));
                 }
             }
 
             return edges;
+        }
+
+        private List<TwentyNodeBrickElement> GenerateBrickElements(Vector3 nValues)
+        {
+            List<TwentyNodeBrickElement> brickElements = new List<TwentyNodeBrickElement>();
+            for (int y = 1; y < nValues.Y * 2; y += 2)
+            {
+                for (int z = 1; z < nValues.Z * 2; z += 2)
+                {
+                    for (int x = 1; x < nValues.X * 2; x += 2)
+                    {
+                        Vector3 position = new Vector3(x, y, z);
+                        List<BasePoint3D> elementVertices = GetVerticesByCenterPosition(position, vertexDictionary);
+
+                        IMesh mesh = new Mesh();
+                        mesh.AddRange(elementVertices);
+
+                        TwentyNodeBrickElement be = new TwentyNodeBrickElement(position, new Vector3(1 / nValues.X, 1 / nValues.Y, 1 / nValues.Z));
+                        be.Mesh = mesh;
+                    }
+                }
+            }
+            return brickElements;
+        }
+
+        private List<BasePoint3D> GetVerticesByCenterPosition(Vector3 centerPosition, Dictionary<Vector3, BasePoint3D> allPoints) 
+        {
+            float x = centerPosition.X;
+            float y = centerPosition.Y;
+            float z = centerPosition.Z;
+
+            return new List<BasePoint3D>()
+            {
+                // Corner Vertices
+                allPoints[new Vector3(x - 1, y - 1, z - 1)],    // -1, -1, 1
+                allPoints[new Vector3(x + 1, y - 1, z - 1)],    // 1, -1, 1
+                allPoints[new Vector3(x + 1, y - 1, z + 1)],    // 1, -1, -1
+                allPoints[new Vector3(x - 1, y - 1, z + 1)],    // -1, -1, -1
+
+                allPoints[new Vector3(x - 1, y + 1, z - 1)],    // -1, 1, 1
+                allPoints[new Vector3(x + 1, y + 1, z - 1)],    // 1, 1, 1
+                allPoints[new Vector3(x + 1, y + 1, z + 1)],    // 1, 1, -1
+                allPoints[new Vector3(x - 1, y + 1, z + 1)],    // -1, 1, -1
+
+                // Middle Vertices
+                allPoints[new Vector3(x, y - 1, z - 1)],    // 0, -1, 1
+                allPoints[new Vector3(x + 1, y - 1, z)],    // 1, -1, 0
+                allPoints[new Vector3(x, y - 1, z + 1)],    // 0, -1, -1
+                allPoints[new Vector3(x - 1, y - 1, z)],    // -1, -1, 0
+
+                allPoints[new Vector3(x - 1, y, z - 1)],    // -1, 0, 1
+                allPoints[new Vector3(x + 1, y, z - 1)],    // 1, 0, 1
+                allPoints[new Vector3(x + 1, y, z + 1)],    // 1, 0, -1
+                allPoints[new Vector3(x - 1, y, z + 1)],    // -1, 0, -1
+
+                allPoints[new Vector3(x, y + 1, z - 1)],    // 0, 1, 1
+                allPoints[new Vector3(x + 1, y + 1, z)],    // 1, 1, 0
+                allPoints[new Vector3(x, y + 1, z + 1)],    // 0, 1, -1
+                allPoints[new Vector3(x - 1, y + 1, z)],    // -1, 1, 0
+            };
         }
 
         //private List<BaseLine3D> GenerateEdges()

@@ -231,26 +231,16 @@
   <data name="Remove" xml:space="preserve">
     <value />
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Render_Drawing" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
   <data name="Render_Drawing_Faces" xml:space="preserve">
     <value />
   </data>
   <data name="Render_Drawing_TriangleFaces" xml:space="preserve">
     <value />
   </data>
-  <data name="Render_Drawing_VertexIndices" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
   <data name="SaveMenu" xml:space="preserve">
     <value />
   </data>
   <data name="Start" xml:space="preserve">
-    <value />
-  </data>
-  <data name="Update" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
   <data name="X_Coordinate" xml:space="preserve">
@@ -290,9 +280,6 @@
     <value />
   </data>
   <data name="SceneMode_ViewMode" xml:space="preserve">
-    <value />
-  </data>
-  <data name="SceneMode_EditMode" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
   <data name="Property_Position" xml:space="preserve">

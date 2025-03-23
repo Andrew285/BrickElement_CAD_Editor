@@ -380,7 +380,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
         public static CubeBrickElement CreateStandartElement(Vector3? position = null, Vector3? size = null)
         {
             Vector3 safePosition = (Vector3)((position == null) ? Vector3.Zero : position);
-            Vector3 safeSize = (Vector3)((size == null) ? new Vector3(2, 2, 2) : size);
+            Vector3 safeSize = (Vector3)((size == null) ? new Vector3(1, 1, 1) : size);
 
             return new CubeBrickElement(safePosition, safeSize);
         }

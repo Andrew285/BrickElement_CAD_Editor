@@ -1,4 +1,5 @@
-﻿using Core.Models.Geometry.Complex.Surfaces;
+﻿using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Graphics.Cameras;
 
 namespace Core.Models.Scene
@@ -19,5 +20,6 @@ namespace Core.Models.Scene
 
         public BrickElementSurface? GetSurfaceOf(SceneObject3D obj);
 
+        public void HandleOnBrickElementDivided(TwentyNodeBrickElement dividedBE, IMesh dividedMesh, List<TwentyNodeBrickElement> innerDividedElements);
     }
 }

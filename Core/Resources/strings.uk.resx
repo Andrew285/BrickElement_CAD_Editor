@@ -231,26 +231,17 @@
   <data name="Remove" xml:space="preserve">
     <value>Видалити</value>
   </data>
-  <data name="Render_Drawing" xml:space="preserve">
-    <value>Малювання</value>
-  </data>
   <data name="Render_Drawing_Faces" xml:space="preserve">
     <value>Грані</value>
   </data>
   <data name="Render_Drawing_TriangleFaces" xml:space="preserve">
     <value>Draw All Faces</value>
   </data>
-  <data name="Render_Drawing_VertexIndices" xml:space="preserve">
-    <value>Індекси вершин</value>
-  </data>
   <data name="SaveMenu" xml:space="preserve">
     <value>Зберегти</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Початок</value>
-  </data>
-  <data name="Update" xml:space="preserve">
-    <value>Оновити</value>
   </data>
   <data name="X_Coordinate" xml:space="preserve">
     <value>X</value>
@@ -290,9 +281,6 @@
   </data>
   <data name="SceneMode_ViewMode" xml:space="preserve">
     <value>Режим огляду</value>
-  </data>
-  <data name="SceneMode_EditMode" xml:space="preserve">
-    <value>Режим редагування</value>
   </data>
   <data name="Property_Position" xml:space="preserve">
     <value>Позиція</value>

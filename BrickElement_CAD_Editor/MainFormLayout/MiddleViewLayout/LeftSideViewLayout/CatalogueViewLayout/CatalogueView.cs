@@ -1,4 +1,7 @@
-﻿using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout;
+﻿using App.Properties;
+using System.IO;
+using System.Reflection;
+using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout;
 using UI.Utils.ViewLayout.CustomPanelView;
 
 public class CatalogueView : PanelView, ICatalogueView
@@ -78,18 +81,22 @@ public class CatalogueView : PanelView, ICatalogueView
 
     private Panel CreateItemPanel(string name, DateTime? date)
     {
+
         Panel panelItem = new Panel
         {
-            Size = new Size(100, 120),
+            Size = new Size(100, 100),
             Margin = new Padding(10),
             BackColor = Color.White,
             BorderStyle = BorderStyle.FixedSingle
         };
 
+        //Assembly myAssembly = Assembly.GetExecutingAssembly();
+        //Stream stream = myAssembly.GetManifestResourceStream("App.Resources.App_4dwIw093C1.png");
         PictureBox pictureBox = new PictureBox
         {
             Size = new Size(80, 80),
-            //Image = Properties.Resources.default_image, // Replace with actual image resource
+
+            //Image = Image.FromStream(stream), // Replace with actual image resource 
             SizeMode = PictureBoxSizeMode.StretchImage,
             Dock = DockStyle.Top
         };
@@ -98,7 +105,7 @@ public class CatalogueView : PanelView, ICatalogueView
         {
             Text = name,
             TextAlign = ContentAlignment.MiddleCenter,
-            Dock = DockStyle.Top
+            Dock = DockStyle.Bottom
         };
 
         panelItem.Controls.Add(pictureBox);
@@ -115,6 +122,8 @@ public class CatalogueView : PanelView, ICatalogueView
             panelItem.Controls.Add(dateLabel);
         }
 
+        nameLabel.Click += (s, e) => OnItemClicked?.Invoke(name, e);
+        pictureBox.Click += (s, e) => OnItemClicked?.Invoke(name, e);
         panelItem.Click += (s, e) => OnItemClicked?.Invoke(name, e);
 
         return panelItem;

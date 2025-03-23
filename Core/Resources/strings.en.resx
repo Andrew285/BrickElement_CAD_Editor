@@ -231,26 +231,17 @@
   <data name="Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
-  <data name="Render_Drawing" xml:space="preserve">
-    <value>Drawing</value>
-  </data>
   <data name="Render_Drawing_Faces" xml:space="preserve">
     <value>Faces</value>
   </data>
   <data name="Render_Drawing_TriangleFaces" xml:space="preserve">
     <value>Draw All Faces</value>
   </data>
-  <data name="Render_Drawing_VertexIndices" xml:space="preserve">
-    <value>Vertex Lables</value>
-  </data>
   <data name="SaveMenu" xml:space="preserve">
     <value>Save</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
-  </data>
-  <data name="Update" xml:space="preserve">
-    <value>Update</value>
   </data>
   <data name="X_Coordinate" xml:space="preserve">
     <value>X</value>
@@ -291,9 +282,6 @@
   </data>
   <data name="SceneMode_ViewMode" xml:space="preserve">
     <value>View Mode</value>
-  </data>
-  <data name="SceneMode_EditMode" xml:space="preserve">
-    <value>Edit Mode</value>
   </data>
   <data name="Property_Position" xml:space="preserve">
     <value>Position</value>

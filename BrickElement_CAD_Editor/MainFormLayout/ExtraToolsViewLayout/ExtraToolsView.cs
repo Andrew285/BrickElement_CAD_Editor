@@ -13,6 +13,7 @@ public class ExtraToolsView : IExtraToolsView
     public Panel Control { get { return panel; } set { panel = value; } }
 
     public event EventHandler? OnAddBrickElementToFaceItemClicked;
+    public event EventHandler? OnDivideBrickElementItemClicked;
     public event Action<SelectionToolMode> OnSelectionModeChanged;
 
     public ExtraToolsView()
@@ -181,18 +182,24 @@ public class ExtraToolsView : IExtraToolsView
         };
 
         comboBox.SelectedIndex = 0;
+        toolStrip.Items.Add(comboBox);
+
 
         // Add Button
         ToolStripButton addButton = new ToolStripButton("Add", imageList.Images["add"]);
         addButton.Text = "";
         addButton.ToolTipText = "Add a new object";
         addButton.Click += (s, e) => OnAddBrickElementToFaceItemClicked?.Invoke(this, e);
-
-
-        // Add ComboBox to ToolStrip
-        toolStrip.Items.Add(comboBox);
         toolStrip.Items.Add(new ToolStripSeparator());
         toolStrip.Items.Add(addButton);
+
+        // Add Button
+        ToolStripButton divideBrickElementButton = new ToolStripButton("Divide", imageList.Images["add"]);
+        divideBrickElementButton.Text = "";
+        divideBrickElementButton.ToolTipText = "Divide selected brick element";
+        divideBrickElementButton.Click += (s, e) => OnDivideBrickElementItemClicked?.Invoke(this, e);
+        toolStrip.Items.Add(new ToolStripSeparator());
+        toolStrip.Items.Add(divideBrickElementButton);
     }
 
     public void ChangeSelectionMode(SelectionToolMode mode)

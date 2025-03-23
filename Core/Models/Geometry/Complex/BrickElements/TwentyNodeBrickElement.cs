@@ -7,7 +7,7 @@ using System.Numerics;
 
 namespace Core.Models.Geometry.Complex.BrickElements
 {
-    public class TwentyNodeBrickElement : MeshObject3D, IDivideable
+    public class TwentyNodeBrickElement : MeshObject3D
     {
 
         // Center Vertices
@@ -15,51 +15,51 @@ namespace Core.Models.Geometry.Complex.BrickElements
         public bool AreCenterVerticesDrawable { get; set; } = true;
 
         protected Vector3 size;
-        private Vector3 Size { get { return size; } }
+        public Vector3 Size { get { return size; } }
 
         private Vector3 divisionValue = Vector3.One;
 
-        public float DivideX
-        {
-            get
-            {
-                return divisionValue.X;
-            }
+        //public float DivideX
+        //{
+        //    get
+        //    {
+        //        return divisionValue.X;
+        //    }
 
-            set
-            {
-                divisionValue = new Vector3(value, divisionValue.Y, divisionValue.Z);
-                Divide(divisionValue);
-            }
-        }
+        //    set
+        //    {
+        //        divisionValue = new Vector3(value, divisionValue.Y, divisionValue.Z);
+        //        Divide(divisionValue);
+        //    }
+        //}
 
-        public float DivideY
-        {
-            get
-            {
-                return divisionValue.Y;
-            }
+        //public float DivideY
+        //{
+        //    get
+        //    {
+        //        return divisionValue.Y;
+        //    }
 
-            set
-            {
-                divisionValue = new Vector3(divisionValue.X, value, divisionValue.Z);
-                Divide(divisionValue);
-            }
-        }
+        //    set
+        //    {
+        //        divisionValue = new Vector3(divisionValue.X, value, divisionValue.Z);
+        //        Divide(divisionValue);
+        //    }
+        //}
 
-        public float DivideZ
-        {
-            get
-            {
-                return divisionValue.Z;
-            }
+        //public float DivideZ
+        //{
+        //    get
+        //    {
+        //        return divisionValue.Z;
+        //    }
 
-            set
-            {
-                divisionValue = new Vector3(divisionValue.X, divisionValue.Y, value);
-                Divide(divisionValue);
-            }
-        }
+        //    set
+        //    {
+        //        divisionValue = new Vector3(divisionValue.X, divisionValue.Y, value);
+        //        Divide(divisionValue);
+        //    }
+        //}
 
         public override bool IsSelected
         {
@@ -105,16 +105,16 @@ namespace Core.Models.Geometry.Complex.BrickElements
             }
         }
 
-        public void Divide(Vector3 nValues)
-        {
-            BrickElementDivisionService divisionService = new BrickElementDivisionService(Size, nValues);
-            IMesh mesh = divisionService.GenerateDividedMesh();
-            Mesh = mesh;
+        //public void Divide(Vector3 nValues)
+        //{
+        //    BrickElementDivisionManager divisionService = new BrickElementDivisionManager(Size, nValues);
+        //    IMesh mesh = divisionService.GenerateDividedMesh();
+        //    Mesh = mesh;
 
-            Mesh.FacesSet.Clear();
-            Mesh.FacesDictionary.Clear();
-            CenterVertices.Clear();
-        }
+        //    Mesh.FacesSet.Clear();
+        //    Mesh.FacesDictionary.Clear();
+        //    CenterVertices.Clear();
+        //}
 
         public override void Move(Vector3 moveVector)
         {

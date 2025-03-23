@@ -7,6 +7,7 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
     {
         public event Action<SelectionToolMode> OnSelectionModeChanged;
         public event EventHandler? OnAddBrickElementToFaceItemClicked;
+        public event EventHandler? OnDivideBrickElementItemClicked;
 
         public void SetSelectionTools();
         public void ChangeSelectionMode(SelectionToolMode mode);

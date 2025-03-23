@@ -90,5 +90,13 @@ namespace Core.Models.Scene
 
             return resultSurface;
         }
+
+        public void HandleOnBrickElementDivided(TwentyNodeBrickElement dividedBE, IMesh dividedMesh, List<TwentyNodeBrickElement> innerDividedElements)
+        {
+            Objects3D.Remove(dividedBE);
+
+            BrickElementSurface surface = BrickElementSurfaceInitializator.CreateFrom(dividedMesh, innerDividedElements);
+            AddObject3D(surface);
+        }
     }
 }
