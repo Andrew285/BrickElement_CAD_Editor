@@ -7,6 +7,7 @@ using Core.Models.Scene;
 using Core.Models.Text.VertexText;
 using Core.Services;
 using System.Numerics;
+using System.Text;
 
 namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout
 {
@@ -29,26 +30,26 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
         {
             // CASE 1
 
-            //CubeBrickElement cbe000 = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe100 = new CubeBrickElement(new Vector3(1, 0, 0), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe010 = new CubeBrickElement(new Vector3(0, 1, 0), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe110 = new CubeBrickElement(new Vector3(1, 1, 0), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe001 = new CubeBrickElement(new Vector3(0, 0, 1), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe101 = new CubeBrickElement(new Vector3(1, 0, 1), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe011 = new CubeBrickElement(new Vector3(0, 1, 1), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe111 = new CubeBrickElement(new Vector3(1, 1, 1), new Vector3(1, 1, 1));
+            CubeBrickElement cbe000 = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+            CubeBrickElement cbe100 = new CubeBrickElement(new Vector3(1, 0, 0), new Vector3(1, 1, 1));
+            CubeBrickElement cbe010 = new CubeBrickElement(new Vector3(0, 1, 0), new Vector3(1, 1, 1));
+            CubeBrickElement cbe110 = new CubeBrickElement(new Vector3(1, 1, 0), new Vector3(1, 1, 1));
+            CubeBrickElement cbe001 = new CubeBrickElement(new Vector3(0, 0, 1), new Vector3(1, 1, 1));
+            CubeBrickElement cbe101 = new CubeBrickElement(new Vector3(1, 0, 1), new Vector3(1, 1, 1));
+            CubeBrickElement cbe011 = new CubeBrickElement(new Vector3(0, 1, 1), new Vector3(1, 1, 1));
+            CubeBrickElement cbe111 = new CubeBrickElement(new Vector3(1, 1, 1), new Vector3(1, 1, 1));
 
-            //BrickElementSurface surface = new BrickElementSurface();
-            //surface.AddBrickElement(cbe000);
-            //surface.AddBrickElement(cbe100);
-            //surface.AddBrickElement(cbe010);
-            //surface.AddBrickElement(cbe110);
-            //surface.AddBrickElement(cbe001);
-            //surface.AddBrickElement(cbe101);
-            //surface.AddBrickElement(cbe011);
-            //surface.AddBrickElement(cbe111);
+            BrickElementSurface surface = new BrickElementSurface();
+            surface.AddBrickElement(cbe000);
+            surface.AddBrickElement(cbe100);
+            surface.AddBrickElement(cbe010);
+            surface.AddBrickElement(cbe110);
+            surface.AddBrickElement(cbe001);
+            surface.AddBrickElement(cbe101);
+            surface.AddBrickElement(cbe011);
+            surface.AddBrickElement(cbe111);
 
-            //scene.AddObject3D(surface);
+            scene.AddObject3D(surface);
 
             //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(surface.GetGlobalVertices(), renderer);
             //scene.AddObject2D(vertexIndexGroup);
@@ -81,9 +82,9 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
 
 
 
-
-            CubeBrickElement cbe = BrickElementInitializator.CreateStandartElement();
+            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
             scene.AddObject3D(cbe);
+
 
             //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Mesh.VerticesSet.ToList(), renderer);
             //scene.AddObject2D(vertexIndexGroup);
@@ -91,6 +92,72 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
 
             //BrickElementDivisionManager br = new BrickElementDivisionManager(scene);
             //br.Divide(cbe, new Vector3(2, 2, 2));
+
+            //BrickElementSurface? surface = (BrickElementSurface)scene.Objects3D[0];
+            //if (surface != null)
+            //{
+            //    TwentyNodeBrickElement standartCube = BrickElementInitializator.CreateStandartElement();
+            //    Dictionary<Vector3, Dictionary<int, List<float>>> dfiabg = FEM.CalculateDFIABG(standartCube);
+
+            //    var yakobians000 = FEM.CalculateYakobians(surface.BrickElements[0], dfiabg);
+            //    //var yakobians100 = FEM.CalculateYakobians(surface.BrickElements[1], dfiabg);
+            //    //var yakobians200 = FEM.CalculateYakobians(surface.BrickElements[2], dfiabg);
+            //    //var yakobians300 = FEM.CalculateYakobians(surface.BrickElements[3], dfiabg);
+            //    //var yakobians010 = FEM.CalculateYakobians(surface.BrickElements[4], dfiabg);
+            //    //var yakobians110 = FEM.CalculateYakobians(surface.BrickElements[5], dfiabg);
+
+            //    float det1 = FEM.Determinant3x3(yakobians000[0]);
+            //    //float det2 = FEM.Determinant3x3(yakobians100[0]);
+            //    //float det3 = FEM.Determinant3x3(yakobians200[0]);
+            //    //float det4 = FEM.Determinant3x3(yakobians300[0]);
+            //    //float det5 = FEM.Determinant3x3(yakobians010[0]);
+            //    //float det6 = FEM.Determinant3x3(yakobians110[0]);
+
+            //    var dfixyz = FEM.CalculateDFIXYZ(yakobians000, dfiabg);
+            //    var mge = FEM.CalculateMGE(yakobians000, dfixyz);
+
+            //    //Console.WriteLine(dfiabg);
+            //    StringBuilder str = new StringBuilder();
+            //    for (int i = 0; i < dfixyz.Count; i++)
+            //    {
+            //        str.Append(dfixyz.ElementAt(i).Key + "\n");
+            //        for (int j = 0; j < dfixyz.ElementAt(i).Value.Count; j++)
+            //        {
+            //            str.Append(String.Format("{0}: [", j.ToString()));
+            //            for (int k = 0; k < 3; k++)
+            //            {
+            //                if (k == 2)
+            //                {
+            //                    str.Append(String.Format("{0} ]\n", dfixyz.ElementAt(i).Value[j][k]));
+            //                }
+            //                else
+            //                {
+            //                    str.Append(String.Format("{0}, ", dfixyz.ElementAt(i).Value[j][k]));
+            //                }
+            //            }
+            //        }
+            //        str.Append("\n");
+            //    }
+            //    Console.WriteLine(str.ToString());
+
+            //    str.Clear();
+            //    for (int i = 0; i < mge.GetLength(0); i++)
+            //    {
+            //        for (int j = 0; j < mge.GetLength(1); j++)
+            //        {
+            //            if (j == mge.GetLength(1) - 1)
+            //            {
+            //                str.Append(String.Format("{0} \n", mge[i, j]));
+            //            }
+            //            else
+            //            {
+            //                str.Append(String.Format("{0}, ", mge[i, j]));
+            //            }
+            //        }
+            //    }
+            //    Console.WriteLine(str.ToString());
+            //}
+
 
 
             ////cbe.AreTriangleFacesDrawable = true;

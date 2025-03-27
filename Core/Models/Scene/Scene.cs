@@ -1,4 +1,5 @@
-﻿using Core.Models.Geometry.Complex.BrickElements;
+﻿using Core.Models.Geometry.Complex;
+using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Graphics.Cameras;
@@ -9,50 +10,47 @@ namespace Core.Models.Scene
     {
         public ICamera? Camera { get; set; }
 
-        private List<SceneObject3D> objects3D;
-        public List<SceneObject3D> Objects3D { get { return objects3D; } }
+        public Dictionary<Guid, SceneObject3D> Objects3D { get; set; }
+        public Dictionary<Guid, SceneObject2D> Objects2D { get; set; }
 
-
-        private List<SceneObject2D> objects2D;
-        public List<SceneObject2D> Objects2D { get { return objects2D; } }
-        public event Action<SceneObject> OnObjectAddedToScene;
+        public event Action<SceneObject3D> OnObjectAddedToScene;
 
         public Scene() 
         {
-            objects3D = new List<SceneObject3D>();
-            objects2D = new List<SceneObject2D>();
+            Objects3D = new Dictionary<Guid, SceneObject3D>();
+            Objects2D = new Dictionary<Guid, SceneObject2D>();
         }
 
         public void AddObject3D(SceneObject3D obj)
         {
-            objects3D.Add(obj);
+            Objects3D.Add(obj.ID, obj);
             OnObjectAddedToScene.Invoke(obj);
         }
 
         public bool RemoveObject3D(SceneObject3D obj)
         {
-            return objects3D.Remove(obj);
+            return Objects3D.Remove(obj.ID);
         }
 
         public void AddObject2D(SceneObject2D obj)
         {
-            objects2D.Add(obj);
+            Objects2D.Add(obj.ID, obj);
         }
 
         public bool RemoveObject2D(SceneObject2D obj)
         {
-            return objects2D.Remove(obj);
+            return Objects2D.Remove(obj.ID);
         }
 
         public BrickElementSurface? GetSurfaceOf(SceneObject3D obj)
         {
             BrickElementSurface resultSurface = null;
 
-            foreach (SceneObject3D object3D in Objects3D)
+            foreach (var objectPair in Objects3D)
             {
-                if (object3D is BrickElementSurface)
+                if (objectPair.Value is BrickElementSurface)
                 {
-                    BrickElementSurface surface = (BrickElementSurface)object3D;
+                    BrickElementSurface surface = (BrickElementSurface)objectPair.Value;
 
                     if (obj is BasePlane3D face)
                     {
@@ -91,9 +89,58 @@ namespace Core.Models.Scene
             return resultSurface;
         }
 
+        public SceneObject3D? GetSceneObjectByID(Guid id)
+        {
+            if (!Objects3D.ContainsKey(id))
+            {
+                foreach (var obj in Objects3D)
+                {
+                    if (obj.Value is MeshObject3D meshObject)
+                    {
+                        if (meshObject.Mesh.VerticesDictionary.ContainsKey(id))
+                        {
+                            return meshObject.Mesh.VerticesDictionary[id];
+                        }
+
+                        if (meshObject.Mesh.EdgesDictionary.ContainsKey(id))
+                        {
+                            return meshObject.Mesh.EdgesDictionary[id];
+                        }
+
+                        if (meshObject.Mesh.FacesDictionary.ContainsKey(id))
+                        {
+                            return meshObject.Mesh.FacesDictionary[id];
+                        }
+                    }
+                }
+                return null;
+            }
+
+            return Objects3D[id];
+
+            //foreach (var obj in Objects3D)
+            //{
+            //    if (obj is BrickElementSurface surface)
+            //    {
+            //        foreach (var innerObj in surface.BrickElements.Values)
+            //        {
+            //            if (innerObj.ID == id)
+            //            {
+            //                return innerObj;
+            //            }
+            //        }
+            //    }
+            //    if (obj.ID == id)
+            //    {
+            //        return obj;
+            //    }
+            //}
+            //return null;
+        }
+
         public void HandleOnBrickElementDivided(TwentyNodeBrickElement dividedBE, IMesh dividedMesh, List<TwentyNodeBrickElement> innerDividedElements)
         {
-            Objects3D.Remove(dividedBE);
+            Objects3D.Remove(dividedBE.ID);
 
             BrickElementSurface surface = BrickElementSurfaceInitializator.CreateFrom(dividedMesh, innerDividedElements);
             AddObject3D(surface);

@@ -66,7 +66,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
             get => base.IsSelected;
             set
             {
-                base.IsSelected = value;
+                isSelected = value;
+                base.IsSelected = isSelected;
                 SetEdgesAreSelected(isSelected);
             }
         }
@@ -77,6 +78,11 @@ namespace Core.Models.Geometry.Complex.BrickElements
             foreach (var obj in Mesh.EdgesSet)
             {
                 obj.IsSelected = isSeleted;
+            }
+
+            foreach (var obj in Mesh.EdgesDictionary)
+            {
+                obj.Value.IsSelected = isSeleted;
             }
         }
 

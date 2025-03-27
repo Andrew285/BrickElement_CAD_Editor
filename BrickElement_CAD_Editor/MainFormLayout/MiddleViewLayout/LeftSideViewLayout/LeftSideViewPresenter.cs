@@ -1,4 +1,5 @@
-﻿using Core.Models.Graphics.Rendering;
+﻿using App.Tools;
+using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout;
 using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout;
@@ -12,11 +13,11 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout
         public SceneTreeViewPresenter SceneTreeViewPresenter { get; set; }
         public CatalogueViewPresenter CatalogueViewPresenter { get; set; }
 
-        public LeftSideViewPresenter(ILeftSideView leftSideView, IRenderer renderer, IScene scene) 
+        public LeftSideViewPresenter(ILeftSideView leftSideView, IRenderer renderer, IScene scene, SelectionTool selectionTool) 
         {
             this.leftSideView = leftSideView;
 
-            SceneTreeViewPresenter = new SceneTreeViewPresenter(leftSideView.SceneTreeView, scene);
+            SceneTreeViewPresenter = new SceneTreeViewPresenter(leftSideView.SceneTreeView, scene, selectionTool);
             CatalogueViewPresenter = new CatalogueViewPresenter(leftSideView.CatalogueView, scene, renderer);
         }
     }

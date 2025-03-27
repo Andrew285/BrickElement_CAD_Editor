@@ -49,7 +49,7 @@ namespace App.Tools
             base.HandleLeftMouseButtonClick();
 
             previoiusSelectedObject = SelectedObject;
-            SelectedObject = renderer.RaycastObjects3D(scene.Objects3D);
+            SelectedObject = renderer.RaycastObjects3D(scene.Objects3D.Values);
 
             if (previoiusSelectedObject != null)
             {
@@ -70,11 +70,42 @@ namespace App.Tools
             }
             else
             {
-                SelectedObject.IsSelected = true;
-                OnObjectSelected?.Invoke(SelectedObject);
+                Select(SelectedObject);
             }
 
             //LanguageService.GetInstance().ChangeLanguage(Language.UKRAINIAN);
+        }
+
+        public void Select(SceneObject3D sceneObject)
+        {
+            previoiusSelectedObject = SelectedObject;
+            SelectedObject = sceneObject;
+            SelectedObject.IsSelected = true;
+            OnObjectSelected?.Invoke(SelectedObject);
+        }
+
+        public void Deselect(SceneObject3D sceneObject)
+        {
+            previoiusSelectedObject = SelectedObject;
+            SelectedObject = sceneObject;
+            SelectedObject.IsSelected = false;
+            OnObjectDeselected?.Invoke(SelectedObject);
+        }
+
+        public void SelectAll()
+        {
+            foreach (var obj in scene.Objects3D.Values)
+            {
+                obj.IsSelected = true;
+            }
+        }
+
+        public void DeselectAll()
+        {
+            foreach (var obj in scene.Objects3D.Values)
+            {
+                obj.IsSelected = false;
+            }
         }
 
         public override void HandleMiddleMouseButtonClick(Vector2 mouseDelta)

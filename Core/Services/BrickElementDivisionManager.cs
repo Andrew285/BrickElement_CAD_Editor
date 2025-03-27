@@ -44,7 +44,7 @@ namespace Core.Services
 
         public IMesh Divide(TwentyNodeBrickElement be, Vector3 nValues)
         {
-            this.aValues = Vector3.One;
+            this.aValues = new Vector3(2, 2, 2);
 
             cubesCountByX = (int)nValues.X;
             cubesCountByY = (int)nValues.Y;
@@ -95,9 +95,13 @@ namespace Core.Services
                         Point3D point = null;
                         if (patterns[patternIndex][x % 2] == 1)
                         {
-                            float xValue = -aValues.X / 2 + x * stepX;  // -1.5 + 0 * 
-                            float yValue = -aValues.Y / 2 + y * stepY;
-                            float zValue = aValues.Z / 2 + z * -stepZ;
+                            //float xValue = -aValues.X / 2 + x * stepX;  // -1.5 + 0 * 
+                            //float yValue = -aValues.Y / 2 + y * stepY;
+                            //float zValue = aValues.Z / 2 + z * -stepZ;
+
+                            float xValue = x * stepX;  // -1.5 + 0 * 
+                            float yValue = y * stepY;
+                            float zValue = z * -stepZ;
 
                             point = new Point3D(xValue, yValue, zValue);
                             vertices.Add(point);
@@ -180,6 +184,7 @@ namespace Core.Services
 
                         TwentyNodeBrickElement be = new TwentyNodeBrickElement(position, new Vector3(1 / nValues.X, 1 / nValues.Y, 1 / nValues.Z));
                         be.Mesh = mesh;
+                        brickElements.Add(be);
                     }
                 }
             }

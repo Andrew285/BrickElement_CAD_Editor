@@ -20,7 +20,7 @@ namespace UI.MainFormLayout.MiddleViewLayout
         {
             this.middleView = middleView;
             SceneViewPresenter = new SceneViewPresenter(middleView.SceneView, renderer, scene, toolManager);
-            LeftSideViewPresenter = new LeftSideViewPresenter(middleView.LeftSideView, renderer, scene);
+            LeftSideViewPresenter = new LeftSideViewPresenter(middleView.LeftSideView, renderer, scene, (SelectionTool)toolManager.CurrentTool);
             PropertyViewPresenter = new PropertyViewPresenter(middleView.PropertyView);
         }
     }

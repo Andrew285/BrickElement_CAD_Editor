@@ -5,8 +5,10 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLay
 {
     public interface ISceneTreeView: IView<TreeView>
     {
-        public void AddSceneObject(SceneObject sceneObject);
-        public void RemoveSelectedObject();
+        public Action<Guid?> OnSceneObjectNodeRemoved { get; set; }
+        public Action<Guid?> OnSceneObjectNodeSelected { get; set; }
+        public void Add(Guid id, Guid? parentId, string name = "", bool isExpandable = true);
+        public Guid? RemoveSelectedNode();
 
     }
 }

@@ -102,19 +102,19 @@ namespace Core.Models.Graphics.Rendering
             Raylib.ClearBackground(ENVIRONMENT_COLOR);
             Raylib.BeginMode3D(Camera.ToCamera3D());
 
-            DrawSceneObjects(scene.Objects3D);
+            DrawSceneObjects(scene.Objects3D.Values);
 
             OnRender3D?.Invoke();
             Raylib.EndMode3D();
 
             DrawFPS();
-            DrawSceneObjects(scene.Objects2D);
+            DrawSceneObjects(scene.Objects2D.Values);
 
             OnRender2D?.Invoke();
             Raylib.EndDrawing();
         }
 
-        public SceneObject3D? RaycastObjects3D(List<SceneObject3D> objects) 
+        public SceneObject3D? RaycastObjects3D(IEnumerable<SceneObject3D> objects) 
         {
             Ray ray = Raylib.GetScreenToWorldRay(Raylib.GetMousePosition(), Camera.ToCamera3D());
             return Raycast(objects, ray);
@@ -278,7 +278,7 @@ namespace Core.Models.Graphics.Rendering
         }
 
         #region Drawing
-        private void DrawSceneObjects<T>(List<T> objects) where T : SceneObject
+        private void DrawSceneObjects<T>(IEnumerable<T> objects) where T : SceneObject
         {
             foreach (SceneObject obj in objects)
             {

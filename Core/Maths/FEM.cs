@@ -184,6 +184,8 @@ namespace Core.Maths
                             cubeResult += vertexResult;
                         }
 
+                        // Add minus (should be deleted)
+                        //if (j == 2) cubeResult *= -1;
                         yakobian[i, j] = cubeResult;
                     }
                 }
@@ -284,7 +286,6 @@ namespace Core.Maths
             float mu = E / (2 * (1 + nu));
 
             float[,] currentValuesA = new float[20, 20];
-            int gaussIndex = 0;
             for (int i = 0; i < 20; i++)
             {
                 for (int j = 0; j < 20; j++)
@@ -298,6 +299,8 @@ namespace Core.Maths
                     float a12 = 0;
                     float a13 = 0;
                     float a23 = 0;
+                    int gaussIndex = 0;
+
                     for (int c1 = 0; c1 < 3; c1++)
                     {
                         float constValue1 = constValues[c1];
@@ -316,6 +319,8 @@ namespace Core.Maths
                                 a12 += constValuesMultiplier * (float)functionsForValuesA[(1, 2)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
                                 a13 += constValuesMultiplier * (float)functionsForValuesA[(1, 3)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
                                 a23 += constValuesMultiplier * (float)functionsForValuesA[(2, 3)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
+
+                                gaussIndex++;
                             }
                         }
                     }
@@ -326,6 +331,9 @@ namespace Core.Maths
                     matrixMGE[20 * 0 + i, 20 * 1 + j] = a12;
                     matrixMGE[20 * 0 + i, 20 * 2 + j] = a13;
                     matrixMGE[20 * 1 + i, 20 * 2 + j] = a23;
+
+                    //matrixMGE[20 * 1 + i, 20 * 0 + j] = a12; // a21
+
                 }
             }
 

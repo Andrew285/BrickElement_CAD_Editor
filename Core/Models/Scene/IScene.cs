@@ -6,15 +6,15 @@ namespace Core.Models.Scene
 {
     public interface IScene
     {
-        public List<SceneObject3D> Objects3D { get; }
-        public List<SceneObject2D> Objects2D { get; }
+        public Dictionary<Guid, SceneObject3D> Objects3D { get; set; }
+        public Dictionary<Guid, SceneObject2D> Objects2D { get; set; }
         public ICamera? Camera { get; set; }
 
-        public event Action<SceneObject> OnObjectAddedToScene;
+        public event Action<SceneObject3D> OnObjectAddedToScene;
 
         public void AddObject3D(SceneObject3D obj);
         public bool RemoveObject3D(SceneObject3D obj);
-
+        public SceneObject3D? GetSceneObjectByID(Guid id);
         public void AddObject2D(SceneObject2D obj);
         public bool RemoveObject2D(SceneObject2D obj);
 

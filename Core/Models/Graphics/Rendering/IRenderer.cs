@@ -18,7 +18,7 @@ namespace Core.Models.Graphics.Rendering
         public void DrawText(string text, int posX, int posY, int fontSize, Color color);
         public Vector2 GetWorldToScreen(Vector3 value);
         public bool IsFaceVisible(Plane3D face);
-        public SceneObject3D? RaycastObjects3D(List<SceneObject3D> objects);
+        public SceneObject3D? RaycastObjects3D(IEnumerable<SceneObject3D> objects);
         public void DrawGradientTriangle(Vector3 v1, Color c1, Vector3 v2, Color c2, Vector3 v3, Color c3);
     }
 }
