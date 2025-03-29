@@ -2,9 +2,7 @@
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using Raylib_cs;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 
 namespace Core.Models.Geometry.Primitive.Plane
 {
@@ -17,6 +15,38 @@ namespace Core.Models.Geometry.Primitive.Plane
         public List<TrianglePlane3D> TrianglePlanes { get { return trianglePlanes; } }
 
         public FaceType FaceType { get; set; } = FaceType.NONE;
+
+        public override Raylib_cs.Color NonSelectedColor 
+        { 
+            get
+            {
+                return base.NonSelectedColor;
+            } 
+            set 
+            {
+                base.NonSelectedColor = value;
+                foreach (var trianglePlane in TrianglePlanes)
+                {
+                    trianglePlane.NonSelectedColor = value;
+                }
+            }
+        }
+
+        public override Raylib_cs.Color SelectedColor
+        {
+            get
+            {
+                return base.SelectedColor;
+            }
+            set
+            {
+                base.SelectedColor = value;
+                foreach (var trianglePlane in TrianglePlanes)
+                {
+                    trianglePlane.SelectedColor = value;
+                }
+            }
+        }
 
         public bool AreTriangleFacesDrawable
         {

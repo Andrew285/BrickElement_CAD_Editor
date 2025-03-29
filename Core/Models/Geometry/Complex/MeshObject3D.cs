@@ -4,8 +4,11 @@ using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using System.Linq;
-using System.Numerics;
+using Raylib_cs;
+using System.ComponentModel;
+using System.Drawing.Design;
+using Color = Raylib_cs.Color;
+using Mesh = Core.Models.Geometry.Complex.BrickElements.Mesh;
 
 namespace Core.Models.Geometry.Complex
 {
@@ -13,8 +16,68 @@ namespace Core.Models.Geometry.Complex
     {
         public IMesh Mesh { get; set; }
 
+        [Category("Вигляд")]
+        [DisplayName("Колір виділення")]
+        [Description("Колір об'єкта, як тільки він ВИДІЛЕНИЙ")]
+        [Editor(typeof(RaylibColorEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(RaylibColorConverter))]
+        public override Color SelectedColor
+        {
+            get
+            {
+                return selectedColor;
+            }
+            set
+            {
+                selectedColor = value;
+                color = selectedColor;
+            }
+        }
+        private Color selectedColor = Color.Red;
+
+        [Category("Вигляд")]
+        [DisplayName("Основний Колір")]
+        [Description("Колір об'єкта, як тільки він НЕ ВИДІЛЕНИЙ")]
+        [Editor(typeof(RaylibColorEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(RaylibColorConverter))]
+        public override Color NonSelectedColor
+        {
+            get
+            {
+                return nonSelectedColor;
+            }
+            set
+            {
+                nonSelectedColor = value;
+                color = nonSelectedColor;
+                
+                //set color to faces
+                foreach (var face in Mesh.FacesSet)
+                {
+                    face.NonSelectedColor = nonSelectedColor;
+                }
+
+                foreach (var face in Mesh.FacesDictionary.Values)
+                {
+                    face.NonSelectedColor = nonSelectedColor;
+                }
+            }
+        }
+        private Color nonSelectedColor = Color.Black;
+
+        [Category("Малювання")]
+        [DisplayName("Вершини")]
+        [Description("Визначає, чи малювати вершини об'єкта")]
         public bool AreVerticesDrawable { get; set; } = true;
+
+        [Category("Малювання")]
+        [DisplayName("Ребра")]
+        [Description("Визначає, чи малювати ребра об'єкта")]
         public bool AreEdgesDrawable { get; set; } = true;
+
+        [Category("Малювання")]
+        [DisplayName("Грані")]
+        [Description("Визначає, чи малювати грані об'єкта")]
         public bool AreFacesDrawable { get; set; } = true;
 
         //public bool AreTriangleFacesDrawable

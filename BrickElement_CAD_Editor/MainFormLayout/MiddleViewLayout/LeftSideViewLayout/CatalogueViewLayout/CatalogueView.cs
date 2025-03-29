@@ -1,4 +1,5 @@
 ﻿using App.Properties;
+using ReaLTaiizor.Util;
 using System.IO;
 using System.Reflection;
 using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout;
@@ -27,8 +28,8 @@ public class CatalogueView : PanelView, ICatalogueView
         generalTabPanel = CreateTabPanel();
         libraryTabPanel = CreateTabPanel();
 
-        TabPage generalTab = new TabPage("General") { BackColor = Color.LightGray };
-        TabPage libraryTab = new TabPage("Library") { BackColor = Color.LightGray };
+        TabPage generalTab = new TabPage("Загальні") { BackColor = Color.LightGray };
+        TabPage libraryTab = new TabPage("Користувацькі") { BackColor = Color.LightGray };
 
         generalTab.Controls.Add(generalTabPanel);
         libraryTab.Controls.Add(libraryTabPanel);
@@ -55,40 +56,57 @@ public class CatalogueView : PanelView, ICatalogueView
 
     private void LoadGeneralItems()
     {
-        List<string> items = new List<string> { "Cube", "Sphere", "Cylinder" };
-
-        foreach (var item in items)
+        List<string> items = new List<string> { "Шестигранник", "Сфера", "Циліндр" };
+        List<string> images = new List<string> 
         {
-            var itemPanel = CreateItemPanel(item, null);
+            @"D:\Projects\VisualStudio\BrickElement_CAD_Editor\BrickElement_CAD_Editor\Resources\Cube.png",
+            @"D:\Projects\VisualStudio\BrickElement_CAD_Editor\BrickElement_CAD_Editor\Resources\Sphere.png",
+            @"D:\Projects\VisualStudio\BrickElement_CAD_Editor\BrickElement_CAD_Editor\Resources\Pyramid.png",
+        };
+
+        for (int i = 0; i < 3; i++)
+        {
+            var itemPanel = CreateItemPanel(items[i], null, images[i]);
             generalTabPanel.Controls.Add(itemPanel);
         }
     }
 
     private void LoadLibraryItems()
     {
-        List<(string name, DateTime date)> items = new List<(string, DateTime)>
+        List<(string name, DateTime date, string image)> items = new List<(string, DateTime, string image)>
         {
-            ("Custom Block 1", DateTime.Now.AddDays(-5)),
-            ("Custom Block 2", DateTime.Now.AddDays(-10))
+            ("Крило літака", DateTime.Now.AddDays(-5), @"D:\Projects\VisualStudio\BrickElement_CAD_Editor\BrickElement_CAD_Editor\Resources\Wing.png"),
+            ("Зуб Людини", DateTime.Now.AddDays(-10), @"D:\Projects\VisualStudio\BrickElement_CAD_Editor\BrickElement_CAD_Editor\Resources\Tooth.png")
         };
 
-        foreach (var (name, date) in items)
+        foreach (var (name, date, image) in items)
         {
-            var itemPanel = CreateItemPanel(name, date);
+            var itemPanel = CreateItemPanel(name, date, image);
             libraryTabPanel.Controls.Add(itemPanel);
         }
     }
 
-    private Panel CreateItemPanel(string name, DateTime? date)
+    private Panel CreateItemPanel(string name, DateTime? date, string image)
     {
+        //Panel panelItem = new Panel
+        //{
+        //    Size = new Size(100, 100),
+        //    Margin = new Padding(10),
+        //    BackColor = Color.White,
+        //    BorderStyle = BorderStyle.FixedSingle
+        //};
 
-        Panel panelItem = new Panel
+        TableLayoutPanel tableLayoutPanel = new TableLayoutPanel
         {
-            Size = new Size(100, 100),
+            Size = new Size(100, 120),
             Margin = new Padding(10),
             BackColor = Color.White,
-            BorderStyle = BorderStyle.FixedSingle
+            BorderStyle = BorderStyle.FixedSingle,
         };
+        tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 60));
+        tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 20));
+        tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 20));
+
 
         //Assembly myAssembly = Assembly.GetExecutingAssembly();
         //Stream stream = myAssembly.GetManifestResourceStream("App.Resources.App_4dwIw093C1.png");
@@ -96,20 +114,23 @@ public class CatalogueView : PanelView, ICatalogueView
         {
             Size = new Size(80, 80),
 
-            //Image = Image.FromStream(stream), // Replace with actual image resource 
+            Image = Image.FromFile(image), // Replace with actual image resource 
             SizeMode = PictureBoxSizeMode.StretchImage,
-            Dock = DockStyle.Top
+            Dock = DockStyle.Fill
         };
 
         Label nameLabel = new Label
         {
             Text = name,
             TextAlign = ContentAlignment.MiddleCenter,
-            Dock = DockStyle.Bottom
+            Dock = DockStyle.Fill
         };
 
-        panelItem.Controls.Add(pictureBox);
-        panelItem.Controls.Add(nameLabel);
+        //panelItem.Controls.Add(pictureBox);
+        //panelItem.Controls.Add(nameLabel);
+
+        tableLayoutPanel.Controls.Add(pictureBox, 0, 0);
+        tableLayoutPanel.Controls.Add(nameLabel, 0, 1);
 
         if (date.HasValue)
         {
@@ -117,16 +138,17 @@ public class CatalogueView : PanelView, ICatalogueView
             {
                 Text = date.Value.ToShortDateString(),
                 TextAlign = ContentAlignment.MiddleCenter,
-                Dock = DockStyle.Bottom
+                Dock = DockStyle.Fill
             };
-            panelItem.Controls.Add(dateLabel);
+            tableLayoutPanel.Size = new Size(100, 140);
+            tableLayoutPanel.Controls.Add(dateLabel, 0, 2);
         }
 
         nameLabel.Click += (s, e) => OnItemClicked?.Invoke(name, e);
         pictureBox.Click += (s, e) => OnItemClicked?.Invoke(name, e);
-        panelItem.Click += (s, e) => OnItemClicked?.Invoke(name, e);
+        tableLayoutPanel.Click += (s, e) => OnItemClicked?.Invoke(name, e);
 
-        return panelItem;
+        return tableLayoutPanel;
     }
 
     public void Refresh()

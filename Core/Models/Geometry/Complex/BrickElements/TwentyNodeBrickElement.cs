@@ -2,65 +2,15 @@
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
-using Core.Services;
+using Core.Utils;
+using System.ComponentModel;
 using System.Numerics;
 
 namespace Core.Models.Geometry.Complex.BrickElements
 {
     public class TwentyNodeBrickElement : MeshObject3D
     {
-
-        // Center Vertices
-        protected List<BasePoint3D> CenterVertices {  get; set; }
-        public bool AreCenterVerticesDrawable { get; set; } = true;
-
-        protected Vector3 size;
-        public Vector3 Size { get { return size; } }
-
         private Vector3 divisionValue = Vector3.One;
-
-        //public float DivideX
-        //{
-        //    get
-        //    {
-        //        return divisionValue.X;
-        //    }
-
-        //    set
-        //    {
-        //        divisionValue = new Vector3(value, divisionValue.Y, divisionValue.Z);
-        //        Divide(divisionValue);
-        //    }
-        //}
-
-        //public float DivideY
-        //{
-        //    get
-        //    {
-        //        return divisionValue.Y;
-        //    }
-
-        //    set
-        //    {
-        //        divisionValue = new Vector3(divisionValue.X, value, divisionValue.Z);
-        //        Divide(divisionValue);
-        //    }
-        //}
-
-        //public float DivideZ
-        //{
-        //    get
-        //    {
-        //        return divisionValue.Z;
-        //    }
-
-        //    set
-        //    {
-        //        divisionValue = new Vector3(divisionValue.X, divisionValue.Y, value);
-        //        Divide(divisionValue);
-        //    }
-        //}
-
         public override bool IsSelected
         {
             get => base.IsSelected;
@@ -71,6 +21,20 @@ namespace Core.Models.Geometry.Complex.BrickElements
                 SetEdgesAreSelected(isSelected);
             }
         }
+
+        
+        [Category("Трансформація")]
+        [DisplayName("Розмір")]
+        [Description("Розмір об'єкта")]
+        [TypeConverter(typeof(Vector3Converter))]
+        public Vector3 Size { get { return size; } set { size = value; } }
+        protected Vector3 size;
+
+        [Category("Малювання")]
+        [DisplayName("Центральні вершини")]
+        [Description("Визначає чи малювати вершини, що знаходяться посередині кожної грані шестигранника")]
+        public bool AreCenterVerticesDrawable { get; set; } = true;
+        protected List<BasePoint3D> CenterVertices { get; set; }
 
 
         private void SetEdgesAreSelected(bool isSeleted)

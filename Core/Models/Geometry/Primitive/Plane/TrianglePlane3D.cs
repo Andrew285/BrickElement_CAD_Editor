@@ -13,7 +13,17 @@ namespace Core.Models.Geometry.Primitive.Plane
 
         public bool AreLinesDrawable { get; set; } = false;
 
-        public override Color NonSelectedColor { get; set; } = Color.LightGray;
+        public override Color NonSelectedColor
+        {
+            get
+            {
+                return Color.LightGray;
+            }
+            set
+            {
+                base.NonSelectedColor = value;
+            }
+        }
 
         public TrianglePlane3D(): base()
         {
