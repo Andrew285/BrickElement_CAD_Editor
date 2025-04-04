@@ -95,6 +95,17 @@ namespace Core.Models.Scene
             {
                 foreach (var obj in Objects3D)
                 {
+                    if (obj.Value is BrickElementSurface surface)
+                    {
+                        foreach (var be in surface.BrickElements.Values)
+                        {
+                            if (be.ID == id)
+                            {
+                                return be;
+                            }
+                        }
+                    }
+
                     if (obj.Value is MeshObject3D meshObject)
                     {
                         if (meshObject.Mesh.VerticesDictionary.ContainsKey(id))
@@ -142,7 +153,7 @@ namespace Core.Models.Scene
         {
             Objects3D.Remove(dividedBE.ID);
 
-            BrickElementSurface surface = BrickElementSurfaceInitializator.CreateFrom(dividedMesh, innerDividedElements);
+            BrickElementSurface surface = BrickElementSurfaceInitializator.CreateFrom(this, dividedMesh, innerDividedElements);
             AddObject3D(surface);
         }
     }

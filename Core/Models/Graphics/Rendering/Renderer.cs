@@ -6,6 +6,7 @@ using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Cameras;
 using Core.Models.Scene;
+using Core.Models.Text.VertexText;
 using Raylib_cs;
 using System.Drawing;
 using System.Numerics;
@@ -109,6 +110,20 @@ namespace Core.Models.Graphics.Rendering
 
             DrawFPS();
             DrawSceneObjects(scene.Objects2D.Values);
+
+            //Vector3 cameraPosition = Vector3.One;  // Camera's position in 3D world
+            //Vector3 cameraTarget = Camera.Target;      // Camera's target point in 3D world
+
+            //// Create a Camera2D struct to represent the 2D camera
+            //Vector2 cameraTarget2D = new Vector2(cameraTarget.X, cameraTarget.Y);  // Target in 2D (ignore Z)
+            //Vector2 cameraOffset2D = new Vector2(cameraPosition.X, cameraPosition.Y);  // Camera offset in 2D (ignore Z)
+
+            //// Set up the 2D camera
+            //Camera2D camera2D = new Camera2D(cameraOffset2D, cameraTarget2D, 0f, 10f);  // No rotation, default zoom
+            //Raylib.BeginMode2D(camera2D);
+            //AxisCube cube = new AxisCube(100, 100, new Vector3(2, 2, 2));
+            //scene.AddObject3D(cube);
+            //Raylib.EndMode2D();
 
             OnRender2D?.Invoke();
             Raylib.EndDrawing();

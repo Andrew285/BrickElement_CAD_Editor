@@ -85,9 +85,36 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
             scene.AddObject3D(cbe);
 
+            LoadSolver loadSolver = new LoadSolver();
+            var deriv = loadSolver.CalculateFaceDerivativesNT();
+            Console.WriteLine();
+
+            List<BasePoint3D> points = new List<BasePoint3D>() {
+                new Point3D(1.0f, 1.0f, 2.0f),
+                new Point3D(2.0f, 1.0f, 2.0f),
+                new Point3D(2.0f, 2.0f, 2.0f),
+                new Point3D(1.0f, 2.0f, 2.0f),
+                new Point3D(1.5f, 1.0f, 2.0f),
+                new Point3D(2.0f, 1.5f, 2.0f),
+                new Point3D(1.5f, 2.0f, 2.0f),
+                new Point3D(1.0f, 1.5f, 2.0f),
+            };
+
+            var xyzDntValues = loadSolver.CalculateFaceDerivativesXYZ(points, deriv);
+            Console.WriteLine();
+
+            var standartValues = loadSolver.CalculateStandartFaceDerivativesNT();
+            Console.WriteLine();
+
+            float p = 1f;
+            var fValues = loadSolver.CalculateValuesF(p, xyzDntValues, standartValues);
+            Console.WriteLine();
 
             //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Mesh.VerticesSet.ToList(), renderer);
             //scene.AddObject2D(vertexIndexGroup);
+
+            //AxisCube cube = new AxisCube(100, 100, new Vector3(2, 2, 2));
+            //scene.AddObject3D(cube);
 
 
             //BrickElementDivisionManager br = new BrickElementDivisionManager(scene);

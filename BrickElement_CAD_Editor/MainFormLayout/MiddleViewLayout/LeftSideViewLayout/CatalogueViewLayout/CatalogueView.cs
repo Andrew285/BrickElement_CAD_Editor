@@ -56,7 +56,7 @@ public class CatalogueView : PanelView, ICatalogueView
 
     private void LoadGeneralItems()
     {
-        List<string> items = new List<string> { "Шестигранник", "Сфера", "Циліндр" };
+        List<string> items = new List<string> { "Шестигранник", "Циліндр", "Піраміда" };
         List<string> images = new List<string> 
         {
             @"D:\Projects\VisualStudio\BrickElement_CAD_Editor\BrickElement_CAD_Editor\Resources\Cube.png",

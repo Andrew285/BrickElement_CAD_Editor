@@ -1,6 +1,7 @@
 ﻿using Core.Models.Geometry.Complex;
 using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Primitive.Line;
+using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Scene;
 using System.Numerics;
@@ -178,9 +179,16 @@ namespace Core.Services
                     {
                         Vector3 position = new Vector3(x, y, z);
                         List<BasePoint3D> elementVertices = GetVerticesByCenterPosition(position, vertexDictionary);
+                        List<BasePoint3D> elementCenterVertices = BrickElementInitializator.InitializeCenterVertices(elementVertices);
+                        List<BaseLine3D> elementEdges = BrickElementInitializator.InitializeEdges(elementVertices);
+                        List<BasePlane3D> elementFaces = BrickElementInitializator.InitializeFaces(elementVertices, elementCenterVertices);
+
+                        elementFaces[0].IsSelected = true;
 
                         IMesh mesh = new Mesh();
                         mesh.AddRange(elementVertices);
+                        mesh.AddRange(elementEdges);
+                        mesh.AddRange(elementFaces);
 
                         TwentyNodeBrickElement be = new TwentyNodeBrickElement(position, new Vector3(1 / nValues.X, 1 / nValues.Y, 1 / nValues.Z));
                         be.Mesh = mesh;
@@ -227,6 +235,44 @@ namespace Core.Services
                 allPoints[new Vector3(x - 1, y + 1, z)],    // -1, 1, 0
             };
         }
+
+        //private List<BaseLine3D> GetEdgesByCenterPosition(Vector3 centerPosition, Dictionary<Vector3, BasePoint3D> allPoints)
+        //{
+        //    float x = centerPosition.X;
+        //    float y = centerPosition.Y;
+        //    float z = centerPosition.Z;
+
+        //    return new List<BaseLine3D>()
+        //    {
+        //        // Corner Vertices
+        //        allPoints[new Vector3(x - 1, y - 1, z - 1)],    // -1, -1, 1
+        //        allPoints[new Vector3(x + 1, y - 1, z - 1)],    // 1, -1, 1
+        //        allPoints[new Vector3(x + 1, y - 1, z + 1)],    // 1, -1, -1
+        //        allPoints[new Vector3(x - 1, y - 1, z + 1)],    // -1, -1, -1
+
+        //        allPoints[new Vector3(x - 1, y + 1, z - 1)],    // -1, 1, 1
+        //        allPoints[new Vector3(x + 1, y + 1, z - 1)],    // 1, 1, 1
+        //        allPoints[new Vector3(x + 1, y + 1, z + 1)],    // 1, 1, -1
+        //        allPoints[new Vector3(x - 1, y + 1, z + 1)],    // -1, 1, -1
+
+        //        // Middle Vertices
+        //        allPoints[new Vector3(x, y - 1, z - 1)],    // 0, -1, 1
+        //        allPoints[new Vector3(x + 1, y - 1, z)],    // 1, -1, 0
+        //        allPoints[new Vector3(x, y - 1, z + 1)],    // 0, -1, -1
+        //        allPoints[new Vector3(x - 1, y - 1, z)],    // -1, -1, 0
+
+        //        allPoints[new Vector3(x - 1, y, z - 1)],    // -1, 0, 1
+        //        allPoints[new Vector3(x + 1, y, z - 1)],    // 1, 0, 1
+        //        allPoints[new Vector3(x + 1, y, z + 1)],    // 1, 0, -1
+        //        allPoints[new Vector3(x - 1, y, z + 1)],    // -1, 0, -1
+
+        //        allPoints[new Vector3(x, y + 1, z - 1)],    // 0, 1, 1
+        //        allPoints[new Vector3(x + 1, y + 1, z)],    // 1, 1, 0
+        //        allPoints[new Vector3(x, y + 1, z + 1)],    // 0, 1, -1
+        //        allPoints[new Vector3(x - 1, y + 1, z)],    // -1, 1, 0
+        //    };
+        //}
+
 
         //private List<BaseLine3D> GenerateEdges()
         //{

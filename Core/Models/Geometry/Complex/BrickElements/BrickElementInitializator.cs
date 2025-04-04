@@ -47,9 +47,9 @@ namespace Core.Models.Geometry.Complex.BrickElements
                         throw new Exception("Incorrect Local Index");
                     }
 
-                    BasePoint3D secondVertex = vertex.Clone();
+                    BasePoint3D secondVertex = new Point3D(vertex);
                     //secondVertex.LocalIndex = secondFaceLocalIndex;
-                    secondVertex.Position += normal * 1f;
+                    secondVertex.Position += normal * 2f;
                     resultVertices[secondFaceLocalIndex] = secondVertex;
 
                     //secondPlanePoints.Add(secondVertex);
@@ -66,8 +66,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
                         int middleIndex = i / 2;
                         int localIndex = middleFacesVerticesIndices[middleIndex];
 
-                        BasePoint3D middleVertex = vertex.Clone();
-                        middleVertex.Position += normal * 0.5f;
+                        BasePoint3D middleVertex = new Point3D(vertex);
+                        middleVertex.Position += normal * 1f;
                         resultVertices[localIndex] = middleVertex;
                     }
                 }

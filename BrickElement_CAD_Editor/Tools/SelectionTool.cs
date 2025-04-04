@@ -1,4 +1,5 @@
-﻿using Core.Models.Graphics.Rendering;
+﻿using Core.Models.Geometry.Complex;
+using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Raylib_cs;
 using System.Numerics;
@@ -62,7 +63,14 @@ namespace App.Tools
                 return;
             }
 
-            SelectedObject = (SelectionToolMode == SelectionToolMode.OBJECT_SELECTION) ? (SceneObject3D)SelectedObject.Parent : SelectedObject;
+            //SelectedObject = (SelectionToolMode == SelectionToolMode.OBJECT_SELECTION) ? (SceneObject3D)SelectedObject.Parent : SelectedObject;
+            switch (SelectionToolMode)
+            {
+                case SelectionToolMode.SURFACE_SELECTION: SelectedObject = scene.GetSurfaceOf(SelectedObject); break;
+                case SelectionToolMode.OBJECT_SELECTION: SelectedObject = (SceneObject3D)SelectedObject.Parent; break;
+                case SelectionToolMode.COMPONENT_SELECTION:  break;
+            }
+
             if (SelectedObject.IsSelected)
             {
                 SelectedObject.IsSelected = false;
@@ -104,7 +112,23 @@ namespace App.Tools
         {
             foreach (var obj in scene.Objects3D.Values)
             {
-                obj.IsSelected = false;
+                if (obj is MeshObject3D meshObject)
+                {
+                    foreach (var v in meshObject.Mesh.VerticesSet)
+                    {
+                        v.IsSelected = false;
+                    }
+
+                    foreach (var e in meshObject.Mesh.EdgesSet)
+                    {
+                        e.IsSelected = false;
+                    }
+
+                    foreach (var f in meshObject.Mesh.FacesSet)
+                    {
+                        f.IsSelected = false;
+                    }
+                }
             }
         }
 

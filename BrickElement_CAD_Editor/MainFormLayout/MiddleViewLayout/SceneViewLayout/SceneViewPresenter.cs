@@ -36,8 +36,6 @@ namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
 
         public void HandleOnSceneRendered(object sender, EventArgs e)
         {
-            Mesh mesh = Raylib.GenMeshCube(10, 10, 10);
-
             while (!Raylib.WindowShouldClose())
             {
                 HandleMouseClick();

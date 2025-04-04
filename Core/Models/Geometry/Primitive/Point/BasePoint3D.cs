@@ -41,6 +41,11 @@ namespace Core.Models.Geometry.Primitive.Point
         {
         }
 
+        public BasePoint3D(BasePoint3D point)
+        {
+            this.Position = point.Position;
+        }
+
         public override void Draw(IRenderer renderer)
         {
             float distanceToTarget = renderer.Camera.DistanceToTarget;

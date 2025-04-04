@@ -2,7 +2,6 @@
 using Core.Models.Geometry.Primitive.Point;
 using MathNet.Numerics.LinearAlgebra;
 using System.Numerics;
-using System.Reflection;
 
 namespace Core.Maths
 {

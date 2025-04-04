@@ -14,6 +14,8 @@ namespace App.Tools
     {
         public abstract ToolType Type { get; set; }
 
+        public Action<KeyboardKey> OnKeyboardKeyPressed;
+
         public BaseTool() 
         {
         
@@ -21,7 +23,10 @@ namespace App.Tools
 
         public virtual void HandleKeyPress()
         {
-            
+            if (Raylib.IsKeyPressed(KeyboardKey.Q))
+            {
+                OnKeyboardKeyPressed(KeyboardKey.Q);
+            }
         }
 
         public void HandleMouseClick(MouseButton button, int x, int y)

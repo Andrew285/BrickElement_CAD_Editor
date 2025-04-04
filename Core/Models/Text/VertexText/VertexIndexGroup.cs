@@ -1,5 +1,4 @@
 ﻿using Core.Models.Geometry.Primitive.Point;
-using Core.Models.Graphics.Rendering;
 using Core.Models.Text.ObjectLabels;
 using Core.Models.Text.ObjectLables;
 
@@ -7,11 +6,8 @@ namespace Core.Models.Text.VertexText
 {
     public class VertexIndexGroup : LableGroupObject
     {
-        private IRenderer renderer;
-
-        public VertexIndexGroup(List<BasePoint3D> vertices, IRenderer renderer): base()
+        public VertexIndexGroup(List<BasePoint3D> vertices): base()
         {
-            this.renderer = renderer;
             labelObjects = InitializeTextObjects(vertices);
         }
 

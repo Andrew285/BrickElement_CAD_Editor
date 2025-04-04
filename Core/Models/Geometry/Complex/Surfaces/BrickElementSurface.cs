@@ -2,7 +2,11 @@
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
+using Core.Models.Graphics.Rendering;
+using Core.Models.Scene;
+using Core.Models.Text.VertexText;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using System.Windows.Forms.VisualStyles;
 
 namespace Core.Models.Geometry.Complex.Surfaces
@@ -23,8 +27,43 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
         private GlobalIndexManager globalIndexManager;
 
-        public BrickElementSurface(): base() 
+        private bool areVertexLabelsDrawable = false;
+        public bool AreVertexLabelsDrawable
         {
+            get
+            {
+                return areVertexLabelsDrawable;
+            }
+            set
+            {
+                areVertexLabelsDrawable = value;
+                VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(GetGlobalVertices());
+                OnVertexLabelsDrawn?.Invoke(vertexIndexGroup);
+            }
+        }
+
+        public override bool IsSelected 
+        {
+            get => base.IsSelected;
+            set
+            {
+                base.IsSelected = value;
+                foreach (BaseLine3D edge in Mesh.EdgesSet)
+                {
+                    if (edge.IsDrawable)
+                    {
+                        edge.IsSelected = value;
+                    }
+                }
+            }
+        }
+
+        private IScene scene;
+        public Action<SceneObject2D> OnVertexLabelsDrawn;
+
+        public BrickElementSurface(IScene scene): base() 
+        {
+            OnVertexLabelsDrawn += scene.AddObject2D;
             globalIndexManager = new GlobalIndexManager();
         }
 
@@ -87,10 +126,14 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
             //Create New BrickElement with new Vertices
             TwentyNodeBrickElement? newBE = BrickElementInitializator.CreateFrom(newPointsForBE);
-            BrickElements.Add(brickElementCounter, newBE);
+            if (newBE != null)
+            {
+                newBE.Parent = this;
+                BrickElements.Add(brickElementCounter, newBE);
 
-            // Generate Global Indices
-            GlobalVertexIndices = globalIndexManager.GenerateGlobalVertices(Mesh.VerticesSet);
+                // Generate Global Indices
+                GlobalVertexIndices = globalIndexManager.GenerateGlobalVertices(Mesh.VerticesSet);
+            }
         }
 
         public TwentyNodeBrickElement AddBrickElementToFace(BasePlane3D faceToAttach)

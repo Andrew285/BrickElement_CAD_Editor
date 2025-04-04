@@ -33,7 +33,7 @@ public class ExtraToolsView : IExtraToolsView
         imageList = new ImageList();
         imageList.ImageSize = new Size(30, 30); // Increase icon size
         imageList.Images.Add("add", Image.FromFile("D:\\Downloads\\pixil-frame-0 (3).png"));
-        imageList.Images.Add("edit", Image.FromFile("D:\\Downloads\\Adding_Cube.png"));
+        imageList.Images.Add("divide", Image.FromFile("D:\\Downloads\\pixil-frame-0__5_-removebg-preview.png"));
         imageList.Images.Add("settings", Image.FromFile("D:\\Downloads\\Adding_Cube.png"));
         imageList.Images.Add("delete", Image.FromFile("D:\\Downloads\\Adding_Cube.png"));
         imageList.Images.Add("toggle", Image.FromFile("D:\\Downloads\\Adding_Cube.png"));
@@ -158,29 +158,39 @@ public class ExtraToolsView : IExtraToolsView
 
         // Create ToolStripComboBox
         comboBox = new ToolStripComboBox();
+        comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 
         // Create ToolStripMenuItems with images
+        ToolStripMenuItem surfaceSelection = new ToolStripMenuItem("Surface Mode", imageList.Images["add"]);
         ToolStripMenuItem objectSelectionItem = new ToolStripMenuItem("Object Mode", imageList.Images["add"]);
         ToolStripMenuItem componentSelectionItem = new ToolStripMenuItem("Component Mode", imageList.Images["edit"]);
 
+        surfaceSelection.Click += (s, e) => OnSelectionModeChanged?.Invoke(SelectionToolMode.SURFACE_SELECTION);
         objectSelectionItem.Click += (s, e) => OnSelectionModeChanged?.Invoke(SelectionToolMode.OBJECT_SELECTION);
         componentSelectionItem.Click += (s, e) => OnSelectionModeChanged?.Invoke(SelectionToolMode.COMPONENT_SELECTION);
 
+        comboBox.Items.Add(surfaceSelection);
         comboBox.Items.Add(objectSelectionItem);
         comboBox.Items.Add(componentSelectionItem);
 
+        // Handle selection change
         comboBox.SelectedIndexChanged += (s, e) =>
         {
-            if (comboBox.SelectedIndex == 0)
+            switch (comboBox.SelectedIndex)
             {
-                OnSelectionModeChanged?.Invoke(SelectionToolMode.OBJECT_SELECTION);
-            }
-            else
-            {
-                OnSelectionModeChanged?.Invoke(SelectionToolMode.COMPONENT_SELECTION);
+                case 0:
+                    OnSelectionModeChanged?.Invoke(SelectionToolMode.SURFACE_SELECTION);
+                    break;
+                case 1:
+                    OnSelectionModeChanged?.Invoke(SelectionToolMode.OBJECT_SELECTION);
+                    break;
+                case 2:
+                    OnSelectionModeChanged?.Invoke(SelectionToolMode.COMPONENT_SELECTION);
+                    break;
             }
         };
 
+        // Set default selection
         comboBox.SelectedIndex = 0;
         toolStrip.Items.Add(comboBox);
 
@@ -194,7 +204,7 @@ public class ExtraToolsView : IExtraToolsView
         toolStrip.Items.Add(addButton);
 
         // Add Button
-        ToolStripButton divideBrickElementButton = new ToolStripButton("Divide", imageList.Images["add"]);
+        ToolStripButton divideBrickElementButton = new ToolStripButton("Divide", imageList.Images["divide"]);
         divideBrickElementButton.Text = "";
         divideBrickElementButton.ToolTipText = "Divide selected brick element";
         divideBrickElementButton.Click += (s, e) => OnDivideBrickElementItemClicked?.Invoke(this, e);
@@ -204,6 +214,12 @@ public class ExtraToolsView : IExtraToolsView
 
     public void ChangeSelectionMode(SelectionToolMode mode)
     {
-        comboBox.SelectedIndex = (mode == SelectionToolMode.OBJECT_SELECTION) ? 0 : 1;
+        //comboBox.SelectedIndex = (mode == SelectionToolMode.OBJECT_SELECTION) ? 0 : 1;
+        switch (mode)
+        {
+            case SelectionToolMode.SURFACE_SELECTION: comboBox.SelectedIndex = 0; break;
+            case SelectionToolMode.OBJECT_SELECTION: comboBox.SelectedIndex = 1; break;
+            case SelectionToolMode.COMPONENT_SELECTION: comboBox.SelectedIndex = 2; break;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
+using Core.Models.Scene;
 using System.Numerics;
 
 namespace Tests.Core.Models.Geometry.Complex.Surfaces
@@ -15,7 +16,7 @@ namespace Tests.Core.Models.Geometry.Complex.Surfaces
         [Test]
         public void InitializingTest()
         {
-            BrickElementSurface brickElementSurfaceTest = new BrickElementSurface();
+            BrickElementSurface brickElementSurfaceTest = new BrickElementSurface(new Scene());
 
             Assert.IsNotNull(brickElementSurfaceTest);
             Assert.IsNotNull(brickElementSurfaceTest.Mesh.VerticesSet);
@@ -35,7 +36,7 @@ namespace Tests.Core.Models.Geometry.Complex.Surfaces
         public void AddOneCubeTest()
         {
             CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-            BrickElementSurface brickElementSurface = new BrickElementSurface();
+            BrickElementSurface brickElementSurface = new BrickElementSurface(new Scene());
 
             brickElementSurface.AddBrickElement(cbe);
 
@@ -51,7 +52,7 @@ namespace Tests.Core.Models.Geometry.Complex.Surfaces
         {
             CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
             //TwentyNodeBrickElement? cbe2 = BrickElementInitializator.CreateFrom(cbe.Faces[1], cbe);
-            BrickElementSurface brickElementSurface = new BrickElementSurface();
+            BrickElementSurface brickElementSurface = new BrickElementSurface(new Scene());
 
             brickElementSurface.AddBrickElement(cbe);
             brickElementSurface.AddBrickElementToFace(cbe.Mesh.FacesSet.ElementAt(1));
