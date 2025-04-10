@@ -1,6 +1,8 @@
 ﻿using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Geometry.Primitive.Point;
 using MathNet.Numerics.LinearAlgebra;
+using System.Linq;
 using System.Numerics;
 
 namespace Core.Maths
@@ -8,10 +10,10 @@ namespace Core.Maths
     public static class FEM
     {
         private static double[] gaussValues = { -Math.Sqrt(0.6), 0, Math.Sqrt(0.6)};
-        private static float[] constValues = { 5.0f/9, 8.0f/9, 5.0f/9 };
+        private static double[] constValues = { 5.0f/9, 8.0f/9, 5.0f/9 };
 
-        private static Dictionary<int, Func<Vector3, Vector3, double>> cornerDerivativeFunctions =
-            new Dictionary<int, Func<Vector3, Vector3, double>>
+        private static Dictionary<int, Func<Vector3Double, Vector3Double, double>> cornerDerivativeFunctions =
+            new Dictionary<int, Func<Vector3Double, Vector3Double, double>>
             {
                 { 0, (constValue, vertexValue) => (1.0 / 8) * (constValue.Y * vertexValue.Y + 1) * (constValue.Z * vertexValue.Z + 1) *
                     (vertexValue.X * (vertexValue.X * constValue.X + constValue.Y * vertexValue.Y + constValue.Z * vertexValue.Z - 2) + vertexValue.X * (vertexValue.X * constValue.X + 1))
@@ -24,8 +26,8 @@ namespace Core.Maths
                 },
             };
 
-        private static Dictionary<int, Func<Vector3, Vector3, double>> middleDerivativeFunctions =
-            new Dictionary<int, Func<Vector3, Vector3, double>>
+        private static Dictionary<int, Func<Vector3Double, Vector3Double, double>> middleDerivativeFunctions =
+            new Dictionary<int, Func<Vector3Double, Vector3Double, double>>
             {
                 { 0, 
                         (constValue, vertexValue) => 
@@ -74,8 +76,8 @@ namespace Core.Maths
             };
 
 
-        private static Dictionary<(int, int), Func<Dictionary<int, List<float>>, int, int, float, float, float, double>> functionsForValuesA =
-            new Dictionary<(int, int), Func<Dictionary<int, List<float>>, int, int, float, float, float, double>>
+        private static Dictionary<(int, int), Func<Dictionary<int, List<double>>, int, int, double, double, double, double>> functionsForValuesA =
+            new Dictionary<(int, int), Func<Dictionary<int, List<double>>, int, int, double, double, double, double>>
             {
                         // Diagonal Values
                         { (1, 1), (dValues, i, j, lambda, nu, mu ) => lambda * (1 - nu) * (dValues[i][0] * dValues[j][0]) + 
@@ -95,12 +97,12 @@ namespace Core.Maths
             };
 
 
-        public static Dictionary<Vector3, Dictionary<int, List<float>>> CalculateDFIABG(TwentyNodeBrickElement brickElement)
+        public static Dictionary<Vector3Double, Dictionary<int, List<double>>> CalculateDFIABG(TwentyNodeBrickElement brickElement)
         {
             Dictionary<Guid, BasePoint3D> vertices = brickElement.Mesh.VerticesDictionary;
 
             // result derivatives values
-            Dictionary<Vector3, Dictionary<int, List<float>>> DFIABG = new Dictionary<Vector3, Dictionary<int, List<float>>>();
+            Dictionary<Vector3Double, Dictionary<int, List<double>>> DFIABG = new Dictionary<Vector3Double, Dictionary<int, List<double>>>();
 
             for (int c1 = 0; c1 < 3; c1++)
             {
@@ -108,10 +110,10 @@ namespace Core.Maths
                 {
                     for (int c3 = 0; c3 < 3; c3++)
                     {
-                        Vector3 currentGaussValue = new Vector3((float)gaussValues[c1], (float)gaussValues[c2], (float)gaussValues[c3]);
+                        Vector3Double currentGaussValue = new Vector3Double(gaussValues[c1], gaussValues[c2], gaussValues[c3]);
                         if (!DFIABG.ContainsKey(currentGaussValue))
                         {
-                            DFIABG.Add(currentGaussValue, new Dictionary<int, List<float>>());
+                            DFIABG.Add(currentGaussValue, new Dictionary<int, List<double>>());
                         }
 
                         for (int j = 0; j < 3; j++)
@@ -122,7 +124,7 @@ namespace Core.Maths
                                 BasePoint3D vertex = vertices.ElementAt(i).Value;
 
                                 // find appropriate function from dictionary
-                                Func<Vector3, Vector3, double> derivativeFunction = cornerDerivativeFunctions[0];
+                                Func<Vector3Double, Vector3Double, double> derivativeFunction = cornerDerivativeFunctions[0];
                                 if (i >= 0 && i < 8)
                                 {
                                     derivativeFunction = cornerDerivativeFunctions[j];
@@ -137,13 +139,13 @@ namespace Core.Maths
                                 }
 
                                 // get derivate value
-                                float value = (float)derivativeFunction(currentGaussValue, vertex.Position);
+                                double value = derivativeFunction(currentGaussValue, new Vector3Double(vertex.Position.X, vertex.Position.Y, vertex.Position.Z));
 
 
                                 // add value to array
                                 if (!DFIABG[currentGaussValue].ContainsKey(i))
                                 {
-                                    DFIABG[currentGaussValue].Add(i, new List<float>());
+                                    DFIABG[currentGaussValue].Add(i, new List<double>());
                                 }
                                 DFIABG[currentGaussValue][i].Add(value);
                             }
@@ -155,16 +157,16 @@ namespace Core.Maths
             return DFIABG;
         }
 
-        public static float[][,] CalculateYakobians(TwentyNodeBrickElement be, Dictionary<Vector3, Dictionary<int, List<float>>> derivatives)
+        public static double[][,] CalculateYakobians(TwentyNodeBrickElement be, Dictionary<Vector3Double, Dictionary<int, List<double>>> derivatives)
         {
-            float[][,] yakobians = new float[27][,];
+            double[][,] yakobians = new double[27][,];
 
             for (int d = 0; d < derivatives.Count; d++)
             {
-                Vector3 gaussValue = derivatives.ElementAt(d).Key;
+                Vector3Double gaussValue = derivatives.ElementAt(d).Key;
                 var derivativesByCube = derivatives.ElementAt(d).Value;
 
-                float[,] yakobian = new float[3, 3];
+                double[,] yakobian = new double[3, 3];
 
                 // alpha, beta, gamma
                 for (int i = 0; i < 3; i++)
@@ -172,14 +174,14 @@ namespace Core.Maths
                     // x, y, z
                     for (int j = 0; j < 3; j++)
                     {
-                        float cubeResult = 0;
+                        double cubeResult = 0;
                         for (int k = 0; k < 20; k++)
                         {
                             BasePoint3D vertexOfCube = be.Mesh.VerticesSet.ElementAt(k);
-                            float valueByAxis = vertexOfCube[j];
+                            double valueByAxis = vertexOfCube[j];
 
-                            float deriv = derivativesByCube[k][i];
-                            float vertexResult = valueByAxis * deriv; // changed i -> j
+                            double deriv = derivativesByCube[k][i];
+                            double vertexResult = valueByAxis * deriv; // changed i -> j
                             cubeResult += vertexResult;
                         }
 
@@ -193,7 +195,7 @@ namespace Core.Maths
             return yakobians;
         }
 
-        public static float Determinant3x3(float[,] matrix)
+        public static double Determinant3x3(double[,] matrix)
         {
             if (matrix.GetLength(0) != 3 || matrix.GetLength(1) != 3)
                 throw new ArgumentException("Matrix should be 3x3");
@@ -203,39 +205,39 @@ namespace Core.Maths
                  + matrix[0, 2] * (matrix[1, 0] * matrix[2, 1] - matrix[1, 1] * matrix[2, 0]);
         }
 
-        public static float Determinant3x3_2(float[,] matrix)
+        public static double Determinant3x3_2(double[,] matrix)
         {
             return matrix[0, 0] * matrix[1, 1] * matrix[2, 2] + matrix[0, 1] * matrix[1, 2] * matrix[2, 0] + matrix[0, 2] * matrix[1, 0] * matrix[2, 1] - matrix[0, 2] * matrix[1, 1] * matrix[2, 0] - matrix[0, 0] * matrix[1, 2] * matrix[2, 1] - matrix[0, 1] * matrix[1, 0] * matrix[2, 2];
         }
 
 
-        public static Dictionary<Vector3, Dictionary<int, List<float>>>? CalculateDFIXYZ(float[][,] yakobians, Dictionary<Vector3, Dictionary<int, List<float>>> dfiabg)
+        public static Dictionary<Vector3Double, Dictionary<int, List<double>>>? CalculateDFIXYZ(double[][,] yakobians, Dictionary<Vector3Double, Dictionary<int, List<double>>> dfiabg)
         {
             if (yakobians.GetLength(0) != dfiabg.Count) return null;
 
-            Dictionary<Vector3, Dictionary<int, List<float>>> dfixyz = new Dictionary<Vector3, Dictionary<int, List<float>>>();
+            Dictionary<Vector3Double, Dictionary<int, List<double>>> dfixyz = new Dictionary<Vector3Double, Dictionary<int, List<double>>>();
             for (int i = 0; i < yakobians.Length; i++)
             {
-                float[,] currentYakobian = yakobians[i];
+                double[,] currentYakobian = yakobians[i];
 
-                Dictionary<int, List<float>> currentDerivativesByElement = dfiabg.ElementAt(i).Value;
-                Vector3 gaussValue = dfiabg.ElementAt(i).Key;
+                Dictionary<int, List<double>> currentDerivativesByElement = dfiabg.ElementAt(i).Value;
+                Vector3Double gaussValue = dfiabg.ElementAt(i).Key;
 
                 for (int j = 0; j < currentDerivativesByElement.Count; j++)
                 {
-                    float[] currentDerivativeValues = currentDerivativesByElement[j].ToArray();
-                    float[] resultVector = SolveLinearSystem2(currentYakobian, currentDerivativeValues);
+                    double[] currentDerivativeValues = currentDerivativesByElement[j].ToArray();
+                    double[] resultVector = SolveLinearSystem2(currentYakobian, currentDerivativeValues);
 
                     // add value to array
                     if (!dfixyz.ContainsKey(gaussValue))
                     {
-                        dfixyz.Add(gaussValue, new Dictionary<int, List<float>>());
+                        dfixyz.Add(gaussValue, new Dictionary<int, List<double>>());
                     }
 
 
                     if (!dfixyz[gaussValue].ContainsKey(j))
                     {
-                        dfixyz[gaussValue].Add(j, new List<float>());
+                        dfixyz[gaussValue].Add(j, new List<double>());
                     }
                     dfixyz[gaussValue][j].AddRange(resultVector);
                 }
@@ -244,28 +246,28 @@ namespace Core.Maths
             return dfixyz;
         }
 
+        //static float[] SolveLinearSystem(float[,] A, float[] B)
+        //{
+        //    float detA = Determinant3x3(A);
+        //    if (Math.Abs(detA) < 1e-9)
+        //        return null;
+
+        //    float[,] Ax = { { B[0], A[0, 1], A[0, 2] }, { B[1], A[1, 1], A[1, 2] }, { B[2], A[2, 1], A[2, 2] } };
+        //    float[,] Ay = { { A[0, 0], B[0], A[0, 2] }, { A[1, 0], B[1], A[1, 2] }, { A[2, 0], B[2], A[2, 2] } };
+        //    float[,] Az = { { A[0, 0], A[0, 1], B[0] }, { A[1, 0], A[1, 1], B[1] }, { A[2, 0], A[2, 1], B[2] } };
+
+        //    float x = Determinant3x3(Ax) / detA;
+        //    float y = Determinant3x3(Ay) / detA;
+        //    float z = Determinant3x3(Az) / detA;
+
+        //    return [x, y, z];
+        //}
+
         // Cramer Solving method
-        static float[] SolveLinearSystem(float[,] A, float[] B)
+        public static double[] SolveLinearSystem2(double[,] matrix, double[] b)
         {
-            float detA = Determinant3x3(A);
-            if (Math.Abs(detA) < 1e-9)
-                return null;
-
-            float[,] Ax = { { B[0], A[0, 1], A[0, 2] }, { B[1], A[1, 1], A[1, 2] }, { B[2], A[2, 1], A[2, 2] } };
-            float[,] Ay = { { A[0, 0], B[0], A[0, 2] }, { A[1, 0], B[1], A[1, 2] }, { A[2, 0], B[2], A[2, 2] } };
-            float[,] Az = { { A[0, 0], A[0, 1], B[0] }, { A[1, 0], A[1, 1], B[1] }, { A[2, 0], A[2, 1], B[2] } };
-
-            float x = Determinant3x3(Ax) / detA;
-            float y = Determinant3x3(Ay) / detA;
-            float z = Determinant3x3(Az) / detA;
-
-            return [x, y, z];
-        }
-
-        static float[] SolveLinearSystem2(float[,] matrix, float[] b)
-        {
-            var A = Matrix<float>.Build.DenseOfArray(matrix);
-            var B = MathNet.Numerics.LinearAlgebra.Vector<float>.Build.Dense(b);
+            var A = Matrix<double>.Build.DenseOfArray(matrix);
+            var B = MathNet.Numerics.LinearAlgebra.Vector<double>.Build.Dense(b);
 
             if (Math.Abs(A.Determinant()) < 1e-9)
                 return null; // Система не має єдиного розв'язку
@@ -273,51 +275,51 @@ namespace Core.Maths
             return A.Solve(B).AsArray();
         }
 
-        public static float[,] CalculateMGE(float[][,] yakobians, Dictionary<Vector3, Dictionary<int, List<float>>> dfixyz)
+        public static double[,] CalculateMGE(double[][,] yakobians, Dictionary<Vector3Double, Dictionary<int, List<double>>> dfixyz)
         {
-            float resultSummary = 0;
+            double resultSummary = 0;
 
 
-            float[,] matrixMGE = new float[60, 60];
-            float E = 1f;
-            float nu = 0.3f;
-            float lambda = E / ((1 + nu) * (1 - 2 * nu));
-            float mu = E / (2 * (1 + nu));
+            double[,] matrixMGE = new double[60, 60];
+            double E = 1f;
+            double nu = 0.3f;
+            double lambda = E / ((1 + nu) * (1 - 2 * nu));
+            double mu = E / (2 * (1 + nu));
 
-            float[,] currentValuesA = new float[20, 20];
+            double[,] currentValuesA = new double[20, 20];
             for (int i = 0; i < 20; i++)
             {
                 for (int j = 0; j < 20; j++)
                 {
-                    float[] diagonalValuesA = new float[3]; // a11, a22, a33, 
-                    float[] upperValuesA = new float[3]; // a12, a13, a23
+                    double[] diagonalValuesA = new double[3]; // a11, a22, a33, 
+                    double[] upperValuesA = new double[3]; // a12, a13, a23
 
-                    float a11 = 0;
-                    float a22 = 0;
-                    float a33 = 0;
-                    float a12 = 0;
-                    float a13 = 0;
-                    float a23 = 0;
+                    double a11 = 0;
+                    double a22 = 0;
+                    double a33 = 0;
+                    double a12 = 0;
+                    double a13 = 0;
+                    double a23 = 0;
                     int gaussIndex = 0;
 
                     for (int c1 = 0; c1 < 3; c1++)
                     {
-                        float constValue1 = constValues[c1];
+                        double constValue1 = constValues[c1];
                         for (int c2 = 0; c2 < 3; c2++)
                         {
-                            float constValue2 = constValues[c2];
+                            double constValue2 = constValues[c2];
                             for (int c3 = 0; c3 < 3; c3++)
                             {
-                                float constValue3 = constValues[c3];
-                                float constValuesMultiplier = constValue1 * constValue2 * constValue3;
+                                double constValue3 = constValues[c3];
+                                double constValuesMultiplier = constValue1 * constValue2 * constValue3;
 
-                                float det = Determinant3x3_2(yakobians[gaussIndex]);
-                                a11 += constValuesMultiplier * (float)functionsForValuesA[(1, 1)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
-                                a22 += constValuesMultiplier * (float)functionsForValuesA[(2, 2)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
-                                a33 += constValuesMultiplier * (float)functionsForValuesA[(3, 3)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
-                                a12 += constValuesMultiplier * (float)functionsForValuesA[(1, 2)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
-                                a13 += constValuesMultiplier * (float)functionsForValuesA[(1, 3)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
-                                a23 += constValuesMultiplier * (float)functionsForValuesA[(2, 3)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
+                                double det = Determinant3x3_2(yakobians[gaussIndex]);
+                                a11 += constValuesMultiplier * functionsForValuesA[(1, 1)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
+                                a22 += constValuesMultiplier * functionsForValuesA[(2, 2)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
+                                a33 += constValuesMultiplier * functionsForValuesA[(3, 3)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
+                                a12 += constValuesMultiplier * functionsForValuesA[(1, 2)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
+                                a13 += constValuesMultiplier * functionsForValuesA[(1, 3)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
+                                a23 += constValuesMultiplier * functionsForValuesA[(2, 3)](dfixyz.ElementAt(gaussIndex).Value, i, j, lambda, nu, mu) * det;
 
                                 gaussIndex++;
                             }
@@ -330,13 +332,83 @@ namespace Core.Maths
                     matrixMGE[20 * 0 + i, 20 * 1 + j] = a12;
                     matrixMGE[20 * 0 + i, 20 * 2 + j] = a13;
                     matrixMGE[20 * 1 + i, 20 * 2 + j] = a23;
-
-                    //matrixMGE[20 * 1 + i, 20 * 0 + j] = a12; // a21
-
+                    matrixMGE[20 * 1 + i, 20 * 0 + j] = a12; // a21
+                    matrixMGE[20 * 2 + i, 20 * 0 + j] = a13; // a31
+                    matrixMGE[20 * 2 + i, 20 * 1 + j] = a23; // a32
                 }
             }
 
             return matrixMGE;
+        }
+
+        //public static float[,] Transpose(float[,] original)
+        //{
+        //    int rows = original.GetLength(0);
+        //    int cols = original.GetLength(1);
+
+        //    float[,] transposed = new float[cols, rows];
+        //    for (int i = 0; i < rows; i++)
+        //    {
+        //        for (int j = 0; j < cols; j++)
+        //        {
+        //            transposed[j, i] = original[i, j];
+        //        }
+        //    }
+        //    return transposed;
+        //}
+
+        public static double[,] CreateCombinedMatrix(List<double[,]> mgeMatrices, Dictionary<Guid, List<int>> localVertexIndices, int globalVerticesCount)
+        {
+            double[,] resultCombinedMatrix = new double[3 * globalVerticesCount, 3 * globalVerticesCount];
+            for (int m = 0; m < mgeMatrices.Count; m++)
+            {
+                double[,] currentMgeMatrix = mgeMatrices[m];
+                List<int> vertexIndices = localVertexIndices.ElementAt(m).Value;
+                for (int i = 0; i < currentMgeMatrix.GetLength(0); i++)
+                {
+                    for (int j = 0; j < currentMgeMatrix.GetLength(1); j++)
+                    {
+                        // 0 for 0-19,
+                        // 1 for 20-39,
+                        // 2 for 40-59
+                        int rowAxisIndex = i / 20; 
+                        int colAxisIndex = j / 20;
+
+                        // place on defined position
+                        int rowIndex = 3 * vertexIndices[i % 20] + rowAxisIndex;
+                        int columnIndex = 3 * vertexIndices[j % 20] + colAxisIndex;
+                        resultCombinedMatrix[rowIndex, columnIndex] += currentMgeMatrix[i, j];
+                    }
+                }
+            }
+
+            //ZU, make big values
+            for (int i = 0; i < 21; i++)
+            {
+                int index = i;
+                for (int j = 0; j < 3; j++)
+                {
+                    int axisIndex = 3 * index + j;
+                    resultCombinedMatrix[axisIndex, axisIndex] = 1000000000000000000000000000f;
+                }
+            }
+
+
+            return resultCombinedMatrix;
+        }
+
+        public struct Vector3Double
+        {
+            public double X;
+            public double Y;
+            public double Z;
+
+            public Vector3Double(double x, double y, double z)
+            {
+                X = x;
+                Y = y;
+                Z = z;
+            }
         }
     }
 }

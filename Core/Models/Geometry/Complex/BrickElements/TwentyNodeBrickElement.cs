@@ -36,6 +36,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
         public bool AreCenterVerticesDrawable { get; set; } = true;
         protected List<BasePoint3D> CenterVertices { get; set; }
 
+        public Dictionary<Guid, int> LocalIndices { get; private set; }
 
         private void SetEdgesAreSelected(bool isSeleted)
         {
@@ -53,6 +54,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
         public TwentyNodeBrickElement(Vector3 position, Vector3 size): base()
         {
             CenterVertices = new List<BasePoint3D>();
+            LocalIndices = new Dictionary<Guid, int>();
 
             this.position = position;
             this.size = size;
@@ -61,8 +63,18 @@ namespace Core.Models.Geometry.Complex.BrickElements
         public TwentyNodeBrickElement(List<BasePoint3D> vertices, List<BasePoint3D> centerVertices, List<BaseLine3D> edges, List<BasePlane3D> faces): base(vertices, edges, faces)
         {
             this.CenterVertices = centerVertices;
+            LocalIndices = new Dictionary<Guid, int>();
 
+            InitializeLocalIndices();
             // TODO Add Position and Size
+        }
+
+        protected void InitializeLocalIndices()
+        {
+            for (int i = 0; i < Mesh.VerticesSet.Count; i++)
+            {
+                LocalIndices.Add(Mesh.VerticesSet.ElementAt(i).ID, i);
+            }
         }
 
         public override void Draw(IRenderer renderer)

@@ -44,7 +44,7 @@ namespace Tests.Core.Models.Geometry.Complex.Surfaces
             Assert.That(brickElementSurface.Mesh.VerticesCount, Is.EqualTo(20));
             Assert.That(brickElementSurface.Mesh.EdgesCount, Is.EqualTo(24));
             Assert.That(brickElementSurface.Mesh.FacesCount, Is.EqualTo(6));
-            Assert.IsNotNull(brickElementSurface.BrickElements[0]);
+            Assert.IsNotNull(brickElementSurface.BrickElements.ElementAt(0).Value);
         }
 
         [Test]

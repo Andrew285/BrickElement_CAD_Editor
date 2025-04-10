@@ -197,7 +197,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
                     // Left Top Corner Square
                     new TrianglePlane3D(CenterVertices[0], Vertices[16], Vertices[12]),
                     new TrianglePlane3D(Vertices[16], Vertices[4], Vertices[12]),
-                }),
+                },
+                new List<BasePoint3D>() { Vertices[0], Vertices[1], Vertices[5], Vertices[4], Vertices[8], Vertices[13], Vertices[16], Vertices[12] }),
 
 
                 ///       RIGHT FACE
@@ -227,7 +228,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
                     // Left Top Corner Square
                     new TrianglePlane3D(CenterVertices[1], Vertices[17], Vertices[13]),
                     new TrianglePlane3D(Vertices[17], Vertices[5], Vertices[13]),
-                }),
+                },
+                new List<BasePoint3D>() { Vertices[1], Vertices[2], Vertices[6], Vertices[5], Vertices[9], Vertices[14], Vertices[17], Vertices[13] }),
 
 
                 ///       BACK FACE
@@ -257,7 +259,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
                     // Left Top Corner Square
                     new TrianglePlane3D(CenterVertices[2], Vertices[18], Vertices[14]),
                     new TrianglePlane3D(Vertices[18], Vertices[6], Vertices[14]),
-                }),
+                },
+                new List<BasePoint3D>() { Vertices[2], Vertices[3], Vertices[7], Vertices[6], Vertices[10], Vertices[15], Vertices[18], Vertices[14] }),
 
                 
                 ///       LEFT FACE
@@ -287,7 +290,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
                     // Left Top Corner Square
                     new TrianglePlane3D(CenterVertices[3], Vertices[19], Vertices[15]),
                     new TrianglePlane3D(Vertices[19], Vertices[7], Vertices[15]),
-                }),
+                },
+                new List<BasePoint3D>() { Vertices[3], Vertices[0], Vertices[4], Vertices[7], Vertices[11], Vertices[12], Vertices[19], Vertices[15] }),
 
                 ///       BOTTOM FACE
                 /// 
@@ -316,7 +320,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
                     // Left Top Corner Square
                     new TrianglePlane3D(CenterVertices[4], Vertices[10], Vertices[9]),
                     new TrianglePlane3D(Vertices[9], Vertices[10], Vertices[2]),
-                }),
+                },
+                new List<BasePoint3D>() { Vertices[1], Vertices[0], Vertices[3], Vertices[2], Vertices[8], Vertices[11], Vertices[10], Vertices[9] }),
 
                 ///       TOP FACE
                 /// 
@@ -345,7 +350,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
                     // Left Top Corner Square
                     new TrianglePlane3D(CenterVertices[5], Vertices[18], Vertices[19]),
                     new TrianglePlane3D(Vertices[18], Vertices[7], Vertices[19]),
-                })
+                },
+                new List<BasePoint3D>() { Vertices[4], Vertices[5], Vertices[6], Vertices[7], Vertices[16], Vertices[17], Vertices[18], Vertices[19] })
             };
 
             faces[0].FaceType = FaceType.FRONT;
@@ -371,9 +377,24 @@ namespace Core.Models.Geometry.Complex.BrickElements
                 l.Value.Parent = be;
             }
 
-            foreach (var p in be.Mesh.FacesDictionary)
+            foreach (var f in be.Mesh.FacesDictionary)
             {
-                p.Value.Parent = be;
+                f.Value.Parent = be;
+            }
+
+            foreach (var p in be.Mesh.VerticesSet)
+            {
+                p.Parent = be;
+            }
+
+            foreach (var l in be.Mesh.EdgesSet)
+            {
+                l.Parent = be;
+            }
+
+            foreach (var f in be.Mesh.FacesSet)
+            {
+                f.Parent = be;
             }
         }
 

@@ -10,10 +10,6 @@ namespace Core.Models.Geometry.Complex.BrickElements
         public CubeBrickElement(Vector3 position, Vector3 size): base(position, size)
         {
             Mesh.AddRange(InitializeVertices());
-            //centerVertices = InitializeCenterVertices();
-            //edges = InitializeEdges();
-            //faces = InitializeFaces();
-
             CenterVertices = BrickElementInitializator.InitializeCenterVertices(Mesh.VerticesSet);
             List<BaseLine3D> edges = BrickElementInitializator.InitializeEdges(Mesh.VerticesSet.ToList());
             List<BasePlane3D> faces = BrickElementInitializator.InitializeFaces(Mesh.VerticesSet.ToList(), CenterVertices);
@@ -21,6 +17,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
             Mesh.AddRange(edges);
             Mesh.AddRange(faces);
 
+            InitializeLocalIndices();
             BrickElementInitializator.SetParent(this);
         }
 

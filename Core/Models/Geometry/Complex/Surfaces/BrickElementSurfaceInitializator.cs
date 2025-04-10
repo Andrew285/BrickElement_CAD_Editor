@@ -10,8 +10,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
             BrickElementSurface surface = new BrickElementSurface(scene);
             surface.Mesh = mesh;
 
-            int i = 0;
-            surface.BrickElements = innerDividedMesh.ToDictionary(_ => i++, element => element);
+            surface.BrickElements = innerDividedMesh.ToDictionary(_ => _.ID, element => element);
 
             // set parent
             foreach (var be in surface.BrickElements.Values)

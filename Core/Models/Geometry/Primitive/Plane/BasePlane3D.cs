@@ -2,6 +2,8 @@
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
+using Core.Resources;
+using Core.Services;
 using System.Numerics;
 
 namespace Core.Models.Geometry.Primitive.Plane
@@ -10,11 +12,28 @@ namespace Core.Models.Geometry.Primitive.Plane
     {
         protected List<TrianglePlane3D> trianglePlanes;
         protected List<BasePoint3D> vertices;
+        public List<BasePoint3D> correctOrderVertices;
 
         public List<BasePoint3D> Vertices { get { return vertices; } }
         public List<TrianglePlane3D> TrianglePlanes { get { return trianglePlanes; } }
 
         public FaceType FaceType { get; set; } = FaceType.NONE;
+
+        // Face Pressure
+        [LocalizedCategory(PropertyConstants.C_APPEARANCE)]
+        public float Pressure
+        {
+            get
+            {
+                return pressure;
+            }
+            set
+            {
+                pressure = value;
+                BrickElementPressureManager.GetInstance().AddFaceForPressure(this);
+            }
+        }
+        private float pressure = 0f;
 
         public override Raylib_cs.Color NonSelectedColor 
         { 
@@ -104,13 +123,15 @@ namespace Core.Models.Geometry.Primitive.Plane
             vertices = new List<BasePoint3D>();
             trianglePlanes = new List<TrianglePlane3D>();
             position = GetCenter();
+            correctOrderVertices = new List<BasePoint3D>();
         }
 
-        public BasePlane3D(List<TrianglePlane3D> planes) : base()
+        public BasePlane3D(List<TrianglePlane3D> planes, List<BasePoint3D> correctOrderVertices) : base()
         {
             trianglePlanes = planes;
             vertices = GetUniqueVertices(trianglePlanes);
             position = GetCenter();
+            this.correctOrderVertices = correctOrderVertices;
 
             // Order Vertices
             vertices = vertices.OrderBy(p => p.X)

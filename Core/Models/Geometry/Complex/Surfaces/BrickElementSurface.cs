@@ -13,15 +13,19 @@ namespace Core.Models.Geometry.Complex.Surfaces
 {
     public class BrickElementSurface: MeshObject3D
     {
-        private Dictionary<Guid, HashSet<int>> verticesMap {  get; set; } = new Dictionary<Guid, HashSet<int>>();
+        private Dictionary<Guid, HashSet<Guid>> verticesMap {  get; set; } = new Dictionary<Guid, HashSet<Guid>>();
 
-        private Dictionary<Guid, HashSet<int>> edgesMap { get; set; } = new Dictionary<Guid, HashSet<int>>();
+        private Dictionary<Guid, HashSet<Guid>> edgesMap { get; set; } = new Dictionary<Guid, HashSet<Guid>>();
 
-        public Dictionary<Guid, HashSet<int>> facesMap { get; set; } = new Dictionary<Guid, HashSet<int>>();
+        public Dictionary<Guid, HashSet<Guid>> facesMap { get; set; } = new Dictionary<Guid, HashSet<Guid>>();
 
-        public Dictionary<int, TwentyNodeBrickElement> BrickElements { get; set; } = new Dictionary<int, TwentyNodeBrickElement>();
+        public Dictionary<Guid, TwentyNodeBrickElement> BrickElements { get; set; } = new Dictionary<Guid, TwentyNodeBrickElement>();
 
-        public Dictionary<Guid, int> GlobalVertexIndices { get; private set; } = new Dictionary<Guid, int>();
+        //public Dictionary<Guid, VertexIndex> GlobalVertexIndices { get; private set; } = new Dictionary<Guid, VertexIndex>();
+
+        public Dictionary<Guid, int> GlobalVertexIndices { get; set; } = new Dictionary<Guid, int>();
+        public Dictionary<Guid, List<int>> LocalVertexIndices { get; set; } = new Dictionary<Guid, List<int>>();
+
 
         private int brickElementCounter = -1;
 
@@ -78,16 +82,16 @@ namespace Core.Models.Geometry.Complex.Surfaces
             {
                 if (Mesh.Add(vertex))
                 {
-                    verticesMap.Add(vertex.ID, new HashSet<int>());
+                    verticesMap.Add(vertex.ID, new HashSet<Guid>());
                 }
 
                 if (Mesh.VerticesSet.Contains(vertex)) 
                 {
                     // TODO Try to optimise a bit
                     Guid id = Mesh.VerticesDictionary.FirstOrDefault(kv => kv.Value.Equals(vertex)).Key;
-                    verticesMap[id].Add(brickElementCounter);
+                    verticesMap[id].Add(newBrickElement.ID);
+                    newPointsForBE.Add(Mesh.VerticesDictionary[id]);
                 }
-                newPointsForBE.Add(vertex);
             }
 
             // Add Edges
@@ -96,13 +100,13 @@ namespace Core.Models.Geometry.Complex.Surfaces
             {
                 if (Mesh.Add(edge))
                 {
-                    edgesMap.Add(edge.ID, new HashSet<int>());
+                    edgesMap.Add(edge.ID, new HashSet<Guid>());
                 }
 
                 if (Mesh.EdgesSet.Contains(edge))
                 {
                      Guid id = Mesh.EdgesDictionary.FirstOrDefault(kv => kv.Value.Equals(edge)).Key;
-                    edgesMap[id].Add(brickElementCounter);
+                    edgesMap[id].Add(newBrickElement.ID);
                 }
             }
 
@@ -112,13 +116,13 @@ namespace Core.Models.Geometry.Complex.Surfaces
             {
                 if (Mesh.Add(face))
                 {
-                    facesMap.Add(face.ID, new HashSet<int>());
+                    facesMap.Add(face.ID, new HashSet<Guid>());
                 }
 
                 if (Mesh.FacesSet.Contains(face))
                 {
                     Guid id = Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
-                    facesMap[id].Add(brickElementCounter);
+                    facesMap[id].Add(newBrickElement.ID);
                 }
             }
 
@@ -129,10 +133,11 @@ namespace Core.Models.Geometry.Complex.Surfaces
             if (newBE != null)
             {
                 newBE.Parent = this;
-                BrickElements.Add(brickElementCounter, newBE);
+                BrickElements.Add(newBrickElement.ID, newBE);
 
                 // Generate Global Indices
                 GlobalVertexIndices = globalIndexManager.GenerateGlobalVertices(Mesh.VerticesSet);
+                LocalVertexIndices = globalIndexManager.GetLocalIndices(BrickElements, GlobalVertexIndices, Mesh.VerticesDictionary);
             }
         }
 
@@ -143,8 +148,8 @@ namespace Core.Models.Geometry.Complex.Surfaces
                 return null;
             }
 
-            int beIndex = facesMap[faceToAttach.ID].ElementAt(0);
-            TwentyNodeBrickElement beToAttach = BrickElements[beIndex];
+            Guid beID = facesMap[faceToAttach.ID].ElementAt(0);
+            TwentyNodeBrickElement beToAttach = BrickElements[beID];
             TwentyNodeBrickElement? newBrickElement = BrickElementInitializator.CreateFrom(faceToAttach, beToAttach);
 
             if (newBrickElement != null)

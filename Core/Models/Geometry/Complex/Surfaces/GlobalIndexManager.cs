@@ -1,4 +1,5 @@
-﻿using Core.Models.Geometry.Primitive.Point;
+﻿using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Primitive.Point;
 using System.Numerics;
 
 namespace Core.Models.Geometry.Complex.Surfaces
@@ -50,17 +51,41 @@ namespace Core.Models.Geometry.Complex.Surfaces
         {
             Dictionary<Guid, int> resultVertices = new Dictionary<Guid, int>();
 
-            int counter = 0;
+            int globalIndex = 0;
             foreach (Vector3 layer in sortedLayers)
             {
                 foreach (BasePoint3D vertex in verticesByLayers[layer])
                 {
-                    resultVertices.Add(vertex.ID, counter);
-                    counter++;
+                    TwentyNodeBrickElement parent = (TwentyNodeBrickElement)vertex.Parent;
+                    int localIndex = parent.LocalIndices[vertex.ID];
+                    resultVertices.Add(vertex.ID, globalIndex);
+                    globalIndex++;
                 }
             }
 
             return resultVertices;
+        }
+
+        public Dictionary<Guid, List<int>> GetLocalIndices(Dictionary<Guid, TwentyNodeBrickElement> brickElements, Dictionary<Guid, int> globalVertices, Dictionary<Guid, BasePoint3D> vertices)
+        {
+            Dictionary<Guid, List<int>> resultLocalIndices = new Dictionary<Guid, List<int>>();
+            foreach (KeyValuePair<Guid, TwentyNodeBrickElement> be in brickElements)
+            {
+                foreach (BasePoint3D vertex in be.Value.Mesh.VerticesSet)
+                {
+                    Guid currentVertexId = vertex.ID;
+                    if (resultLocalIndices.Count == 0 || !resultLocalIndices.ContainsKey(be.Key))
+                    {
+                        resultLocalIndices.Add(be.Key, new List<int>());
+                    }
+
+                    //int localIndex = be.Value.LocalIndices[currentVertexId];
+                    int globalIndex = globalVertices[vertex.ID];
+                    resultLocalIndices[be.Key].Add(globalIndex);
+                }
+               
+            }
+            return resultLocalIndices;
         }
 
         private Vector3 GetLayerOf(BasePoint3D vertex) 
@@ -86,5 +111,11 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
             return (int)Math.Floor(vertexValue / layerSize);
         }
+    }
+
+    public struct VertexIndex
+    {
+        public int Global;
+        public int Local;
     }
 }

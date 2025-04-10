@@ -34,8 +34,10 @@ namespace Core.Models.Geometry.Primitive.Point
             get => Position.Z;
         }
 
+        // Radius of vertex
         [LocalizedCategory(PropertyConstants.C_APPEARANCE)]
         public float Radius { get; set; } = 0.1f;
+
 
         public BasePoint3D() : base()
         {

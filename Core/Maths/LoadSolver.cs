@@ -1,4 +1,7 @@
-﻿using Core.Models.Geometry.Primitive.Point;
+﻿using Core.Models.Geometry.Primitive.Plane;
+using Core.Models.Geometry.Primitive.Plane.Face;
+using Core.Models.Geometry.Primitive.Point;
+using Core.Utils;
 using MathNet.Numerics.Distributions;
 using System.Collections.Generic;
 using System.Numerics;
@@ -11,6 +14,16 @@ namespace Core.Maths
         private List<Vector2> localFacePoints;
         private List<double> gaussValues = new List<double>() { -Math.Sqrt(0.6), 0, Math.Sqrt(0.6)};
         private static float[] constValues = { 5.0f / 9, 8.0f / 9, 5.0f / 9 };
+
+        private Dictionary<FaceType, List<int>> allFaceLocalIndices = new Dictionary<FaceType, List<int>>
+        {
+            { FaceType.FRONT, new List<int> { 0, 1, 5, 4, 8, 13, 16, 12 } },
+            { FaceType.RIGHT, new List<int> { 1, 2, 6, 5, 9, 14, 17, 13 } },
+            { FaceType.BACK, new List<int> { 2, 3, 7, 6, 10, 15, 18, 14 } },
+            { FaceType.LEFT, new List<int> { 3, 0, 4, 7, 11, 12, 19, 15 } },
+            { FaceType.BOTTOM, new List<int> { 1, 0, 3, 2, 8, 11, 10, 9 } },
+            { FaceType.TOP, new List<int> { 4, 5, 6, 7, 16, 17, 18, 19 } },
+        };
 
         private Dictionary<LOCAL_AXIS, Func<double, double, float, float, double>> cornerDerivativeFunctions =
         new Dictionary<LOCAL_AXIS, Func<double, double, float, float, double>>
@@ -50,10 +63,10 @@ namespace Core.Maths
                 (1.0 / 4) * (constTauGauss * vertexTau + 1) * (constEtaGauss * vertexEta + 1) * (constEtaGauss * vertexEta + vertexTau * constTauGauss - 1);
 
         private Func<double, double, float, float, double> verticalMiddleStandartFunctions = (constEtaGauss, constTauGauss, vertexEta, vertexTau) =>
-                (1 / 2) * (-constEtaGauss * constEtaGauss + 1) * (vertexTau * constTauGauss + 1);
+                (1.0 / 2) * (-constEtaGauss * constEtaGauss + 1) * (vertexTau * constTauGauss + 1);
 
         private Func<double, double, float, float, double> horizontalMiddleStandartFunctions = (constEtaGauss, constTauGauss, vertexEta, vertexTau) =>
-                (1 / 2) * (-constTauGauss * constTauGauss + 1) * (vertexEta * constEtaGauss + 1);
+                (1.0 / 2) * (-constTauGauss * constTauGauss + 1) * (vertexEta * constEtaGauss + 1);
 
         public LoadSolver()
         {
@@ -221,55 +234,82 @@ namespace Core.Maths
             return resultFaceStandartValuesNT;
         }
 
-        public float[] CalculateValuesF(
+        public double[] CalculateValuesF(
             float p,
-            Dictionary<Vector2Double, double[,]> xyzDNT,
+            BasePlane3D face,
+            Dictionary<Vector2Double, Dictionary<LOCAL_AXIS, List<double>>> deriv,
             Dictionary<Vector2Double, List<double>> standartNT)
         {
-            float[] resultF = new float[60];
+            var xyzDntValues = CalculateFaceDerivativesXYZ(face.correctOrderVertices, deriv);
+            double[] resultF = new double[60];
+            List<int> faceLocalIndices = allFaceLocalIndices[face.FaceType];
             for (int i = 0; i < 8; i++)
             {
-                float f1 = 0;
-                float f2 = 0;
-                float f3 = 0;
+                double f1 = 0;
+                double f2 = 0;
+                double f3 = 0;
                 int gaussIndex = 0;
-                double[,] currentXyzDNT = xyzDNT.ElementAt(i).Value;
-                List<double> currentStandartValues = standartNT.ElementAt(i).Value;
                 for (int c1 = 0; c1 < 3; c1++)
                 {
-                    float constValue1 = constValues[c1];
+                    double constValue1 = constValues[c1];
                     for (int c2 = 0; c2 < 3; c2++)
                     {
-                        float constValue2 = constValues[c2];
-                        float constValuesMultiplier = constValue1 * constValue2 * p;
+                        double constValue2 = constValues[c2];
+                        double constValuesMultiplier = constValue1 * constValue2 * p;
 
-                        f1 += (float)(constValuesMultiplier * ((currentXyzDNT[1, 0] * currentXyzDNT[2, 1] - currentXyzDNT[2, 0] * currentXyzDNT[1, 1]) * currentStandartValues[i]));
-                        f2 += (float)(constValuesMultiplier * ((currentXyzDNT[2, 0] * currentXyzDNT[0, 1] - currentXyzDNT[0, 0] * currentXyzDNT[2, 1]) * currentStandartValues[i]));
-                        f3 += (float)(constValuesMultiplier * ((currentXyzDNT[0, 0] * currentXyzDNT[1, 1] - currentXyzDNT[1, 0] * currentXyzDNT[0, 1]) * currentStandartValues[i]));
+                        double[,] currentXyzDNT = xyzDntValues.ElementAt(gaussIndex).Value;
+                        List<double> currentStandartValues = standartNT.ElementAt(gaussIndex).Value;
+                        double currentStandartValue = currentStandartValues[i];
+
+                        f1 += constValuesMultiplier * ((currentXyzDNT[1, 0] * currentXyzDNT[2, 1] - currentXyzDNT[2, 0] * currentXyzDNT[1, 1]) * currentStandartValue);
+                        f2 += constValuesMultiplier * ((currentXyzDNT[2, 0] * currentXyzDNT[0, 1] - currentXyzDNT[0, 0] * currentXyzDNT[2, 1]) * currentStandartValue);
+                        f3 += constValuesMultiplier * ((currentXyzDNT[0, 0] * currentXyzDNT[1, 1] - currentXyzDNT[1, 0] * currentXyzDNT[0, 1]) * currentStandartValue);
 
                         gaussIndex++;
                     }
                 }
-
-                resultF[20 * 0 + i] = f1;
-                resultF[20 * 1 + i] = f2;
-                resultF[20 * 2 + i] = f3;
+                int vertexPosition = faceLocalIndices[i];
+                resultF[20 * 0 + vertexPosition] = f1;
+                resultF[20 * 1 + vertexPosition] = f2;
+                resultF[20 * 2 + vertexPosition] = f3;
             }
             return resultF;
         }
 
-        public enum LOCAL_AXIS { N, T };
-
-        public struct Vector2Double
+        public double[] CreateCombinedF(List<double[]> allValuesF, Dictionary<Guid, List<int>> localVertexIndices, int globalVerticesCount)
         {
-            double X;
-            double Y;
-
-            public Vector2Double(double x, double y)
+            double[] resultCombinedVector = new double[3 * globalVerticesCount];
+            for (int v = 0; v < allValuesF.Count; v++)
             {
-                X = x;
-                Y = y;
+                double[] currentVectorF = allValuesF[v];
+                List<int> vertexIndices = localVertexIndices.ElementAt(v).Value;
+                for (int i = 0; i < currentVectorF.Length; i++)
+                {
+                    // 0 for 0-19,
+                    // 1 for 20-39,
+                    // 2 for 40-59
+                    int axisIndex = i / 20;
+
+                    // place on defined position
+                    int index = 3 * vertexIndices[i % 20] + axisIndex;
+                    resultCombinedVector[index] += currentVectorF[i];
+                }
             }
+            return resultCombinedVector;
+        }
+    }
+
+    public enum LOCAL_AXIS { N, T };
+
+    public struct Vector2Double
+    {
+        double X;
+        double Y;
+
+        public Vector2Double(double x, double y)
+        {
+            X = x;
+            Y = y;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Core.Maths;
 using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
+using Core.Models.Scene;
 using System.Numerics;
 
 namespace Tests.Core.Maths
@@ -49,7 +50,8 @@ namespace Tests.Core.Maths
             CubeBrickElement cbe011 = new CubeBrickElement(new Vector3(0, 1, 1), new Vector3(1, 1, 1));
             CubeBrickElement cbe111 = new CubeBrickElement(new Vector3(1, 1, 1), new Vector3(1, 1, 1));
 
-            BrickElementSurface surface = new BrickElementSurface();
+            IScene scene = new Scene();
+            BrickElementSurface surface = new BrickElementSurface(scene);
             surface.AddBrickElement(cbe000);
             surface.AddBrickElement(cbe100);
             surface.AddBrickElement(cbe010);
@@ -67,12 +69,14 @@ namespace Tests.Core.Maths
 
             List<float[][,]> allYakobians = new List<float[][,]>() 
             {
-                FEM.CalculateYakobians(surface.BrickElements[0], dfiabg),
-                FEM.CalculateYakobians(surface.BrickElements[1], dfiabg),
-                FEM.CalculateYakobians(surface.BrickElements[2], dfiabg),
-                FEM.CalculateYakobians(surface.BrickElements[3], dfiabg),
-                FEM.CalculateYakobians(surface.BrickElements[4], dfiabg),
-                FEM.CalculateYakobians(surface.BrickElements[5], dfiabg)
+                FEM.CalculateYakobians(surface.BrickElements.ElementAt(0).Value, dfiabg),
+                FEM.CalculateYakobians(surface.BrickElements.ElementAt(1).Value, dfiabg),
+                FEM.CalculateYakobians(surface.BrickElements.ElementAt(2).Value, dfiabg),
+                FEM.CalculateYakobians(surface.BrickElements.ElementAt(3).Value, dfiabg),
+                FEM.CalculateYakobians(surface.BrickElements.ElementAt(4).Value, dfiabg),
+                FEM.CalculateYakobians(surface.BrickElements.ElementAt(5).Value, dfiabg),
+                FEM.CalculateYakobians(surface.BrickElements.ElementAt(6).Value, dfiabg),
+                FEM.CalculateYakobians(surface.BrickElements.ElementAt(7).Value, dfiabg),
             };
 
 

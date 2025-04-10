@@ -1,13 +1,13 @@
-﻿using Core.Maths;
+﻿using App.DataTableLayout;
+using ConsoleTables;
+using Core.Maths;
 using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
-using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using Core.Models.Text.VertexText;
-using Core.Services;
+using System.Data;
 using System.Numerics;
-using System.Text;
+using static Core.Maths.FEM;
 
 namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout
 {
@@ -30,26 +30,27 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
         {
             // CASE 1
 
-            //CubeBrickElement cbe000 = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe100 = new CubeBrickElement(new Vector3(1, 0, 0), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe010 = new CubeBrickElement(new Vector3(0, 1, 0), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe110 = new CubeBrickElement(new Vector3(1, 1, 0), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe001 = new CubeBrickElement(new Vector3(0, 0, 1), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe101 = new CubeBrickElement(new Vector3(1, 0, 1), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe011 = new CubeBrickElement(new Vector3(0, 1, 1), new Vector3(1, 1, 1));
-            //CubeBrickElement cbe111 = new CubeBrickElement(new Vector3(1, 1, 1), new Vector3(1, 1, 1));
+            CubeBrickElement cbe000 = new CubeBrickElement(new Vector3(0.5f, 0.5f, -0.5f), new Vector3(1, 1, 1));
+            CubeBrickElement cbe100 = new CubeBrickElement(new Vector3(1.5f, 0.5f, -0.5f), new Vector3(1, 1, 1));
+            CubeBrickElement cbe010 = new CubeBrickElement(new Vector3(0.5f, 1.5f, -0.5f), new Vector3(1, 1, 1));
+            CubeBrickElement cbe110 = new CubeBrickElement(new Vector3(1.5f, 1.5f, -0.5f), new Vector3(1, 1, 1));
+            CubeBrickElement cbe001 = new CubeBrickElement(new Vector3(0.5f, 0.5f, -1.5f), new Vector3(1, 1, 1));
+            CubeBrickElement cbe101 = new CubeBrickElement(new Vector3(1.5f, 0.5f, -1.5f), new Vector3(1, 1, 1));
+            CubeBrickElement cbe011 = new CubeBrickElement(new Vector3(0.5f, 1.5f, -1.5f), new Vector3(1, 1, 1));
+            CubeBrickElement cbe111 = new CubeBrickElement(new Vector3(1.5f, 1.5f, -1.5f), new Vector3(1, 1, 1));
 
-            //BrickElementSurface surface = new BrickElementSurface();
-            //surface.AddBrickElement(cbe000);
-            //surface.AddBrickElement(cbe100);
-            //surface.AddBrickElement(cbe010);
-            //surface.AddBrickElement(cbe110);
-            //surface.AddBrickElement(cbe001);
-            //surface.AddBrickElement(cbe101);
-            //surface.AddBrickElement(cbe011);
-            //surface.AddBrickElement(cbe111);
+            BrickElementSurface surface = new BrickElementSurface(scene);
+            surface.AddBrickElement(cbe000);
+            surface.AddBrickElement(cbe100);
+            surface.AddBrickElement(cbe001);
+            surface.AddBrickElement(cbe101);
 
-            //scene.AddObject3D(surface);
+            surface.AddBrickElement(cbe010);
+            surface.AddBrickElement(cbe110);
+            surface.AddBrickElement(cbe011);
+            surface.AddBrickElement(cbe111);
+
+            scene.AddObject3D(surface);
 
             //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(surface.GetGlobalVertices(), renderer);
             //scene.AddObject2D(vertexIndexGroup);
@@ -82,33 +83,42 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
 
 
 
-            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
-            scene.AddObject3D(cbe);
 
-            LoadSolver loadSolver = new LoadSolver();
-            var deriv = loadSolver.CalculateFaceDerivativesNT();
-            Console.WriteLine();
 
-            List<BasePoint3D> points = new List<BasePoint3D>() {
-                new Point3D(1.0f, 1.0f, 2.0f),
-                new Point3D(2.0f, 1.0f, 2.0f),
-                new Point3D(2.0f, 2.0f, 2.0f),
-                new Point3D(1.0f, 2.0f, 2.0f),
-                new Point3D(1.5f, 1.0f, 2.0f),
-                new Point3D(2.0f, 1.5f, 2.0f),
-                new Point3D(1.5f, 2.0f, 2.0f),
-                new Point3D(1.0f, 1.5f, 2.0f),
-            };
 
-            var xyzDntValues = loadSolver.CalculateFaceDerivativesXYZ(points, deriv);
-            Console.WriteLine();
+            //CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
+            //scene.AddObject3D(cbe);
 
-            var standartValues = loadSolver.CalculateStandartFaceDerivativesNT();
-            Console.WriteLine();
+            //LoadSolver loadSolver = new LoadSolver();
+            //var deriv = loadSolver.CalculateFaceDerivativesNT();
+            //Console.WriteLine();
 
-            float p = 1f;
-            var fValues = loadSolver.CalculateValuesF(p, xyzDntValues, standartValues);
-            Console.WriteLine();
+            //List<BasePoint3D> points = new List<BasePoint3D>() {
+            //    new Point3D(1.0f, 1.0f, 2.0f),
+            //    new Point3D(2.0f, 1.0f, 2.0f),
+            //    new Point3D(2.0f, 2.0f, 2.0f),
+            //    new Point3D(1.0f, 2.0f, 2.0f),
+            //    new Point3D(1.5f, 1.0f, 2.0f),
+            //    new Point3D(2.0f, 1.5f, 2.0f),
+            //    new Point3D(1.5f, 2.0f, 2.0f),
+            //    new Point3D(1.0f, 1.5f, 2.0f),
+            //};
+
+            //var xyzDntValues = loadSolver.CalculateFaceDerivativesXYZ(points, deriv);
+            //Console.WriteLine();
+
+            //var standartValues = loadSolver.CalculateStandartFaceDerivativesNT();
+            //Console.WriteLine();
+
+            //float p = 1f;
+            //var fValues = loadSolver.CalculateValuesF(p, xyzDntValues, standartValues);
+            //Console.WriteLine();
+
+
+
+
+
+
 
             //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Mesh.VerticesSet.ToList(), renderer);
             //scene.AddObject2D(vertexIndexGroup);
@@ -117,31 +127,163 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             //scene.AddObject3D(cube);
 
 
+            //CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
+            //scene.AddObject3D(cbe);
+
             //BrickElementDivisionManager br = new BrickElementDivisionManager(scene);
             //br.Divide(cbe, new Vector3(2, 2, 2));
 
-            //BrickElementSurface? surface = (BrickElementSurface)scene.Objects3D[0];
-            //if (surface != null)
-            //{
-            //    TwentyNodeBrickElement standartCube = BrickElementInitializator.CreateStandartElement();
-            //    Dictionary<Vector3, Dictionary<int, List<float>>> dfiabg = FEM.CalculateDFIABG(standartCube);
+            //BrickElementSurface? surface = (BrickElementSurface)scene.Objects3D.ElementAt(0).Value;
 
-            //    var yakobians000 = FEM.CalculateYakobians(surface.BrickElements[0], dfiabg);
-            //    //var yakobians100 = FEM.CalculateYakobians(surface.BrickElements[1], dfiabg);
-            //    //var yakobians200 = FEM.CalculateYakobians(surface.BrickElements[2], dfiabg);
-            //    //var yakobians300 = FEM.CalculateYakobians(surface.BrickElements[3], dfiabg);
-            //    //var yakobians010 = FEM.CalculateYakobians(surface.BrickElements[4], dfiabg);
-            //    //var yakobians110 = FEM.CalculateYakobians(surface.BrickElements[5], dfiabg);
+            if (surface != null)
+            {
+                TwentyNodeBrickElement standartCube = BrickElementInitializator.CreateStandartElement();
+                Dictionary<Vector3Double, Dictionary<int, List<double>>> dfiabg = FEM.CalculateDFIABG(standartCube);
 
-            //    float det1 = FEM.Determinant3x3(yakobians000[0]);
-            //    //float det2 = FEM.Determinant3x3(yakobians100[0]);
-            //    //float det3 = FEM.Determinant3x3(yakobians200[0]);
-            //    //float det4 = FEM.Determinant3x3(yakobians300[0]);
-            //    //float det5 = FEM.Determinant3x3(yakobians010[0]);
-            //    //float det6 = FEM.Determinant3x3(yakobians110[0]);
+                List<double[,]> mgeMatrices = new List<double[,]>();
 
-            //    var dfixyz = FEM.CalculateDFIXYZ(yakobians000, dfiabg);
-            //    var mge = FEM.CalculateMGE(yakobians000, dfixyz);
+                foreach (var be in surface.BrickElements)
+                {
+                    var yakobians = FEM.CalculateYakobians(be.Value, dfiabg);
+                    var dfixyz = FEM.CalculateDFIXYZ(yakobians, dfiabg);
+                    var mge = FEM.CalculateMGE(yakobians, dfixyz);
+                    mgeMatrices.Add(mge);
+                }
+                //ShowMatrix(mgeMatrices[0]);
+
+                LoadSolver loadSolver = new LoadSolver();
+                List<double[]> fVectors = new List<double[]>();
+
+                // Choose faces for pressure
+                //surface.BrickElements.ElementAt(4).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f / 20;
+                //surface.BrickElements.ElementAt(5).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f / 20;
+                //surface.BrickElements.ElementAt(6).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f / 20;
+                //surface.BrickElements.ElementAt(7).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f / 20;
+
+                surface.BrickElements.ElementAt(4).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f;
+                surface.BrickElements.ElementAt(5).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f;
+                surface.BrickElements.ElementAt(6).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f;
+                surface.BrickElements.ElementAt(7).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f;
+
+
+                surface.AreFacesDrawable = false;
+
+                foreach (var be in surface.BrickElements)
+                {
+                    double[] fValues = null;
+                    foreach (var face in be.Value.Mesh.FacesDictionary)
+                    {
+                        if (face.Value.Pressure > 0f)
+                        {
+                            var deriv = loadSolver.CalculateFaceDerivativesNT();
+                            var standartValues = loadSolver.CalculateStandartFaceDerivativesNT();
+                            fValues = loadSolver.CalculateValuesF(face.Value.Pressure, face.Value, deriv, standartValues);
+                            fVectors.Add(fValues);
+                            break;
+                        }
+                    }
+                    if (fValues != null)
+                    {
+                        continue;
+                    }
+
+                    fValues = new double[60];
+                    fVectors.Add(fValues);
+                }
+
+                double[,] combinedMatrix = FEM.CreateCombinedMatrix(mgeMatrices, surface.LocalVertexIndices, surface.GlobalVertexIndices.Count);
+                double[] combinedVector = loadSolver.CreateCombinedF(fVectors, surface.LocalVertexIndices, surface.GlobalVertexIndices.Count);
+
+                //ShowMatrix(combinedMatrix);
+                //var table = ConsoleTable.From(ShowMatrix(mgeMatrices[0]));
+                //var st = table.ToString();
+
+                double[] resultPoints = FEM.SolveLinearSystem2(combinedMatrix, combinedVector);
+
+
+                ShowVector(combinedVector);
+                ShowVector(resultPoints);
+
+                Vector3[] resultVertices = new Vector3[surface.Mesh.VerticesSet.Count];
+                int counter = 0;
+                for (int i = 0; i < surface.Mesh.VerticesSet.Count; i++)
+                {
+                    var vertex = surface.Mesh.VerticesSet.ElementAt(i).Position;
+                    resultVertices[i] = new Vector3(vertex.X + (float)resultPoints[counter + 0], vertex.Y + (float)resultPoints[counter + 1], vertex.Z + (float)resultPoints[counter + 2]);
+                    counter += 3;
+                }
+
+                for (int i = 0; i < resultVertices.Length; i++)
+                {
+                    surface.Mesh.VerticesSet.ElementAt(i).Position = resultVertices[i];
+                }
+
+
+                //StringBuilder str = new StringBuilder();
+                //for (int i = 0; i < combinedMatrix.GetLength(0); i++)
+                //{
+                //    for (int j = 0; j < combinedMatrix.GetLength(1); j++)
+                //    {
+                //        if (j == combinedMatrix.GetLength(1) - 1)
+                //        {
+                //            str.Append(String.Format("{0} \n", combinedMatrix[i, j]));
+                //        }
+                //        else
+                //        {
+                //            str.Append(String.Format("{0}, ", combinedMatrix[i, j]));
+                //        }
+                //    }
+                //}
+                //Console.WriteLine(str.ToString());
+
+                //List<string> columnNames = new List<string>();
+                //DataTable table = new DataTable();
+                //for (int j = 0; j < combinedMatrix.GetLength(1); j++)
+                //{
+                //    //columnNames.Add(j.ToString());
+                //    table.Columns.Add(j.ToString());
+                //}
+                ////var table = new ConsoleTable(columnNames.ToArray());
+                //for (int i = 0; i < combinedMatrix.GetLength(0); i++)
+                //{
+                //    var subList = new List<string>();
+                //    for (int j = 0; j < combinedMatrix.GetLength(1); j++)
+                //    {
+                //        subList.Add(combinedMatrix[i, j].ToString());
+                //    }
+                //    //table.AddRow(subList.ToArray());
+                //    table.Rows.Add(subList.ToArray());
+                //}
+
+                //DataTableForm dataTableForm = new DataTableForm(table);
+                //dataTableForm.Show();
+
+                //ShowMatrix(combinedMatrix);
+                //ShowVector(resultPoints);
+
+
+
+                //var str = table.ToMarkDownString();
+            }
+
+
+
+
+            //var yakobians100 = FEM.CalculateYakobians(surface.BrickElements[1], dfiabg);
+            //var yakobians200 = FEM.CalculateYakobians(surface.BrickElements[2], dfiabg);
+            //var yakobians300 = FEM.CalculateYakobians(surface.BrickElements[3], dfiabg);
+            //var yakobians010 = FEM.CalculateYakobians(surface.BrickElements[4], dfiabg);
+            //var yakobians110 = FEM.CalculateYakobians(surface.BrickElements[5], dfiabg);
+
+            //float det1 = FEM.Determinant3x3(yakobians000[0]);
+            //float det2 = FEM.Determinant3x3(yakobians100[0]);
+            //float det3 = FEM.Determinant3x3(yakobians200[0]);
+            //float det4 = FEM.Determinant3x3(yakobians300[0]);
+            //float det5 = FEM.Determinant3x3(yakobians010[0]);
+            //float det6 = FEM.Determinant3x3(yakobians110[0]);
+
+            //var dfixyz = FEM.CalculateDFIXYZ(yakobians000, dfiabg);
+            //var mge = FEM.CalculateMGE(yakobians000, dfixyz);
 
             //    //Console.WriteLine(dfiabg);
             //    StringBuilder str = new StringBuilder();
@@ -291,6 +433,50 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             // CASE 3
 
             //GenerateCubes();
+        }
+
+        public void ShowVector(double[] vector)
+        {
+            DataTable table = new DataTable();
+            for (int j = 0; j < 1; j++)
+            {
+                //columnNames.Add(j.ToString());
+                table.Columns.Add(j.ToString());
+            }
+            //var table = new ConsoleTable(columnNames.ToArray());
+            for (int i = 0; i < vector.GetLength(0); i++)
+            {
+                //table.AddRow(subList.ToArray());
+                table.Rows.Add(vector[i].ToString());
+            }
+
+            DataTableForm dataTableForm = new DataTableForm(table);
+            dataTableForm.Show();
+        }
+
+        public DataTable ShowMatrix(double[,] matrix)
+        {
+            DataTable table = new DataTable();
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                //columnNames.Add(j.ToString());
+                table.Columns.Add(j.ToString());
+            }
+            //var table = new ConsoleTable(columnNames.ToArray());
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                var subList = new List<string>();
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    subList.Add(matrix[i, j].ToString());
+                }
+                //table.AddRow(subList.ToArray());
+                table.Rows.Add(subList.ToArray());
+            }
+
+            DataTableForm dataTableForm = new DataTableForm(table);
+            dataTableForm.Show();
+            return table;
         }
 
         public void GenerateCubes(int count = 20)

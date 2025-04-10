@@ -1,7 +1,11 @@
-﻿namespace Core.Models.Geometry.Primitive.Plane
+﻿using Core.Models.Geometry.Primitive.Point;
+
+namespace Core.Models.Geometry.Primitive.Plane
 {
     public class Plane3D : BasePlane3D
     {
-        public Plane3D(List<TrianglePlane3D> planes): base(planes) { }
+        public Plane3D(List<TrianglePlane3D> planes, List<BasePoint3D> correctOrderVertices): base(planes, correctOrderVertices) 
+        {
+        }
     }
 }
