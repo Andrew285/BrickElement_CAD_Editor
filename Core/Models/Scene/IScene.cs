@@ -20,6 +20,6 @@ namespace Core.Models.Scene
 
         public BrickElementSurface? GetSurfaceOf(SceneObject3D obj);
 
-        public void HandleOnBrickElementDivided(TwentyNodeBrickElement dividedBE, IMesh dividedMesh, List<TwentyNodeBrickElement> innerDividedElements);
+        public void HandleOnBrickElementDivided(TwentyNodeBrickElement dividedBE, BrickElementSurface resultSurface);
     }
 }

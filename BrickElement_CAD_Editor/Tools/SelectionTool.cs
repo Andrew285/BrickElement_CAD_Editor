@@ -1,6 +1,8 @@
 ﻿using Core.Models.Geometry.Complex;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
+using Core.Services;
+using Core.Services.Events;
 using Raylib_cs;
 using System.Numerics;
 using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
@@ -17,7 +19,7 @@ namespace App.Tools
         private SceneObject3D? previoiusSelectedObject;
 
         public override ToolType Type { get; set; } = ToolType.SELECTION;
-        public SelectionToolMode SelectionToolMode { get; set; } = SelectionToolMode.OBJECT_SELECTION;
+        public SelectionToolMode SelectionToolMode { get; set; } = SelectionToolMode.COMPONENT_SELECTION;
 
         public event Action<SelectionToolMode> OnSelectionToolModeChanged;
         public event Action<SceneObject3D> OnObjectSelected;
@@ -71,6 +73,13 @@ namespace App.Tools
                 case SelectionToolMode.COMPONENT_SELECTION:  break;
             }
 
+
+            if (SelectedObject == null)
+            {
+                MessageBox.Show("Selected object is NULL", "Null Reference Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             if (SelectedObject.IsSelected)
             {
                 SelectedObject.IsSelected = false;
@@ -90,6 +99,7 @@ namespace App.Tools
             SelectedObject = sceneObject;
             SelectedObject.IsSelected = true;
             OnObjectSelected?.Invoke(SelectedObject);
+            EventBus.Publish(new SelectedObjectEvent(SelectedObject));
         }
 
         public void Deselect(SceneObject3D sceneObject)

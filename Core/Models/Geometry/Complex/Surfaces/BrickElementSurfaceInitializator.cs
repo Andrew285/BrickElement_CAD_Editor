@@ -7,8 +7,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
     {
         public static BrickElementSurface CreateFrom(IScene scene, IMesh mesh, List<TwentyNodeBrickElement> innerDividedMesh)
         {
-            BrickElementSurface surface = new BrickElementSurface(scene);
-            surface.Mesh = mesh;
+            BrickElementSurface surface = new BrickElementSurface(scene, mesh);
 
             surface.BrickElements = innerDividedMesh.ToDictionary(_ => _.ID, element => element);
 
@@ -17,6 +16,8 @@ namespace Core.Models.Geometry.Complex.Surfaces
             {
                 be.Parent = surface;
             }
+
+            surface.InitializeGlobalAndLocalVertices();
             return surface;
         }
     }

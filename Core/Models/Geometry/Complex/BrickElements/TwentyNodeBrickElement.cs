@@ -69,7 +69,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
             // TODO Add Position and Size
         }
 
-        protected void InitializeLocalIndices()
+        public void InitializeLocalIndices()
         {
             for (int i = 0; i < Mesh.VerticesSet.Count; i++)
             {

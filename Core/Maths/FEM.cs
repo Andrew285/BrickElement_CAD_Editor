@@ -358,7 +358,7 @@ namespace Core.Maths
         //    return transposed;
         //}
 
-        public static double[,] CreateCombinedMatrix(List<double[,]> mgeMatrices, Dictionary<Guid, List<int>> localVertexIndices, int globalVerticesCount)
+        public static double[,] CreateCombinedMatrix(List<double[,]> mgeMatrices, Dictionary<Guid, List<int>> localVertexIndices, int globalVerticesCount, List<int> globalFixedVertices)
         {
             double[,] resultCombinedMatrix = new double[3 * globalVerticesCount, 3 * globalVerticesCount];
             for (int m = 0; m < mgeMatrices.Count; m++)
@@ -392,12 +392,11 @@ namespace Core.Maths
             }
 
             //ZU, make big values
-            for (int i = 0; i < 21; i++)
+            for (int i = 0; i < globalFixedVertices.Count; i++)
             {
-                int index = i;
                 for (int j = 0; j < 3; j++)
                 {
-                    int axisIndex = 3 * index + j;
+                    int axisIndex = 3 * globalFixedVertices[i] + j;
                     resultCombinedMatrix[axisIndex, axisIndex] = 100000000000000f;
                 }
             }

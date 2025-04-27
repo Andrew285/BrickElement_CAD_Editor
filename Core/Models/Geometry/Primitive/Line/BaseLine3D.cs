@@ -10,10 +10,10 @@ namespace Core.Models.Geometry.Primitive.Line
     public abstract class BaseLine3D : SceneObject3D, ILine3D, IEquatable<BaseLine3D>
     {
         protected BasePoint3D startPoint;
-        public BasePoint3D StartPoint => startPoint;
+        public BasePoint3D StartPoint { get { return startPoint; } set { startPoint = value; } }
 
         protected BasePoint3D endPoint;
-        public BasePoint3D EndPoint => endPoint;
+        public BasePoint3D EndPoint { get { return endPoint; } set { endPoint = value; } }
 
         public BaseLine3D(): base()
         {

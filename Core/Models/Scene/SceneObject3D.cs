@@ -157,7 +157,7 @@ namespace Core.Models.Scene
             return position;
         }
 
-        public void SetColor(Color color)
+        public virtual void SetColor(Color color)
         {
             Color = color;
         }

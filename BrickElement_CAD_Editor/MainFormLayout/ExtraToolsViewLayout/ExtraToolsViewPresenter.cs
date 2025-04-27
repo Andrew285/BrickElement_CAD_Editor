@@ -5,6 +5,7 @@ using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Scene;
 using Core.Services;
 using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
 
 namespace UI.MainFormLayout.ExtraToolsViewLayout
 {
@@ -14,6 +15,7 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
         private ToolManager toolManager;
         private IScene scene;
         AddCubeToFaceAction addCubeToFaceAction;
+        ToolsManager toolsManager;
 
         private bool isSelectionToolModeUpdating = false;
 
@@ -22,13 +24,17 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
             this.extraToolsView = extraToolsView;
             this.scene = scene;
             this.toolManager = toolManager;
+            toolsManager = new ToolsManager();
 
             ChangeTool(toolManager.CurrentTool);
 
             this.extraToolsView.OnSelectionModeChanged += ChangeSelectionMode;
             this.extraToolsView.OnAddBrickElementToFaceItemClicked += AddBrickElementToFace;
             this.extraToolsView.OnDivideBrickElementItemClicked += DivideBrickElement;
-            
+            this.extraToolsView.OnfixFaceItemClicked += HandleFixFaceItemClicked;
+            this.extraToolsView.OnSetPressureItemClicked += HandleSetPressureItemClicked;
+            this.extraToolsView.OnFemSolverItemClicked += HandleFemSolverItemClicked;
+
             toolManager.OnToolChanged += ChangeTool;
         }
 
@@ -72,6 +78,24 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
                 MessageBox.Show("Selected object should of type 'Brick Element'", "Wrong selected object type", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+        }
+
+        public void HandleFixFaceItemClicked(object sender, EventArgs e)
+        {
+            FixFaceTool fixFaceTool = new FixFaceTool();
+            toolsManager.ActivateTool(fixFaceTool);
+        }
+
+        public void HandleSetPressureItemClicked(object sender, EventArgs e)
+        {
+            PressureTool pressureTool = new PressureTool();
+            toolsManager.ActivateTool(pressureTool);
+        }
+
+        public void HandleFemSolverItemClicked(object sender, EventArgs e)
+        {
+            FemSolverTool femSolverTool = new FemSolverTool();
+            toolsManager.ActivateTool(femSolverTool);
         }
 
         public void ChangeTool(BaseTool tool)

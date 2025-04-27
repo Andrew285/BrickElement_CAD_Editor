@@ -17,13 +17,14 @@ namespace Core.Models.Geometry.Primitive.Plane
         {
             get
             {
-                return Color.LightGray;
+                return nonSelectedColor;
             }
             set
             {
-                base.NonSelectedColor = value;
+                nonSelectedColor = value;
             }
         }
+        private Color nonSelectedColor = Color.LightGray;
 
         public TrianglePlane3D(): base()
         {

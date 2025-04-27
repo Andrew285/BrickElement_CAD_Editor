@@ -14,6 +14,9 @@ public class ExtraToolsView : IExtraToolsView
 
     public event EventHandler? OnAddBrickElementToFaceItemClicked;
     public event EventHandler? OnDivideBrickElementItemClicked;
+    public event EventHandler? OnfixFaceItemClicked;
+    public event EventHandler? OnSetPressureItemClicked;
+    public event EventHandler? OnFemSolverItemClicked;
     public event Action<SelectionToolMode> OnSelectionModeChanged;
 
     public ExtraToolsView()
@@ -191,7 +194,7 @@ public class ExtraToolsView : IExtraToolsView
         };
 
         // Set default selection
-        comboBox.SelectedIndex = 0;
+        comboBox.SelectedIndex = 2;
         toolStrip.Items.Add(comboBox);
 
 
@@ -203,13 +206,38 @@ public class ExtraToolsView : IExtraToolsView
         toolStrip.Items.Add(new ToolStripSeparator());
         toolStrip.Items.Add(addButton);
 
-        // Add Button
+        // Divide Button
         ToolStripButton divideBrickElementButton = new ToolStripButton("Divide", imageList.Images["divide"]);
         divideBrickElementButton.Text = "";
         divideBrickElementButton.ToolTipText = "Divide selected brick element";
         divideBrickElementButton.Click += (s, e) => OnDivideBrickElementItemClicked?.Invoke(this, e);
         toolStrip.Items.Add(new ToolStripSeparator());
         toolStrip.Items.Add(divideBrickElementButton);
+
+        // Fix Face Button
+        ToolStripButton fixFaceButton = new ToolStripButton("Fix", imageList.Images["divide"]);
+        fixFaceButton.Text = "";
+        fixFaceButton.ToolTipText = "Fix Face for FEM algorithm";
+        fixFaceButton.Click += (s, e) => OnfixFaceItemClicked?.Invoke(this, e);
+        toolStrip.Items.Add(new ToolStripSeparator());
+        toolStrip.Items.Add(fixFaceButton);
+
+        // Pressure Face Button
+        ToolStripButton pressureButton = new ToolStripButton("Pressure", imageList.Images["divide"]);
+        pressureButton.Text = "";
+        pressureButton.ToolTipText = "Set face pressure for FEM algorithm";
+        pressureButton.Click += (s, e) => OnSetPressureItemClicked?.Invoke(this, e);
+        toolStrip.Items.Add(new ToolStripSeparator());
+        toolStrip.Items.Add(pressureButton);
+
+
+        // FEM Solver Button
+        ToolStripButton femSolverButton = new ToolStripButton("FEM Solver", imageList.Images["add"]);
+        femSolverButton.Text = "";
+        femSolverButton.ToolTipText = "Solve using FEM algorithm";
+        femSolverButton.Click += (s, e) => OnFemSolverItemClicked?.Invoke(this, e);
+        toolStrip.Items.Add(new ToolStripSeparator());
+        toolStrip.Items.Add(femSolverButton);
     }
 
     public void ChangeSelectionMode(SelectionToolMode mode)

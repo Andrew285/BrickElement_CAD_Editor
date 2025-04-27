@@ -5,6 +5,7 @@ using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
+using Core.Services;
 using System.Data;
 using System.Numerics;
 using System.Text;
@@ -32,134 +33,137 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             // CASE 1
 
             // bottom side
-            CubeBrickElement cbe000 = new CubeBrickElement(new Vector3(0.5f, 0.5f, -0.5f), new Vector3(1, 1, 1));
-            CubeBrickElement cbe100 = new CubeBrickElement(new Vector3(1.5f, 0.5f, -0.5f), new Vector3(1, 1, 1));
-            CubeBrickElement cbe001 = new CubeBrickElement(new Vector3(0.5f, 0.5f, -1.5f), new Vector3(1, 1, 1));
-            CubeBrickElement cbe101 = new CubeBrickElement(new Vector3(1.5f, 0.5f, -1.5f), new Vector3(1, 1, 1));
+            //CubeBrickElement cbe000 = new CubeBrickElement(new Vector3(0.5f, 0.5f, -0.5f), new Vector3(1, 1, 1));
+            //CubeBrickElement cbe100 = new CubeBrickElement(new Vector3(1.5f, 0.5f, -0.5f), new Vector3(1, 1, 1));
+            //CubeBrickElement cbe001 = new CubeBrickElement(new Vector3(0.5f, 0.5f, -1.5f), new Vector3(1, 1, 1));
+            //CubeBrickElement cbe101 = new CubeBrickElement(new Vector3(1.5f, 0.5f, -1.5f), new Vector3(1, 1, 1));
 
-            // upper side
-            CubeBrickElement cbe010 = new CubeBrickElement(new Vector3(0.5f, 1.5f, -0.5f), new Vector3(1, 1, 1));
-            CubeBrickElement cbe110 = new CubeBrickElement(new Vector3(1.5f, 1.5f, -0.5f), new Vector3(1, 1, 1));
-            CubeBrickElement cbe011 = new CubeBrickElement(new Vector3(0.5f, 1.5f, -1.5f), new Vector3(1, 1, 1));
-            CubeBrickElement cbe111 = new CubeBrickElement(new Vector3(1.5f, 1.5f, -1.5f), new Vector3(1, 1, 1));
+            //// upper side
+            //CubeBrickElement cbe010 = new CubeBrickElement(new Vector3(0.5f, 1.5f, -0.5f), new Vector3(1, 1, 1));
+            //CubeBrickElement cbe110 = new CubeBrickElement(new Vector3(1.5f, 1.5f, -0.5f), new Vector3(1, 1, 1));
+            //CubeBrickElement cbe011 = new CubeBrickElement(new Vector3(0.5f, 1.5f, -1.5f), new Vector3(1, 1, 1));
+            //CubeBrickElement cbe111 = new CubeBrickElement(new Vector3(1.5f, 1.5f, -1.5f), new Vector3(1, 1, 1));
 
-            BrickElementSurface surface = new BrickElementSurface(scene);
-            surface.AddBrickElement(cbe000);
-            surface.AddBrickElement(cbe100);
-            surface.AddBrickElement(cbe001);
-            surface.AddBrickElement(cbe101);
+            //BrickElementSurface surface = new BrickElementSurface(scene);
+            //surface.AddBrickElement(cbe000);
+            //surface.AddBrickElement(cbe100);
+            //surface.AddBrickElement(cbe001);
+            //surface.AddBrickElement(cbe101);
 
-            surface.AddBrickElement(cbe010);
-            surface.AddBrickElement(cbe110);
-            surface.AddBrickElement(cbe011);
-            surface.AddBrickElement(cbe111);
+            //surface.AddBrickElement(cbe010);
+            //surface.AddBrickElement(cbe110);
+            //surface.AddBrickElement(cbe011);
+            //surface.AddBrickElement(cbe111);
 
+            //BrickElementSurface surface = new BrickElementSurface(scene);
+            CubeBrickElement cbe = BrickElementInitializator.CreateStandartElement();
+            BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
+            BrickElementSurface surface = divisionManager.Divide(cbe, new Vector3(2, 2, 2));
             scene.AddObject3D(surface);
 
-            
-            if (surface != null)
-            {
-                TwentyNodeBrickElement standartCube = BrickElementInitializator.CreateStandartElement();
-                Dictionary<Vector3Double, Dictionary<int, List<double>>> dfiabg = FEM.CalculateDFIABG(standartCube);
 
-                List<double[,]> mgeMatrices = new List<double[,]>();
+            //if (surface != null)
+            //{
+            //    TwentyNodeBrickElement standartCube = BrickElementInitializator.CreateStandartElement();
+            //    Dictionary<Vector3Double, Dictionary<int, List<double>>> dfiabg = FEM.CalculateDFIABG(standartCube);
 
-                foreach (var be in surface.BrickElements)
-                {
-                    var yakobians = FEM.CalculateYakobians(be.Value, dfiabg);
-                    var dfixyz = FEM.CalculateDFIXYZ(yakobians, dfiabg);
-                    var mge = FEM.CalculateMGE(yakobians, dfixyz);
-                    mgeMatrices.Add(mge);
-                }
-                //ShowMatrix(mgeMatrices[0]);
+            //    List<double[,]> mgeMatrices = new List<double[,]>();
 
-                LoadSolver loadSolver = new LoadSolver();
-                List<double[]> fVectors = new List<double[]>();
+            //    foreach (var be in surface.BrickElements)
+            //    {
+            //        var yakobians = FEM.CalculateYakobians(be.Value, dfiabg);
+            //        var dfixyz = FEM.CalculateDFIXYZ(yakobians, dfiabg);
+            //        var mge = FEM.CalculateMGE(yakobians, dfixyz);
+            //        mgeMatrices.Add(mge);
+            //    }
+            //    //ShowMatrix(mgeMatrices[0]);
 
-                // Choose faces for pressure
-                surface.BrickElements.ElementAt(4).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
-                //surface.BrickElements.ElementAt(5).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
-                //surface.BrickElements.ElementAt(6).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
-                //surface.BrickElements.ElementAt(7).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
+            //    LoadSolver loadSolver = new LoadSolver();
+            //    List<double[]> fVectors = new List<double[]>();
 
-                //surface.BrickElements.ElementAt(0).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f;
+            //    // Choose faces for pressure
+            //    surface.BrickElements.ElementAt(20).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.6f;
+            //    //surface.BrickElements.ElementAt(5).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
+            //    //surface.BrickElements.ElementAt(6).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
+            //    //surface.BrickElements.ElementAt(7).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
+
+            //    //surface.BrickElements.ElementAt(0).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f;
 
 
 
-                surface.AreFacesDrawable = false;
+            //    surface.AreFacesDrawable = false;
 
-                foreach (var be in surface.BrickElements)
-                {
-                    double[] fValues = null;
-                    foreach (var face in be.Value.Mesh.FacesDictionary)
-                    {
-                        if (face.Value.Pressure > 0f)
-                        {
-                            var deriv = loadSolver.CalculateFaceDerivativesNT();
-                            var standartValues = loadSolver.CalculateStandartFaceDerivativesNT();
-                            fValues = loadSolver.CalculateValuesF(face.Value.Pressure, face.Value, deriv, standartValues);
-                            fVectors.Add(fValues);
-                            break;
-                        }
-                    }
-                    if (fValues != null)
-                    {
-                        continue;
-                    }
+            //    foreach (var be in surface.BrickElements)
+            //    {
+            //        double[] fValues = null;
+            //        foreach (var face in be.Value.Mesh.FacesDictionary)
+            //        {
+            //            if (face.Value.Pressure > 0f)
+            //            {
+            //                var deriv = loadSolver.CalculateFaceDerivativesNT();
+            //                var standartValues = loadSolver.CalculateStandartFaceDerivativesNT();
+            //                fValues = loadSolver.CalculateValuesF(face.Value.Pressure, face.Value, deriv, standartValues);
+            //                fVectors.Add(fValues);
+            //                break;
+            //            }
+            //        }
+            //        if (fValues != null)
+            //        {
+            //            continue;
+            //        }
 
-                    fValues = new double[60];
-                    fVectors.Add(fValues);
-                }
+            //        fValues = new double[60];
+            //        fVectors.Add(fValues);
+            //    }
 
-                double[,] combinedMatrix = FEM.CreateCombinedMatrix(mgeMatrices, surface.LocalVertexIndices, surface.GlobalVertexIndices.Count);
-                double[] combinedVector = loadSolver.CreateCombinedF(fVectors, surface.LocalVertexIndices, surface.GlobalVertexIndices.Count);
+            //    double[,] combinedMatrix = FEM.CreateCombinedMatrix(mgeMatrices, surface.LocalVertexIndices, surface.GlobalVertexIndices.Count);
+            //    double[] combinedVector = loadSolver.CreateCombinedF(fVectors, surface.LocalVertexIndices, surface.GlobalVertexIndices.Count);
 
-                ShowMatrix(mgeMatrices[0]);
-                //ShowMatrix(mgeMatrices[1]);
 
-                //var table = ConsoleTable.From(ShowMatrix(mgeMatrices[0]));
-                //var st = table.ToString();
+            //    //var table = ConsoleTable.From(ShowMatrix(mgeMatrices[0]));
+            //    //var st = table.ToString();
 
-                double[] resultPoints = FEM.SolveLinearSystem2(combinedMatrix, combinedVector);
+            //    double[] resultPoints = FEM.SolveLinearSystem2(combinedMatrix, combinedVector);
 
-                ShowMatrix(combinedMatrix);
-                ShowVector(combinedVector);
-                ShowVector(resultPoints);
+            //    //ShowMatrix(mgeMatrices[0]);
+            //    //ShowMatrix(combinedMatrix);
+            //    //ShowVector(combinedVector);
+            //    //ShowVector(resultPoints);
 
-                Vector3[] newPoints = new Vector3[resultPoints.Length];
-                int counter = 0;
-                for (int i = 0; i < surface.Mesh.VerticesSet.Count; i++)
-                {
-                    Guid globalVertexId = surface.GlobalVertexIndices.ElementAt(i).Key;
-                    Vector3 vertex = surface.Mesh.VerticesDictionary[globalVertexId].Position;
-                    Vector3 newPoint = new Vector3(vertex.X - (float)resultPoints[counter + 0], vertex.Y - (float)resultPoints[counter + 2], vertex.Z - (float)resultPoints[counter + 1]);
-                    newPoints[i] = newPoint;
-                    surface.Mesh.VerticesDictionary[globalVertexId].Position = newPoint;
-                    counter += 3;
-                    Console.WriteLine(newPoint);
-                }
+            //    Vector3[] newPoints = new Vector3[resultPoints.Length];
+            //    int counter = 0;
+            //    for (int i = 0; i < surface.GlobalVertexIndices.Count; i++)
+            //    {
+            //        Guid globalVertexId = surface.GlobalVertexIndices.ElementAt(i).Key;
+            //        Vector3 vertex = surface.Mesh.VerticesDictionary[globalVertexId].Position;
+            //        Vector3 newPoint = new Vector3(vertex.X - (float)resultPoints[counter + 0], vertex.Y - (float)resultPoints[counter + 2], vertex.Z - (float)resultPoints[counter + 1]);
+            //        newPoints[i] = newPoint;
+            //        surface.Mesh.VerticesDictionary[globalVertexId].Position = newPoint;
+            //        counter += 3;
+            //        Console.WriteLine(newPoint);
+            //    }
 
-                //StringBuilder sb = new StringBuilder();
-                //foreach (var elem in surface.Mesh.VerticesDictionary)
-                //{
-                //    sb.AppendLine(elem.Value.Position.ToString());
-                //}
-                //Console.WriteLine(sb.ToString());
+            //    //StringBuilder sb = new StringBuilder();
+            //    //foreach (var elem in surface.Mesh.VerticesDictionary)
+            //    //{
+            //    //    sb.AppendLine(elem.Value.Position.ToString());
+            //    //}
+            //    //Console.WriteLine(sb.ToString());
 
-                //StringBuilder sb = new StringBuilder();
-                //foreach (var elem in surface.LocalVertexIndices)
-                //{
-                //    foreach (var a in elem.Value)
-                //    {
-                //        sb.Append(a.ToString() + ", ");
-                //    }
-                //    sb.AppendLine();
-                //}
-                //Console.WriteLine(sb.ToString());
+            //    //StringBuilder sb = new StringBuilder();
+            //    //foreach (var elem in surface.LocalVertexIndices)
+            //    //{
+            //    //    foreach (var a in elem.Value)
+            //    //    {
+            //    //        sb.Append(a.ToString() + ", ");
+            //    //    }
+            //    //    sb.AppendLine();
+            //    //}
+            //    //Console.WriteLine(sb.ToString());
 
-                //surface.Mesh.EdgesSet.Clear();
-                //surface.Mesh.EdgesDictionary.Clear();
-            }
+            //    //surface.Mesh.EdgesSet.Clear();
+            //    //surface.Mesh.EdgesDictionary.Clear();
+            //}
 
 
             // ***********************************************************************************************************************************

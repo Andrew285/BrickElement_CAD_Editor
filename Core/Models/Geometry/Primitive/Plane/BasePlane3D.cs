@@ -35,6 +35,37 @@ namespace Core.Models.Geometry.Primitive.Plane
         }
         private float pressure = 0f;
 
+
+        // Face Pressure
+        [LocalizedCategory(PropertyConstants.C_IS_FIXED)]
+        public bool IsFixed
+        {
+            get
+            {
+                return isFixed;
+            }
+            set
+            {
+                isFixed = value;
+            }
+        }
+        private bool isFixed = false;
+
+        // Face Pressure
+        [LocalizedCategory(PropertyConstants.C_APPEARANCE)]
+        public bool IsStressed
+        {
+            get
+            {
+                return isStressed;
+            }
+            set
+            {
+                isStressed = value;
+            }
+        }
+        private bool isStressed = false;
+
         public override Raylib_cs.Color NonSelectedColor 
         { 
             get
@@ -138,6 +169,15 @@ namespace Core.Models.Geometry.Primitive.Plane
                  .ThenBy(p => p.Y)
                  .ThenBy(p => p.Z)
                  .ToList();
+        }
+
+        public override void SetColor(Raylib_cs.Color color)
+        {
+
+            foreach (var trianglePlane in trianglePlanes)
+            {
+                trianglePlane.SetColor(color);
+            }
         }
 
         public override Vector3 GetCenter()

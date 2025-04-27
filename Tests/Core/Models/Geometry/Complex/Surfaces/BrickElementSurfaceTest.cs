@@ -1,5 +1,6 @@
 ﻿using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
+using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Scene;
 using System.Numerics;
 
@@ -65,6 +66,29 @@ namespace Tests.Core.Models.Geometry.Complex.Surfaces
 
         #endregion
 
+
+        #region Mesh
+
+        [Test]
+        public void TestSurfaceContainsEdge()
+        {
+            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+            //TwentyNodeBrickElement? cbe2 = BrickElementInitializator.CreateFrom(cbe.Faces[1], cbe);
+            BrickElementSurface brickElementSurface = new BrickElementSurface(new Scene());
+            brickElementSurface.AddBrickElement(cbe);
+
+            Line3D line1 = new Line3D(new Vector3(0f, -0.5f, 0.5f), new Vector3(0.5f, -0.5f, 0.5f));
+            Line3D line2 = new Line3D(new Vector3(0.5f, -0.5f, 0.5f), new Vector3(1f, -0.5f, 0.5f));
+            Line3D line3 = new Line3D(new Vector3(-0.5f, -0.5f, 0.5f), new Vector3(0f, -0.5f, 0.5f));
+            Line3D line4 = new Line3D(new Vector3(-1f, -0.5f, 0.5f), new Vector3(-0.5f, -0.5f, 0.5f));
+
+            Assert.That(brickElementSurface.Mesh.EdgesSet.Contains(line1), Is.True);
+            Assert.That(brickElementSurface.Mesh.EdgesSet.Contains(line2), Is.False);
+            Assert.That(brickElementSurface.Mesh.EdgesSet.Contains(line3), Is.True);
+            Assert.That(brickElementSurface.Mesh.EdgesSet.Contains(line4), Is.False);
+        }
+
+        #endregion
 
         #region Remove
 

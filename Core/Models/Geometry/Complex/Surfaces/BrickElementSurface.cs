@@ -65,15 +65,27 @@ namespace Core.Models.Geometry.Complex.Surfaces
         private IScene scene;
         public Action<SceneObject2D> OnVertexLabelsDrawn;
 
-        public BrickElementSurface(IScene scene): base() 
+        public BrickElementSurface(IScene scene, IMesh? mesh = null): base() 
         {
+            Mesh = mesh ?? new Mesh();
+
             OnVertexLabelsDrawn += scene.AddObject2D;
             globalIndexManager = new GlobalIndexManager();
+
+            //InitializeGlobalAndLocalVertices();
+        }
+
+        public void InitializeGlobalAndLocalVertices()
+        {
+            GlobalVertexIndices = globalIndexManager.GenerateGlobalVertices(Mesh.VerticesSet);
+            LocalVertexIndices = globalIndexManager.GetLocalIndices(BrickElements, GlobalVertexIndices, Mesh.VerticesDictionary);
         }
 
         public void AddBrickElement(TwentyNodeBrickElement newBrickElement)
         {
             List<BasePoint3D> newPointsForBE = new List<BasePoint3D>();
+            List<BaseLine3D> newEdgesForBE = new List<BaseLine3D>();
+            List<BasePlane3D> newFacesForBE = new List<BasePlane3D>();
             brickElementCounter++;
 
             // Add Vertices
@@ -100,6 +112,28 @@ namespace Core.Models.Geometry.Complex.Surfaces
             {
                 if (Mesh.Add(edge))
                 {
+                    if (Mesh.VerticesSet.Contains(edge.StartPoint))
+                    {
+                        foreach (BasePoint3D value in Mesh.VerticesDictionary.Values)
+                        {
+                            if (value.Position == edge.StartPoint.Position)
+                            {
+                                edge.StartPoint = value;
+                            }
+                        }
+                    }
+
+                    if (Mesh.VerticesSet.Contains(edge.EndPoint))
+                    {
+                        foreach (BasePoint3D value in Mesh.VerticesDictionary.Values)
+                        {
+                            if (value.Position == edge.EndPoint.Position)
+                            {
+                                edge.EndPoint = value;
+                            }
+                        }
+                    }
+
                     edgesMap.Add(edge.ID, new HashSet<Guid>());
                 }
 
@@ -107,6 +141,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
                 {
                      Guid id = Mesh.EdgesDictionary.FirstOrDefault(kv => kv.Value.Equals(edge)).Key;
                     edgesMap[id].Add(newBrickElement.ID);
+                    newEdgesForBE.Add(Mesh.EdgesDictionary[id]);
                 }
             }
 
@@ -123,6 +158,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
                 {
                     Guid id = Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
                     facesMap[id].Add(newBrickElement.ID);
+                    newFacesForBE.Add(Mesh.FacesDictionary[id]);
                 }
             }
 
@@ -130,14 +166,30 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
             //Create New BrickElement with new Vertices
             TwentyNodeBrickElement? newBE = BrickElementInitializator.CreateFrom(newPointsForBE);
+
+            newBE.Mesh.EdgesDictionary.Clear();
+            newBE.Mesh.EdgesSet.Clear();
+            for (int i = 0; i < newEdgesForBE.Count; i++)
+            {
+                newBE.Mesh.EdgesDictionary.Add(newEdgesForBE[i].ID, newEdgesForBE[i]);
+                newBE.Mesh.EdgesSet.Add(newEdgesForBE[i]);
+            }
+
+            newBE.Mesh.FacesDictionary.Clear();
+            newBE.Mesh.FacesSet.Clear();
+            for (int i = 0; i < newFacesForBE.Count; i++)
+            {
+                newBE.Mesh.FacesDictionary.Add(newFacesForBE[i].ID, newFacesForBE[i]);
+                newBE.Mesh.FacesSet.Add(newFacesForBE[i]);
+            }
+
             if (newBE != null)
             {
                 newBE.Parent = this;
                 BrickElements.Add(newBrickElement.ID, newBE);
 
                 // Generate Global Indices
-                GlobalVertexIndices = globalIndexManager.GenerateGlobalVertices(Mesh.VerticesSet);
-                LocalVertexIndices = globalIndexManager.GetLocalIndices(BrickElements, GlobalVertexIndices, Mesh.VerticesDictionary);
+                InitializeGlobalAndLocalVertices();
             }
         }
 

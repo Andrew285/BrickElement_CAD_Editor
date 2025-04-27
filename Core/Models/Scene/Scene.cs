@@ -149,12 +149,10 @@ namespace Core.Models.Scene
             //return null;
         }
 
-        public void HandleOnBrickElementDivided(TwentyNodeBrickElement dividedBE, IMesh dividedMesh, List<TwentyNodeBrickElement> innerDividedElements)
+        public void HandleOnBrickElementDivided(TwentyNodeBrickElement dividedBE, BrickElementSurface resultSurface)
         {
             Objects3D.Remove(dividedBE.ID);
-
-            BrickElementSurface surface = BrickElementSurfaceInitializator.CreateFrom(this, dividedMesh, innerDividedElements);
-            AddObject3D(surface);
+            AddObject3D(resultSurface);
         }
     }
 }

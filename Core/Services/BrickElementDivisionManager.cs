@@ -1,5 +1,6 @@
 ﻿using Core.Models.Geometry.Complex;
 using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
@@ -35,15 +36,15 @@ namespace Core.Services
         private byte[] pattern1 = { 1, 1 };
 
         private IScene scene;
-        public Action<TwentyNodeBrickElement, IMesh, List<TwentyNodeBrickElement>> OnBrickElementDivided;
+        //public Action<TwentyNodeBrickElement, BrickElementSurface> OnBrickElementDivided;
 
         public BrickElementDivisionManager(IScene scene)
         {
             this.scene = scene;
-            OnBrickElementDivided += this.scene.HandleOnBrickElementDivided;
+            //OnBrickElementDivided += this.scene.HandleOnBrickElementDivided;
         }
 
-        public IMesh Divide(TwentyNodeBrickElement be, Vector3 nValues)
+        public BrickElementSurface Divide(TwentyNodeBrickElement be, Vector3 nValues)
         {
             this.aValues = new Vector3(2, 2, 2);
 
@@ -66,8 +67,16 @@ namespace Core.Services
             IMesh dividedMesh = GenerateDividedMesh();
             List<TwentyNodeBrickElement> brickElements = GenerateBrickElements(nValues);
 
-            OnBrickElementDivided?.Invoke(be, dividedMesh, brickElements);
-            return dividedMesh;
+            //BrickElementSurface surface = BrickElementSurfaceInitializator.CreateFrom(scene, dividedMesh, brickElements);
+            BrickElementSurface surface = new BrickElementSurface(scene);
+            foreach (var b in brickElements)
+            {
+                surface.AddBrickElement(b);
+            }
+
+
+            //OnBrickElementDivided?.Invoke(be, surface);
+            return surface;
         }
 
         public IMesh GenerateDividedMesh()
@@ -178,20 +187,22 @@ namespace Core.Services
                     for (int x = 1; x < nValues.X * 2; x += 2)
                     {
                         Vector3 position = new Vector3(x, y, z);
-                        List<BasePoint3D> elementVertices = GetVerticesByCenterPosition(position, vertexDictionary);
+                        TwentyNodeBrickElement be = new TwentyNodeBrickElement(position, new Vector3(1 / nValues.X, 1 / nValues.Y, 1 / nValues.Z));
+
+                        List<BasePoint3D> elementVertices = GetVerticesByCenterPosition(position, vertexDictionary, be);
                         List<BasePoint3D> elementCenterVertices = BrickElementInitializator.InitializeCenterVertices(elementVertices);
                         List<BaseLine3D> elementEdges = BrickElementInitializator.InitializeEdges(elementVertices);
                         List<BasePlane3D> elementFaces = BrickElementInitializator.InitializeFaces(elementVertices, elementCenterVertices);
-
-                        elementFaces[0].IsSelected = true;
+                        //elementFaces[0].IsSelected = true;
 
                         IMesh mesh = new Mesh();
                         mesh.AddRange(elementVertices);
                         mesh.AddRange(elementEdges);
                         mesh.AddRange(elementFaces);
 
-                        TwentyNodeBrickElement be = new TwentyNodeBrickElement(position, new Vector3(1 / nValues.X, 1 / nValues.Y, 1 / nValues.Z));
                         be.Mesh = mesh;
+                        BrickElementInitializator.SetParent(be);
+                        be.InitializeLocalIndices();
                         brickElements.Add(be);
                     }
                 }
@@ -199,13 +210,13 @@ namespace Core.Services
             return brickElements;
         }
 
-        private List<BasePoint3D> GetVerticesByCenterPosition(Vector3 centerPosition, Dictionary<Vector3, BasePoint3D> allPoints) 
+        private List<BasePoint3D> GetVerticesByCenterPosition(Vector3 centerPosition, Dictionary<Vector3, BasePoint3D> allPoints, TwentyNodeBrickElement parentBe) 
         {
             float x = centerPosition.X;
             float y = centerPosition.Y;
             float z = centerPosition.Z;
 
-            return new List<BasePoint3D>()
+            List<BasePoint3D> points = new List<BasePoint3D>()
             {
                 // Corner Vertices
                 allPoints[new Vector3(x - 1, y - 1, z - 1)],    // -1, -1, 1
@@ -234,6 +245,13 @@ namespace Core.Services
                 allPoints[new Vector3(x, y + 1, z + 1)],    // 0, 1, -1
                 allPoints[new Vector3(x - 1, y + 1, z)],    // -1, 1, 0
             };
+
+            foreach (var point in points)
+            {
+                point.Parent = parentBe;
+            }
+
+            return points;
         }
 
         //private List<BaseLine3D> GetEdgesByCenterPosition(Vector3 centerPosition, Dictionary<Vector3, BasePoint3D> allPoints)
