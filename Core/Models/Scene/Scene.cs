@@ -24,7 +24,7 @@ namespace Core.Models.Scene
         public void AddObject3D(SceneObject3D obj)
         {
             Objects3D.Add(obj.ID, obj);
-            OnObjectAddedToScene.Invoke(obj);
+            OnObjectAddedToScene?.Invoke(obj);
         }
 
         public bool RemoveObject3D(SceneObject3D obj)

@@ -15,6 +15,10 @@ namespace Core.Utils
         {
             if (value is string strValue)
             {
+                if (strValue.Contains('.'))
+                {
+                    strValue = strValue.Replace('.', ',');
+                }
                 string[] parts = strValue.Split(", ");
                 if (parts.Length == 3 &&
                     float.TryParse(parts[0], out float x) &&

@@ -14,6 +14,7 @@ namespace Core.Maths
         private List<Vector2> localFacePoints;
         private List<double> gaussValues = new List<double>() { -Math.Sqrt(0.6), 0, Math.Sqrt(0.6)};
         private static float[] constValues = { 5.0f / 9, 8.0f / 9, 5.0f / 9 };
+        private static int[] correctIndices = new int[] { 0, 2, 1 };
 
         private Dictionary<FaceType, List<int>> allFaceLocalIndices = new Dictionary<FaceType, List<int>>
         {
@@ -128,7 +129,7 @@ namespace Core.Maths
                         for (int k = 0; k < 8; k++)
                         {
                             BasePoint3D currentVertex = faceVertices[k];
-                            double valueByAxis = currentVertex[m];
+                            double valueByAxis = currentVertex[correctIndices[m]];
 
                             double deriv = currentSetOfDerivativeValues[(LOCAL_AXIS)nt_index][k];
                             double vertexResult = valueByAxis * deriv;
@@ -261,17 +262,17 @@ namespace Core.Maths
                         List<double> currentStandartValues = standartNT.ElementAt(gaussIndex).Value;
                         double currentStandartValue = currentStandartValues[i];
 
-                        f1 += constValuesMultiplier * ((currentXyzDNT[1, 0] * currentXyzDNT[2, 1] - currentXyzDNT[2, 0] * currentXyzDNT[1, 1]) * currentStandartValue);
-                        f2 += constValuesMultiplier * ((currentXyzDNT[2, 0] * currentXyzDNT[0, 1] - currentXyzDNT[0, 0] * currentXyzDNT[2, 1]) * currentStandartValue);
-                        f3 += constValuesMultiplier * ((currentXyzDNT[0, 0] * currentXyzDNT[1, 1] - currentXyzDNT[1, 0] * currentXyzDNT[0, 1]) * currentStandartValue);
+                        f1 += constValuesMultiplier * ((currentXyzDNT[2, 0] * currentXyzDNT[1, 1] - currentXyzDNT[1, 0] * currentXyzDNT[2, 1]) * currentStandartValue);
+                        f2 += constValuesMultiplier * ((currentXyzDNT[1, 0] * currentXyzDNT[0, 1] - currentXyzDNT[0, 0] * currentXyzDNT[1, 1]) * currentStandartValue);
+                        f3 += constValuesMultiplier * ((currentXyzDNT[0, 0] * currentXyzDNT[2, 1] - currentXyzDNT[2, 0] * currentXyzDNT[0, 1]) * currentStandartValue);
 
                         gaussIndex++;
                     }
                 }
                 int vertexPosition = faceLocalIndices[i];
                 resultF[20 * 0 + vertexPosition] = f1;
-                resultF[20 * 1 + vertexPosition] = f2;
-                resultF[20 * 2 + vertexPosition] = f3;
+                resultF[20 * 2 + vertexPosition] = f2;
+                resultF[20 * 1 + vertexPosition] = f3;
             }
             return resultF;
         }

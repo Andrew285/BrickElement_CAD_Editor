@@ -11,6 +11,7 @@ namespace Core.Maths
     {
         private static double[] gaussValues = { -Math.Sqrt(0.6), 0, Math.Sqrt(0.6)};
         private static double[] constValues = { 5.0f/9, 8.0f/9, 5.0f/9 };
+        private static int[] correctIndices = new int[] { 0, 2, 1 };
 
         private static Dictionary<int, Func<Vector3Double, Vector3Double, double>> cornerDerivativeFunctions =
             new Dictionary<int, Func<Vector3Double, Vector3Double, double>>
@@ -104,13 +105,13 @@ namespace Core.Maths
             // result derivatives values
             Dictionary<Vector3Double, Dictionary<int, List<double>>> DFIABG = new Dictionary<Vector3Double, Dictionary<int, List<double>>>();
 
-            for (int c1 = 0; c1 < 3; c1++)
+            for (int c3 = 0; c3 < 3; c3++)
             {
                 for (int c2 = 0; c2 < 3; c2++)
                 {
-                    for (int c3 = 0; c3 < 3; c3++)
+                    for (int c1 = 0; c1 < 3; c1++)
                     {
-                        Vector3Double currentGaussValue = new Vector3Double(gaussValues[c1], gaussValues[c2], gaussValues[c3]);
+                        Vector3Double currentGaussValue = new Vector3Double(gaussValues[c1], gaussValues[c3], gaussValues[c2]);
                         if (!DFIABG.ContainsKey(currentGaussValue))
                         {
                             DFIABG.Add(currentGaussValue, new Dictionary<int, List<double>>());
@@ -127,11 +128,11 @@ namespace Core.Maths
                                 Func<Vector3Double, Vector3Double, double> derivativeFunction = cornerDerivativeFunctions[0];
                                 if (i >= 0 && i < 8)
                                 {
-                                    derivativeFunction = cornerDerivativeFunctions[j];
+                                    derivativeFunction = cornerDerivativeFunctions[correctIndices[j]];
                                 }
                                 else if (i >= 8 && i < 20)
                                 {
-                                    derivativeFunction = middleDerivativeFunctions[j];
+                                    derivativeFunction = middleDerivativeFunctions[correctIndices[j]];
                                 }
                                 else
                                 {
@@ -178,16 +179,16 @@ namespace Core.Maths
                         for (int k = 0; k < 20; k++)
                         {
                             BasePoint3D vertexOfCube = be.Mesh.VerticesSet.ElementAt(k);
-                            double valueByAxis = vertexOfCube[j];
+                            double valueByAxis = vertexOfCube[correctIndices[j]];
 
-                            double deriv = derivativesByCube[k][i];
+                            double deriv = derivativesByCube[k][correctIndices[i]];
                             double vertexResult = valueByAxis * deriv; // changed i -> j
                             cubeResult += vertexResult;
                         }
 
                         // Add minus (should be deleted)
                         //if (j == 2) cubeResult *= -1;
-                        yakobian[i, j] = cubeResult;
+                        yakobian[i, correctIndices[j]] = cubeResult;
                     }
                 }
                 yakobians[d] = yakobian;
@@ -332,9 +333,9 @@ namespace Core.Maths
                     matrixMGE[20 * 0 + i, 20 * 1 + j] = a12;
                     matrixMGE[20 * 0 + i, 20 * 2 + j] = a13;
                     matrixMGE[20 * 1 + i, 20 * 2 + j] = a23;
-                    matrixMGE[20 * 1 + i, 20 * 0 + j] = a12; // a21
-                    matrixMGE[20 * 2 + i, 20 * 0 + j] = a13; // a31
-                    matrixMGE[20 * 2 + i, 20 * 1 + j] = a23; // a32
+                    matrixMGE[20 * 1 + j, 20 * 0 + i] = a12; // a21
+                    matrixMGE[20 * 2 + j, 20 * 0 + i] = a13; // a31
+                    matrixMGE[20 * 2 + j, 20 * 1 + i] = a23; // a32
                 }
             }
 
@@ -370,13 +371,21 @@ namespace Core.Maths
                     {
                         // 0 for 0-19,
                         // 1 for 20-39,
-                        // 2 for 40-59
+                        // 2 for 40-59  
                         int rowAxisIndex = i / 20; 
                         int colAxisIndex = j / 20;
 
                         // place on defined position
+
                         int rowIndex = 3 * vertexIndices[i % 20] + rowAxisIndex;
                         int columnIndex = 3 * vertexIndices[j % 20] + colAxisIndex;
+
+                        if ((rowIndex == 17 && columnIndex == 1) || (rowIndex == 1 && columnIndex == 17))
+                        {
+                            Console.WriteLine();
+                        }
+
+                        double value = currentMgeMatrix[i, j];
                         resultCombinedMatrix[rowIndex, columnIndex] += currentMgeMatrix[i, j];
                     }
                 }
@@ -389,7 +398,7 @@ namespace Core.Maths
                 for (int j = 0; j < 3; j++)
                 {
                     int axisIndex = 3 * index + j;
-                    resultCombinedMatrix[axisIndex, axisIndex] = 1000000000000000000000000000f;
+                    resultCombinedMatrix[axisIndex, axisIndex] = 100000000000000f;
                 }
             }
 

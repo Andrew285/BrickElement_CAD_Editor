@@ -180,7 +180,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
             foreach (var vertex in verticesMap)
             {
-                if (vertex.Value.Count > 3)
+                if (vertex.Value.Count > 6)
                 {
                     Mesh.VerticesDictionary[vertex.Key].IsDrawable = false;
                 }
