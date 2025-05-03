@@ -64,6 +64,11 @@ namespace Core.Models.Geometry.Primitive.Point
             return Position;
         }
 
+        public override string ToString()
+        {
+            return String.Format("({0}, {1}, {2})", X, Y, Z);
+        }
+
         public abstract BasePoint3D Clone();
 
         public int CompareTo(BasePoint3D other)
