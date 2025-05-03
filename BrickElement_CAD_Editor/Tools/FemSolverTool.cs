@@ -35,46 +35,46 @@ namespace App.Tools
             {
                 if (surface != null)
                 {
-                    // Global Points
-                    StringBuilder sb1 = new StringBuilder();
-                    foreach (var point in surface.GlobalVertexIndices)
-                    {
-                        sb1.Append(String.Format("Global Index: {0} -- Vertex: {1}\n", point.Value, surface.Mesh.VerticesDictionary[point.Key]));
-                    }
-                    sb1.Append('\n');
-                    File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\globalPoints.txt", sb1.ToString());
+                    //// Global Points
+                    //StringBuilder sb1 = new StringBuilder();
+                    //foreach (var point in surface.GlobalVertexIndices)
+                    //{
+                    //    sb1.Append(String.Format("Global Index: {0} -- Vertex: {1}\n", point.Value, surface.Mesh.VerticesDictionary[point.Key]));
+                    //}
+                    //sb1.Append('\n');
+                    //File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\globalPoints.txt", sb1.ToString());
 
-                    // Local Points
-                    StringBuilder sb2 = new StringBuilder();
-                    int cubeCounter = 0;
-                    foreach (var point in surface.LocalVertexIndices)
-                    {
-                        sb2.Append(String.Format("Local Points Indices for Cube {0}:", cubeCounter));
-                        foreach (var item in point.Value)
-                        {
-                            sb2.Append(item + ", ");
-                        }
-                        sb2.Append('\n');
-                        cubeCounter++;
-                    }
-                    sb2.Append('\n');
-                    File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\localPoints.txt", sb2.ToString());
+                    //// Local Points
+                    //StringBuilder sb2 = new StringBuilder();
+                    //int cubeCounter = 0;
+                    //foreach (var point in surface.LocalVertexIndices)
+                    //{
+                    //    sb2.Append(String.Format("Local Points Indices for Cube {0}:", cubeCounter));
+                    //    foreach (var item in point.Value)
+                    //    {
+                    //        sb2.Append(item + ", ");
+                    //    }
+                    //    sb2.Append('\n');
+                    //    cubeCounter++;
+                    //}
+                    //sb2.Append('\n');
+                    //File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\localPoints.txt", sb2.ToString());
 
 
                     TwentyNodeBrickElement standartCube = BrickElementInitializator.CreateStandartElement();
                     Dictionary<Vector3Double, Dictionary<int, List<double>>> dfiabg = CalculateDFIABG(standartCube);
 
-                    StringBuilder sb = new StringBuilder();
-                    foreach (var elem in dfiabg)
-                    {
-                        sb.Append("Gauss Point: " + elem.Key.ToString() + "\n");
-                        foreach (var dictElem in elem.Value)
-                        {
-                            sb.Append(String.Format("Local Index {0} -- X: {1}, Y: {2}, Z: {3}\n", dictElem.Key, dictElem.Value[0], dictElem.Value[1], dictElem.Value[2]));
-                        }
-                        sb.Append("\n");
-                    }
-                    File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\dfiabg_1.txt", sb.ToString());
+                    //StringBuilder sb = new StringBuilder();
+                    //foreach (var elem in dfiabg)
+                    //{
+                    //    sb.Append("Gauss Point: " + elem.Key.ToString() + "\n");
+                    //    foreach (var dictElem in elem.Value)
+                    //    {
+                    //        sb.Append(String.Format("Local Index {0} -- X: {1}, Y: {2}, Z: {3}\n", dictElem.Key, dictElem.Value[0], dictElem.Value[1], dictElem.Value[2]));
+                    //    }
+                    //    sb.Append("\n");
+                    //}
+                    //File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\dfiabg_1.txt", sb.ToString());
 
                     List<double[,]> mgeMatrices = new List<double[,]>();
                     int xyzCounter = 0;
@@ -83,21 +83,21 @@ namespace App.Tools
                         var yakobians = CalculateYakobians(be.Value, dfiabg);
                         var dfixyz = CalculateDFIXYZ(yakobians, dfiabg);
 
-                        if (xyzCounter < 3)
-                        {
-                            StringBuilder sb3 = new StringBuilder();
-                            foreach (var elem in dfixyz)
-                            {
-                                sb3.Append("Gauss Point: " + elem.Key.ToString() + "\n");
-                                foreach (var dictElem in elem.Value)
-                                {
-                                    sb3.Append(String.Format("Local Index {0} -- X: {1}, Y: {2}, Z: {3}\n", dictElem.Key, dictElem.Value[0], dictElem.Value[1], dictElem.Value[2]));
-                                }
-                                sb3.Append("\n");
-                            }
-                            File.WriteAllText(String.Format("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\dfixyz{0}.txt", xyzCounter), sb3.ToString());
-                            xyzCounter++;
-                        }
+                        //if (xyzCounter < 3)
+                        //{
+                        //    StringBuilder sb3 = new StringBuilder();
+                        //    foreach (var elem in dfixyz)
+                        //    {
+                        //        sb3.Append("Gauss Point: " + elem.Key.ToString() + "\n");
+                        //        foreach (var dictElem in elem.Value)
+                        //        {
+                        //            sb3.Append(String.Format("Local Index {0} -- X: {1}, Y: {2}, Z: {3}\n", dictElem.Key, dictElem.Value[0], dictElem.Value[1], dictElem.Value[2]));
+                        //        }
+                        //        sb3.Append("\n");
+                        //    }
+                        //    File.WriteAllText(String.Format("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\dfixyz{0}.txt", xyzCounter), sb3.ToString());
+                        //    xyzCounter++;
+                        //}
                         
                         var mge = CalculateMGE(yakobians, dfixyz);
                         mgeMatrices.Add(mge);
@@ -105,11 +105,11 @@ namespace App.Tools
 
 
 
-                    DataTable mgeDataTable1 = ShowMatrix(mgeMatrices[0]);
+                    //DataTable mgeDataTable1 = ShowMatrix(mgeMatrices[0]);
                     //DataTable mgeDataTable2 = ShowMatrix(mgeMatrices[1]);
                     //DataTable mgeDataTable3 = ShowMatrix(mgeMatrices[2]);
 
-                    Write2DArrayToCsv(mgeMatrices[0], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge1.csv");
+                    //Write2DArrayToCsv(mgeMatrices[0], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge1.csv");
                     //Write2DArrayToCsv(mgeMatrices[1], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge2.csv");
                     //Write2DArrayToCsv(mgeMatrices[2], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge3.csv");
 
@@ -182,7 +182,7 @@ namespace App.Tools
                     }
 
 
-                    Write1DArrayAsColumnToCsv(fVectors[0], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\fVector0.csv");
+                    //Write1DArrayAsColumnToCsv(fVectors[0], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\fVector0.csv");
                     //Write1DArrayAsColumnToCsv(fVectors[1], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\fVector1.csv");
                     //Write1DArrayAsColumnToCsv(fVectors[2], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\fVector2.csv");
 
@@ -195,15 +195,15 @@ namespace App.Tools
 
                     double[] resultPoints = SolveLinearSystem2(combinedMatrix, combinedVector);
 
-                    //ShowMatrix(mgeMatrices[0]);
-                    DataTable combinedMatrixMGEDataTable = ShowMatrix(combinedMatrix);
-                    WriteToCSV(combinedMatrixMGEDataTable, "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\result_mge.csv");
+                    ////ShowMatrix(mgeMatrices[0]);
+                    //DataTable combinedMatrixMGEDataTable = ShowMatrix(combinedMatrix);
+                    //WriteToCSV(combinedMatrixMGEDataTable, "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\result_mge.csv");
 
-                    DataTable vectorFDataTable = ShowVector(combinedVector);
-                    WriteToCSV(vectorFDataTable, "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\result_vector_f.csv");
+                    //DataTable vectorFDataTable = ShowVector(combinedVector);
+                    //WriteToCSV(vectorFDataTable, "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\result_vector_f.csv");
 
-                    DataTable resultPointsDataTable = ShowVector(resultPoints);
-                    WriteToCSV(resultPointsDataTable, "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\result_points.csv");
+                    //DataTable resultPointsDataTable = ShowVector(resultPoints);
+                    //WriteToCSV(resultPointsDataTable, "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\result_points.csv");
 
                     Vector3[] newPoints = new Vector3[resultPoints.Length];
                     int counter = 0;
