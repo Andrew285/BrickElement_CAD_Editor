@@ -111,6 +111,7 @@ namespace Core.Models.Graphics.Rendering
             DrawFPS();
             DrawSceneObjects(scene.Objects2D.Values);
 
+
             //Vector3 cameraPosition = Vector3.One;  // Camera's position in 3D world
             //Vector3 cameraTarget = Camera.Target;      // Camera's target point in 3D world
 

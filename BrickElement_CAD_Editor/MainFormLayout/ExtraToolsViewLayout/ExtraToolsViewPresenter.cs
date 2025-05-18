@@ -71,7 +71,7 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
                     nValues = new Vector3(resultX, resultY, resultZ);
                 }
 
-                divisionManager.Divide(selectedBrickElement, nValues);
+                divisionManager.Divide(selectedBrickElement, selectedBrickElement.Size, nValues);
             }
             else
             {

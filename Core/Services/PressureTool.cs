@@ -1,10 +1,5 @@
 ﻿using Core.Models.Geometry.Primitive.Plane;
 using Core.Services.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Services
 {
@@ -26,7 +21,7 @@ namespace Core.Services
             {
                 // Set Value
                 face.IsStressed = true;
-                face.Pressure = 0.5f;
+                face.Pressure = 0.3f;
 
                 // Set Color
                 face.NonSelectedColor = Raylib_cs.Color.Orange;

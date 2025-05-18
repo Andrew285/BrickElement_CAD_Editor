@@ -8,6 +8,7 @@ using System.Numerics;
 using App.DataTableLayout;
 
 using static Core.Maths.FEM;
+using static Core.Maths.StressSolver;
 using Core.Services;
 using System.Text;
 using System.Runtime.CompilerServices;
@@ -78,9 +79,17 @@ namespace App.Tools
 
                     List<double[,]> mgeMatrices = new List<double[,]>();
                     int xyzCounter = 0;
+                    int counter1 = 0;
                     foreach (var be in surface.BrickElements)
                     {
                         var yakobians = CalculateYakobians(be.Value, dfiabg);
+                        if (counter1 < 1)
+                        {
+                            Write2DArrayToCsv(yakobians[0], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\yakobians_0_0.csv");
+                            Write2DArrayToCsv(yakobians[1], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\yakobians_0_1.csv");
+                            Write2DArrayToCsv(yakobians[2], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\yakobians_0_2.csv");
+                        }
+
                         var dfixyz = CalculateDFIXYZ(yakobians, dfiabg);
 
                         //if (xyzCounter < 3)
@@ -101,6 +110,7 @@ namespace App.Tools
                         
                         var mge = CalculateMGE(yakobians, dfixyz);
                         mgeMatrices.Add(mge);
+                        counter1++;
                     }
 
 
@@ -126,7 +136,7 @@ namespace App.Tools
 
 
 
-                    surface.AreFacesDrawable = false;
+                    //surface.AreFacesDrawable = false;
 
                     //double[] fValues = null;
                     //foreach (var face in surface.Mesh.FacesDictionary.Values)
@@ -195,6 +205,7 @@ namespace App.Tools
 
                     double[] resultPoints = SolveLinearSystem2(combinedMatrix, combinedVector);
 
+
                     ////ShowMatrix(mgeMatrices[0]);
                     //DataTable combinedMatrixMGEDataTable = ShowMatrix(combinedMatrix);
                     //WriteToCSV(combinedMatrixMGEDataTable, "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\result_mge.csv");
@@ -206,17 +217,41 @@ namespace App.Tools
                     //WriteToCSV(resultPointsDataTable, "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\result_points.csv");
 
                     Vector3[] newPoints = new Vector3[resultPoints.Length];
+                    Vector3[] oldPoints = new Vector3[resultPoints.Length];
                     int counter = 0;
                     for (int i = 0; i < surface.GlobalVertexIndices.Count; i++)
                     {
                         Guid globalVertexId = surface.GlobalVertexIndices.ElementAt(i).Key;
                         Vector3 vertex = surface.Mesh.VerticesDictionary[globalVertexId].Position;
+                        oldPoints[i] = vertex;
                         Vector3 newPoint = new Vector3(vertex.X - (float)resultPoints[counter + 0], vertex.Y - (float)resultPoints[counter + 2], vertex.Z - (float)resultPoints[counter + 1]);
                         newPoints[i] = newPoint;
                         surface.Mesh.VerticesDictionary[globalVertexId].Position = newPoint;
                         counter += 3;
-                        Console.WriteLine(newPoint);
                     }
+
+                    foreach (var face in surface.Mesh.FacesDictionary)
+                    {
+                        face.Value.DrawCustom = false;
+                    }
+                    //surface.AreFacesDrawable = false;
+
+
+                    double E = 20f;
+                    double nu = 0.3f;
+                    double lambda = E / ((1 + nu) * (1 - 2 * nu));
+                    double mu = E / (2 * (1 + nu));
+                    StressSolver stressSolver = new StressSolver(lambda, nu, mu);
+                    var translationDerivatives = stressSolver.CalculateTranslationDerivatives(resultPoints, surface, oldPoints);
+                    var mainStresses = stressSolver.CalculateSigmaStressesForPoint(translationDerivatives);
+                    surface.mainStresses = mainStresses;
+                    //stressSolver.ChangeVerticesColor(mainStresses, surface);
+
+                    //foreach (var face in surface.Mesh.FacesDictionary)
+                    //{
+                    //    face.Value.DrawCustom = true;
+                    //}
+
 
                     //StringBuilder sb = new StringBuilder();
                     //foreach (var elem in surface.Mesh.VerticesDictionary)

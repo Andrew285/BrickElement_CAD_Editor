@@ -17,7 +17,50 @@ namespace Core.Models.Geometry.Primitive.Plane
         public List<BasePoint3D> Vertices { get { return vertices; } }
         public List<TrianglePlane3D> TrianglePlanes { get { return trianglePlanes; } }
 
+        public BasePoint3D CenterPoint { get; set; }
+
         public FaceType FaceType { get; set; } = FaceType.NONE;
+        public bool DrawCustom
+        {
+            get
+            {
+                return drawCustom;
+            }
+            set
+            {
+                drawCustom = value;
+
+                int red = 0;
+                int green = 0;
+                int blue = 0;
+                int alpha = 0;
+
+                Vector3 avaragePosition = Vector3.Zero;
+                for (int i = 0; i < correctOrderVertices.Count; i++)
+                {
+                    BasePoint3D vertex = correctOrderVertices[i];
+
+                    red += vertex.Color.R;
+                    green += vertex.Color.G;
+                    blue += vertex.Color.B;
+                    alpha += vertex.Color.A;
+
+                    avaragePosition += vertex.Position;
+                }
+
+                Raylib_cs.Color color = new Raylib_cs.Color(red / 8, green / 8, blue / 8, alpha / 8);
+                Vector3 resultAvaragePosition = avaragePosition / 8;
+
+                CenterPoint.NonSelectedColor = color;
+                CenterPoint.Position = resultAvaragePosition;
+
+                foreach (var trianglePlane in TrianglePlanes)
+                {
+                    trianglePlane.DrawCustom = drawCustom;
+                }
+            }
+        }
+        private bool drawCustom = false;
 
         // Face Pressure
         [LocalizedCategory(PropertyConstants.C_APPEARANCE)]
@@ -157,7 +200,7 @@ namespace Core.Models.Geometry.Primitive.Plane
             correctOrderVertices = new List<BasePoint3D>();
         }
 
-        public BasePlane3D(List<TrianglePlane3D> planes, List<BasePoint3D> correctOrderVertices) : base()
+        public BasePlane3D(List<TrianglePlane3D> planes, List<BasePoint3D> correctOrderVertices, BasePoint3D centerPoint) : base()
         {
             trianglePlanes = planes;
             vertices = GetUniqueVertices(trianglePlanes);
@@ -169,6 +212,7 @@ namespace Core.Models.Geometry.Primitive.Plane
                  .ThenBy(p => p.Y)
                  .ThenBy(p => p.Z)
                  .ToList();
+            CenterPoint = centerPoint;
         }
 
         public override void SetColor(Raylib_cs.Color color)

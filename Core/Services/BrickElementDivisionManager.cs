@@ -3,6 +3,7 @@ using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
+using Core.Models.Geometry.Primitive.Plane.Face;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Scene;
 using System.Numerics;
@@ -44,9 +45,9 @@ namespace Core.Services
             //OnBrickElementDivided += this.scene.HandleOnBrickElementDivided;
         }
 
-        public BrickElementSurface Divide(TwentyNodeBrickElement be, Vector3 nValues)
+        public BrickElementSurface Divide(TwentyNodeBrickElement be, Vector3 sizeValues, Vector3 nValues)
         {
-            this.aValues = new Vector3(2, 2, 2);
+            this.aValues = sizeValues;
 
             cubesCountByX = (int)nValues.X;
             cubesCountByY = (int)nValues.Y;
@@ -177,6 +178,54 @@ namespace Core.Services
             return edges;
         }
 
+        private void GenerateFaces(int countX, int countY, int countZ)
+        {
+            List<BasePlane3D> faces = new List<BasePlane3D>();
+
+            for (int i = 0; i < countZ; i++)
+            {
+                int zCenter = i * 3 - i - 1;
+
+                for (int j = 0; j < countY; j++)
+                {
+                    int yCenter = j * 3 - j - 1;
+
+                    for (int k = 0; k < countX; k++)
+                    {
+                        int xCenter = k * 3 - k - 1;
+                        Vector3 cubeCenter = new Vector3(xCenter, yCenter, zCenter);
+
+                    }
+                }
+            }
+        }
+
+        private List<BasePoint3D> GenerateCenterVertices(Vector3 center)
+        {
+            return new List<BasePoint3D>()
+            {
+                vertexDictionary[new Vector3(center.X, center.Y, center.Z + 1)],
+                vertexDictionary[new Vector3(center.X + 1, center.Y, center.Z)],
+                vertexDictionary[new Vector3(center.X, center.Y, center.Z - 1)],
+                vertexDictionary[new Vector3(center.X - 1, center.Y, center.Z)],
+                vertexDictionary[new Vector3(center.X, center.Y - 1, center.Z)],
+                vertexDictionary[new Vector3(center.X, center.Y + 1, center.Z)],
+            };
+        }
+
+        private List<BasePoint3D> GenerateVerticesByCubeCenter(Vector3 center)
+        {
+            return new List<BasePoint3D>()
+            {
+                vertexDictionary[new Vector3(center.X, center.Y, center.Z + 1)],
+                vertexDictionary[new Vector3(center.X + 1, center.Y, center.Z)],
+                vertexDictionary[new Vector3(center.X, center.Y, center.Z - 1)],
+                vertexDictionary[new Vector3(center.X - 1, center.Y, center.Z)],
+                vertexDictionary[new Vector3(center.X, center.Y - 1, center.Z)],
+                vertexDictionary[new Vector3(center.X, center.Y + 1, center.Z)],
+            };
+        }
+
         private List<TwentyNodeBrickElement> GenerateBrickElements(Vector3 nValues)
         {
             List<TwentyNodeBrickElement> brickElements = new List<TwentyNodeBrickElement>();
@@ -253,162 +302,5 @@ namespace Core.Services
 
             return points;
         }
-
-        //private List<BaseLine3D> GetEdgesByCenterPosition(Vector3 centerPosition, Dictionary<Vector3, BasePoint3D> allPoints)
-        //{
-        //    float x = centerPosition.X;
-        //    float y = centerPosition.Y;
-        //    float z = centerPosition.Z;
-
-        //    return new List<BaseLine3D>()
-        //    {
-        //        // Corner Vertices
-        //        allPoints[new Vector3(x - 1, y - 1, z - 1)],    // -1, -1, 1
-        //        allPoints[new Vector3(x + 1, y - 1, z - 1)],    // 1, -1, 1
-        //        allPoints[new Vector3(x + 1, y - 1, z + 1)],    // 1, -1, -1
-        //        allPoints[new Vector3(x - 1, y - 1, z + 1)],    // -1, -1, -1
-
-        //        allPoints[new Vector3(x - 1, y + 1, z - 1)],    // -1, 1, 1
-        //        allPoints[new Vector3(x + 1, y + 1, z - 1)],    // 1, 1, 1
-        //        allPoints[new Vector3(x + 1, y + 1, z + 1)],    // 1, 1, -1
-        //        allPoints[new Vector3(x - 1, y + 1, z + 1)],    // -1, 1, -1
-
-        //        // Middle Vertices
-        //        allPoints[new Vector3(x, y - 1, z - 1)],    // 0, -1, 1
-        //        allPoints[new Vector3(x + 1, y - 1, z)],    // 1, -1, 0
-        //        allPoints[new Vector3(x, y - 1, z + 1)],    // 0, -1, -1
-        //        allPoints[new Vector3(x - 1, y - 1, z)],    // -1, -1, 0
-
-        //        allPoints[new Vector3(x - 1, y, z - 1)],    // -1, 0, 1
-        //        allPoints[new Vector3(x + 1, y, z - 1)],    // 1, 0, 1
-        //        allPoints[new Vector3(x + 1, y, z + 1)],    // 1, 0, -1
-        //        allPoints[new Vector3(x - 1, y, z + 1)],    // -1, 0, -1
-
-        //        allPoints[new Vector3(x, y + 1, z - 1)],    // 0, 1, 1
-        //        allPoints[new Vector3(x + 1, y + 1, z)],    // 1, 1, 0
-        //        allPoints[new Vector3(x, y + 1, z + 1)],    // 0, 1, -1
-        //        allPoints[new Vector3(x - 1, y + 1, z)],    // -1, 1, 0
-        //    };
-        //}
-
-
-        //private List<BaseLine3D> GenerateEdges()
-        //{
-        //    List<BaseLine3D> edges = new List<BaseLine3D>();
-
-        //    foreach (var kvp in vertexDictionary)
-        //    {
-        //        Vector3 pos = kvp.Key;
-        //        Point3D currentPoint = kvp.Value;
-
-        //        if (currentPoint == null) continue;
-
-        //        // Define if this point is on the boundary (edges of the grid)
-        //        bool isBoundaryX = pos.X == 0 || pos.X == verticesCountByX - 1;
-        //        bool isBoundaryY = pos.Y == 0 || pos.Y == verticesCountByY - 1;
-        //        bool isBoundaryZ = pos.Z == 0 || pos.Z == verticesCountByZ - 1;
-        //        currentPoint.IsDrawable = isBoundaryX || isBoundaryY || isBoundaryZ;
-
-        //        // Try to connect to the next point in X direction (only if boundary)
-        //        if (vertexDictionary.TryGetValue(new Vector3(pos.X + 1, pos.Y, pos.Z), out Point3D nextX) && nextX != null)
-        //        {
-        //            bool isDrawable = isBoundaryX || nextX.IsDrawable;
-        //            edges.Add(new Line3D(currentPoint, nextX) { IsDrawable = isDrawable });
-        //        }
-
-        //        // Try to connect to the next point in Y direction (only if boundary)
-        //        if (vertexDictionary.TryGetValue(new Vector3(pos.X, pos.Y + 1, pos.Z), out Point3D nextY) && nextY != null)
-        //        {
-        //            bool isDrawable = isBoundaryY || nextY.IsDrawable;
-        //            edges.Add(new Line3D(currentPoint, nextY) { IsDrawable = isDrawable });
-        //        }
-
-        //        // Try to connect to the next point in Z direction (only if boundary)
-        //        if (vertexDictionary.TryGetValue(new Vector3(pos.X, pos.Y, pos.Z + 1), out Point3D nextZ) && nextZ != null)
-        //        {
-        //            bool isDrawable = isBoundaryZ || nextZ.IsDrawable;
-        //            edges.Add(new Line3D(currentPoint, nextZ) { IsDrawable = isDrawable });
-        //        }
-        //    }
-
-        //    return edges.Where(edge => edge.IsDrawable).ToList(); // Only return drawable edges
-        //}
-
-
-
-        //private List<BaseLine3D> GenerateEdges()
-        //{
-        //    List<BaseLine3D> edges = new List<BaseLine3D>();
-        //    for (int y = 0; y < verticesCountByY; y++)
-        //    {
-        //        for (int z = 0; z < verticesCountByZ; z++)
-        //        {
-        //            for (int x = 0; x < verticesCountByX - 1; x++)
-        //            {
-        //                Point3D currentPoint = vertexDictionary[new Vector3(x, y, z)];
-        //                if (currentPoint == null)
-        //                {
-        //                    continue;
-        //                }
-
-        //                Point3D nexPoint = vertexDictionary[new Vector3(x + 1, y, z)];
-        //                if (nexPoint == null)
-        //                {
-        //                    continue;
-        //                }
-        //                Line3D line = new Line3D(currentPoint, nexPoint);
-        //                edges.Add(line);
-        //            }
-        //        }
-        //    }
-
-        //    for (int x = 0; x < verticesCountByX; x++)
-        //    {
-        //        for (int z = 0; z < verticesCountByZ; z++)
-        //        {
-        //            for (int y = 0; y < verticesCountByY - 1; y++)
-        //            {
-        //                Point3D currentPoint = vertexDictionary[new Vector3(x, y, z)];
-        //                if (currentPoint == null)
-        //                {
-        //                    continue;
-        //                }
-
-        //                Point3D nexPoint = vertexDictionary[new Vector3(x, y + 1, z)];
-        //                if (nexPoint == null)
-        //                {
-        //                    continue;
-        //                }
-        //                Line3D line = new Line3D(currentPoint, nexPoint);
-        //                edges.Add(line);
-        //            }
-        //        }
-        //    }
-
-        //    for (int x = 0; x < verticesCountByX; x++)
-        //    {
-        //        for (int y = 0; y < verticesCountByY; y++)
-        //        {
-        //            for (int z = 0; z < verticesCountByZ - 1; z++)
-        //            {
-        //                Point3D currentPoint = vertexDictionary[new Vector3(x, y, z)];
-        //                if (currentPoint == null)
-        //                {
-        //                    continue;
-        //                }
-
-        //                Point3D nexPoint = vertexDictionary[new Vector3(x, y, z + 1)];
-        //                if (nexPoint == null)
-        //                {
-        //                    continue;
-        //                }
-        //                Line3D line = new Line3D(currentPoint, nexPoint);
-        //                edges.Add(line);
-        //            }
-        //        }
-        //    }
-
-        //    return edges;
-        //}
     }
 }

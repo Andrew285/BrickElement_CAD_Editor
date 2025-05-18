@@ -282,7 +282,7 @@ namespace Core.Maths
 
 
             double[,] matrixMGE = new double[60, 60];
-            double E = 2f;
+            double E = 20f;
             double nu = 0.3f;
             double lambda = E / ((1 + nu) * (1 - 2 * nu));
             double mu = E / (2 * (1 + nu));

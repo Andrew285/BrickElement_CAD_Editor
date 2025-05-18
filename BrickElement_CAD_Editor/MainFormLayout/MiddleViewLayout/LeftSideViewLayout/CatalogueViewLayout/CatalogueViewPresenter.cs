@@ -33,10 +33,18 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
 
         public void HandleOnCubeClick(object sender, EventArgs e)
         {
-            CubeBrickElement cbe = BrickElementInitializator.CreateStandartElement();
+            //CubeBrickElement cbe = BrickElementInitializator.CreateStandartElement();
+            //scene.AddObject3D(cbe);
+
+
+            Vector3 size = new Vector3(10, 2, 2);
+            Vector3 division = new Vector3(10, 2, 2);
+            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0.5f, 0.5f, -0.5f), size);
             BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
-            BrickElementSurface surface = divisionManager.Divide(cbe, new Vector3(2, 2, 2));
+            BrickElementSurface surface = divisionManager.Divide(cbe, size, division);
             scene.AddObject3D(surface);
+
+
             //scene.AddObject2D(new LabelObject(new Point3D(new Vector3(0.5f, 0.5f, -0.5f)), "1"));
             //scene.AddObject2D(new LabelObject(new Point3D(new Vector3(1.5f, 0.5f, -0.5f)), "2"));
             //scene.AddObject2D(new LabelObject(new Point3D(new Vector3(0.5f, 0.5f, -1.5f)), "3"));

@@ -1,4 +1,5 @@
-﻿using Core.Models.Geometry.Complex.BrickElements;
+﻿using Core.Maths;
+using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
@@ -6,6 +7,7 @@ using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Models.Text.VertexText;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection.Metadata.Ecma335;
 using System.Windows.Forms.VisualStyles;
 
@@ -43,6 +45,30 @@ namespace Core.Models.Geometry.Complex.Surfaces
                 areVertexLabelsDrawable = value;
                 VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(GetGlobalVertices());
                 OnVertexLabelsDrawn?.Invoke(vertexIndexGroup);
+            }
+        }
+
+        public Dictionary<int, double[]> mainStresses = new Dictionary<int, double[]>();
+        private bool drawTension = false;
+        public bool DrawTension
+        {
+            get
+            {
+                return drawTension;
+            }
+            set
+            {
+                drawTension = value;
+                double E = 20f;
+                double nu = 0.3f;
+                double lambda = E / ((1 + nu) * (1 - 2 * nu));
+                double mu = E / (2 * (1 + nu));
+                StressSolver stressSolver = new StressSolver(lambda, nu, mu);
+                stressSolver.ChangeVerticesColor(mainStresses, this);
+                foreach (var face in Mesh.FacesDictionary)
+                {
+                    face.Value.DrawCustom = drawTension;
+                }
             }
         }
 
