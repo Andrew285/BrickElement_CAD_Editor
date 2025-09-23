@@ -1,4 +1,5 @@
 ﻿using App.DataTableLayout;
+using App.DivideFormLayout;
 using ConsoleTables;
 using Core.Maths;
 using Core.Models.Geometry.Complex.BrickElements;
@@ -36,6 +37,20 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             //CubeBrickElement cbe = BrickElementInitializator.CreateStandartElement();
             //scene.AddObject3D(cbe);
 
+            //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Mesh.VerticesSet.ToList());
+            //scene.AddObject2D(vertexIndexGroup);
+
+            //// Show Form
+            //DivideForm divideForm = new DivideForm();
+            //DivideFormPresenter divideFormPresenter = new DivideFormPresenter(divideForm);
+            //if (divideForm.ShowDialog() == DialogResult.OK)
+            //{
+            //    int resultX = Int32.Parse(divideForm.ValueX);
+            //    int resultY = Int32.Parse(divideForm.ValueY);
+            //    int resultZ = Int32.Parse(divideForm.ValueZ);
+
+            //    division = new Vector3(resultX, resultY, resultZ);
+            //}
 
             Vector3 size = new Vector3(10, 2, 2);
             Vector3 division = new Vector3(10, 2, 2);
@@ -52,8 +67,8 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
 
             // ***********************************************************************************************************************************
 
-            ////VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(cbe.Vertices, renderer);
-            ////scene.AddObject2D(vertexIndexGroup);
+            //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(surface.GetGlobalVertices());
+            //scene.AddObject2D(vertexIndexGroup);
 
             ////TwentyNodeBrickElement? newBe = BrickElementInitializator.CreateFrom(cbe.Faces[5], cbe);
             ////scene.AddObject3D(newBe);

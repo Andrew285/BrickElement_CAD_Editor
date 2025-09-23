@@ -271,7 +271,7 @@ namespace Core.Maths
             var B = MathNet.Numerics.LinearAlgebra.Vector<double>.Build.Dense(b);
 
             if (Math.Abs(A.Determinant()) < 1e-9)
-                return null; // Система не має єдиного розв'язку
+                return null;
 
             return A.Solve(B).AsArray();
         }
@@ -282,7 +282,7 @@ namespace Core.Maths
 
 
             double[,] matrixMGE = new double[60, 60];
-            double E = 20f;
+            double E = 1f;
             double nu = 0.3f;
             double lambda = E / ((1 + nu) * (1 - 2 * nu));
             double mu = E / (2 * (1 + nu));

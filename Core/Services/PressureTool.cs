@@ -21,7 +21,7 @@ namespace Core.Services
             {
                 // Set Value
                 face.IsStressed = true;
-                face.Pressure = 0.3f;
+                face.Pressure = 0.01f;
 
                 // Set Color
                 face.NonSelectedColor = Raylib_cs.Color.Orange;

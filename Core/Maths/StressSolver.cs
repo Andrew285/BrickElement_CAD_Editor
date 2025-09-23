@@ -161,7 +161,7 @@ namespace Core.Maths
                                 //var uX = translationPoints[globalVertexIndex2 * 3 + 0];
                                 //var uY = translationPoints[globalVertexIndex2 * 3 + 1];
                                 //var uZ = translationPoints[globalVertexIndex2 * 3 + 2];
-                                Vector3Double previousVertexPosition = new Vector3Double(oldPoints[globalVertexIndex2].X, oldPoints[globalVertexIndex2].Y, oldPoints[globalVertexIndex2].Z);
+                                //Vector3Double previousVertexPosition = new Vector3Double(oldPoints[globalVertexIndex2].X, oldPoints[globalVertexIndex2].Y, oldPoints[globalVertexIndex2].Z);
 
                                 var currentStandartPoint2 = standartVertices[e].Value.Position;
                                 var uAxis = translationPoints[globalVertexIndex2 * 3 + axis2];
@@ -177,7 +177,8 @@ namespace Core.Maths
                                 }
 
                                 //sum += uAxis * derivativeFunc(new Vector3Double(currentStandartPoint.X, currentStandartPoint.Y, currentStandartPoint.Z), new Vector3Double(previousVertexPosition.X, previousVertexPosition.Y, previousVertexPosition.Z));
-                                sum += uAxis * derivativeFunc(new Vector3Double(currentStandartPoint.X, currentStandartPoint.Y, currentStandartPoint.Z), new Vector3Double(currentStandartPoint2.X, currentStandartPoint2.Y, currentStandartPoint2.Z));
+                                double tempValue = derivativeFunc(new Vector3Double(currentStandartPoint.X, currentStandartPoint.Y, currentStandartPoint.Z), new Vector3Double(currentStandartPoint2.X, currentStandartPoint2.Y, currentStandartPoint2.Z));
+                                sum += uAxis * tempValue;
                             }
 
                             dValuesForPoint[axis, axis2] = sum;

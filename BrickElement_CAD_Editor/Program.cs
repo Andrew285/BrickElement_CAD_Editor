@@ -1,5 +1,4 @@
 ﻿using App.Tools;
-using BrickElement_CAD_Editor;
 using Core.Models.Graphics.Cameras;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
@@ -8,7 +7,7 @@ using UI.MainFormLayout;
 using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 using UI.Utils.ConsoleLogging;
 
-namespace UI
+namespace BrickElement_CAD_Editor
 {
     static class Program
     {

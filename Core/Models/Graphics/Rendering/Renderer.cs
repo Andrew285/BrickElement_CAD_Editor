@@ -132,7 +132,9 @@ namespace Core.Models.Graphics.Rendering
 
         public SceneObject3D? RaycastObjects3D(IEnumerable<SceneObject3D> objects) 
         {
-            Ray ray = Raylib.GetScreenToWorldRay(Raylib.GetMousePosition(), Camera.ToCamera3D());
+            var mousePosition = Raylib.GetMousePosition();
+            Camera3D camera = Camera.ToCamera3D();
+            Ray ray = Raylib.GetScreenToWorldRay(mousePosition, camera);
             return Raycast(objects, ray);
         }
 

@@ -36,120 +36,28 @@ namespace App.Tools
             {
                 if (surface != null)
                 {
-                    //// Global Points
-                    //StringBuilder sb1 = new StringBuilder();
-                    //foreach (var point in surface.GlobalVertexIndices)
-                    //{
-                    //    sb1.Append(String.Format("Global Index: {0} -- Vertex: {1}\n", point.Value, surface.Mesh.VerticesDictionary[point.Key]));
-                    //}
-                    //sb1.Append('\n');
-                    //File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\globalPoints.txt", sb1.ToString());
-
-                    //// Local Points
-                    //StringBuilder sb2 = new StringBuilder();
-                    //int cubeCounter = 0;
-                    //foreach (var point in surface.LocalVertexIndices)
-                    //{
-                    //    sb2.Append(String.Format("Local Points Indices for Cube {0}:", cubeCounter));
-                    //    foreach (var item in point.Value)
-                    //    {
-                    //        sb2.Append(item + ", ");
-                    //    }
-                    //    sb2.Append('\n');
-                    //    cubeCounter++;
-                    //}
-                    //sb2.Append('\n');
-                    //File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\localPoints.txt", sb2.ToString());
-
-
                     TwentyNodeBrickElement standartCube = BrickElementInitializator.CreateStandartElement();
                     Dictionary<Vector3Double, Dictionary<int, List<double>>> dfiabg = CalculateDFIABG(standartCube);
 
-                    //StringBuilder sb = new StringBuilder();
-                    //foreach (var elem in dfiabg)
-                    //{
-                    //    sb.Append("Gauss Point: " + elem.Key.ToString() + "\n");
-                    //    foreach (var dictElem in elem.Value)
-                    //    {
-                    //        sb.Append(String.Format("Local Index {0} -- X: {1}, Y: {2}, Z: {3}\n", dictElem.Key, dictElem.Value[0], dictElem.Value[1], dictElem.Value[2]));
-                    //    }
-                    //    sb.Append("\n");
-                    //}
-                    //File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\dfiabg_1.txt", sb.ToString());
-
                     List<double[,]> mgeMatrices = new List<double[,]>();
-                    int xyzCounter = 0;
-                    int counter1 = 0;
                     foreach (var be in surface.BrickElements)
                     {
                         var yakobians = CalculateYakobians(be.Value, dfiabg);
-                        if (counter1 < 1)
-                        {
-                            Write2DArrayToCsv(yakobians[0], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\yakobians_0_0.csv");
-                            Write2DArrayToCsv(yakobians[1], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\yakobians_0_1.csv");
-                            Write2DArrayToCsv(yakobians[2], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\yakobians_0_2.csv");
-                        }
-
                         var dfixyz = CalculateDFIXYZ(yakobians, dfiabg);
-
-                        //if (xyzCounter < 3)
-                        //{
-                        //    StringBuilder sb3 = new StringBuilder();
-                        //    foreach (var elem in dfixyz)
-                        //    {
-                        //        sb3.Append("Gauss Point: " + elem.Key.ToString() + "\n");
-                        //        foreach (var dictElem in elem.Value)
-                        //        {
-                        //            sb3.Append(String.Format("Local Index {0} -- X: {1}, Y: {2}, Z: {3}\n", dictElem.Key, dictElem.Value[0], dictElem.Value[1], dictElem.Value[2]));
-                        //        }
-                        //        sb3.Append("\n");
-                        //    }
-                        //    File.WriteAllText(String.Format("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\dfixyz{0}.txt", xyzCounter), sb3.ToString());
-                        //    xyzCounter++;
-                        //}
-                        
                         var mge = CalculateMGE(yakobians, dfixyz);
                         mgeMatrices.Add(mge);
-                        counter1++;
                     }
 
-
-
-                    //DataTable mgeDataTable1 = ShowMatrix(mgeMatrices[0]);
+                    DataTable mgeDataTable1 = ShowMatrix(mgeMatrices[0]);
                     //DataTable mgeDataTable2 = ShowMatrix(mgeMatrices[1]);
                     //DataTable mgeDataTable3 = ShowMatrix(mgeMatrices[2]);
 
-                    //Write2DArrayToCsv(mgeMatrices[0], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge1.csv");
+                    Write2DArrayToCsv(mgeMatrices[0], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge1.csv");
                     //Write2DArrayToCsv(mgeMatrices[1], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge2.csv");
                     //Write2DArrayToCsv(mgeMatrices[2], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge3.csv");
 
                     LoadSolver loadSolver = new LoadSolver();
                     List<double[]> fVectors = new List<double[]>();
-
-                    // Choose faces for pressure
-                    //surface.BrickElements.ElementAt(20).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.6f;
-                    //surface.BrickElements.ElementAt(5).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
-                    //surface.BrickElements.ElementAt(6).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
-                    //surface.BrickElements.ElementAt(7).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
-
-                    //surface.BrickElements.ElementAt(0).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f;
-
-
-
-                    //surface.AreFacesDrawable = false;
-
-                    //double[] fValues = null;
-                    //foreach (var face in surface.Mesh.FacesDictionary.Values)
-                    //{
-                    //    if (face.IsStressed)
-                    //    {
-                    //        var deriv = loadSolver.CalculateFaceDerivativesNT();
-                    //        var standartValues = loadSolver.CalculateStandartFaceDerivativesNT();
-                    //        fValues = loadSolver.CalculateValuesF(face.Pressure, face, deriv, standartValues);
-                    //        fVectors.Add(fValues);
-                    //        break;
-                    //    }
-                    //}
 
                     foreach (var be in surface.BrickElements)
                     {
@@ -237,7 +145,7 @@ namespace App.Tools
                     //surface.AreFacesDrawable = false;
 
 
-                    double E = 20f;
+                    double E = 1f;
                     double nu = 0.3f;
                     double lambda = E / ((1 + nu) * (1 - 2 * nu));
                     double mu = E / (2 * (1 + nu));
@@ -245,6 +153,7 @@ namespace App.Tools
                     var translationDerivatives = stressSolver.CalculateTranslationDerivatives(resultPoints, surface, oldPoints);
                     var mainStresses = stressSolver.CalculateSigmaStressesForPoint(translationDerivatives);
                     surface.mainStresses = mainStresses;
+
                     //stressSolver.ChangeVerticesColor(mainStresses, surface);
 
                     //foreach (var face in surface.Mesh.FacesDictionary)

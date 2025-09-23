@@ -17,9 +17,9 @@ namespace Core.Models.Text.VertexText
 
             foreach (Point3D vertex in vertices)
             {
-                int index = vertices.IndexOf(vertex);
+                //int index = vertices.IndexOf(vertex) + 1;
 
-                LabelObject labelObject = new LabelObject(vertex, index.ToString());
+                LabelObject labelObject = new LabelObject(vertex, vertex.Position.ToString());
                 labelObjects.Add(labelObject);
             }
 
