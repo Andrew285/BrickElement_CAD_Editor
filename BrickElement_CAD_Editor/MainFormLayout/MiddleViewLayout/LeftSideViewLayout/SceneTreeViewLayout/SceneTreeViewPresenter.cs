@@ -20,7 +20,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLay
             this.selectionTool = selectionTool;
 
             // TODO: remove comment
-            //scene.OnObjectAddedToScene += AddObject;
+            scene.OnObjectAddedToScene += AddObject;
             sceneTreeView.OnSceneObjectNodeRemoved += RemoveObject;
             sceneTreeView.OnSceneObjectNodeSelected += SelectObject;
             // TODO: Implement Node Click Event

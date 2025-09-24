@@ -6,7 +6,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout
 {
     public interface ILeftSideView : IView<TableLayoutPanel>
     {
-        public ISceneTreeView SceneTreeView { get; set; }
+        public SceneTreeView SceneTreeView { get; set; }
         public ICatalogueView CatalogueView { get; set; }
     }
 }
