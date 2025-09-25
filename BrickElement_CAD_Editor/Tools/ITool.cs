@@ -2,6 +2,7 @@
 {
     public interface ITool
     {
-        ToolType Type { get; set; }
+        ToolType Type { get; }
+        bool IsActive { get; }
     }
 }

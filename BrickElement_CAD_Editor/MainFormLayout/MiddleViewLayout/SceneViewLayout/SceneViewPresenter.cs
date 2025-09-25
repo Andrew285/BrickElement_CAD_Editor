@@ -51,21 +51,21 @@ namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
         {
             if (Raylib.IsMouseButtonPressed(MouseButton.Left))
             {
-                toolManager.CurrentTool.HandleMouseClick(MouseButton.Left, Raylib.GetMouseX(), Raylib.GetMouseY());
+                toolManager.HandleMouseClick(MouseButton.Left, Raylib.GetMouseX(), Raylib.GetMouseY());
             }
             else if (Raylib.IsMouseButtonPressed(MouseButton.Right))
             {
-                toolManager.CurrentTool.HandleMouseClick(MouseButton.Right, Raylib.GetMouseX(), Raylib.GetMouseY());
+                toolManager.HandleMouseClick(MouseButton.Right, Raylib.GetMouseX(), Raylib.GetMouseY());
             }
             else if (Raylib.IsMouseButtonDown(MouseButton.Middle))
             {
-                toolManager.CurrentTool.HandleMouseMove(Raylib.GetMouseDelta());
+                toolManager.HandleMouseMove(Raylib.GetMouseDelta());
             }
         }
 
         public void HandleKeyboardClick()
         {
-            toolManager.CurrentTool.HandleKeyPress();
+            toolManager.HandleKeyPress();
         }
     }
 }

@@ -52,12 +52,23 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             //    division = new Vector3(resultX, resultY, resultZ);
             //}
 
-            Vector3 size = new Vector3(10, 2, 2);
-            Vector3 division = new Vector3(10, 2, 2);
-            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0.5f, 0.5f, -0.5f), size);
-            BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
-            BrickElementSurface surface = divisionManager.Divide(cbe, size, division);
-            scene.AddObject3D(surface);
+
+
+
+
+
+
+            //Vector3 size = new Vector3(10, 2, 2);
+            //Vector3 division = new Vector3(10, 2, 2);
+            //CubeBrickElement cbe = new CubeBrickElement(new Vector3(0.5f, 0.5f, -0.5f), size);
+            //BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
+            //BrickElementSurface surface = divisionManager.Divide(cbe, size, division);
+            //scene.AddObject3D(surface);
+
+
+
+            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0.5f, 0.5f, -0.5f), new Vector3(2, 2, 2));
+            scene.AddObject3D(cbe);
 
 
             //scene.AddObject2D(new LabelObject(new Point3D(new Vector3(0.5f, 0.5f, -0.5f)), "1"));
