@@ -1,4 +1,6 @@
 ﻿using App.Tools;
+using System.Reflection;
+using System.Resources;
 using UI.MainFormLayout.ExtraToolsViewLayout;
 
 public class ExtraToolsView : IExtraToolsView
@@ -66,12 +68,12 @@ public class ExtraToolsView : IExtraToolsView
         try
         {
             // Load icons with fallback to placeholder
-            imageList.Images.Add("select", LoadIconOrPlaceholder("select"));
-            imageList.Images.Add("add", LoadIconOrPlaceholder("add"));
-            imageList.Images.Add("divide", LoadIconOrPlaceholder("divide"));
-            imageList.Images.Add("fix", LoadIconOrPlaceholder("fix"));
-            imageList.Images.Add("pressure", LoadIconOrPlaceholder("pressure"));
-            imageList.Images.Add("solve", LoadIconOrPlaceholder("solve"));
+            imageList.Images.Add("select", LoadIconOrPlaceholder("ic_select"));
+            imageList.Images.Add("add", LoadIconOrPlaceholder("ic_add"));
+            imageList.Images.Add("divide", LoadIconOrPlaceholder("ic_add"));
+            imageList.Images.Add("fix", LoadIconOrPlaceholder("ic_add"));
+            imageList.Images.Add("pressure", LoadIconOrPlaceholder("ic_add"));
+            imageList.Images.Add("solve", LoadIconOrPlaceholder("ic_add"));
         }
         catch
         {
@@ -86,7 +88,18 @@ public class ExtraToolsView : IExtraToolsView
     private Image LoadIconOrPlaceholder(string iconName)
     {
         // Try to load icon, return placeholder if failed
-        return CreatePlaceholderIcon(20, 20);
+        try
+        {
+            PropertyInfo property = typeof(App.Properties.Images).GetProperty(iconName,
+                                                                              BindingFlags.Static |
+                                                                              BindingFlags.NonPublic |
+                                                                              BindingFlags.Public);
+            return (Image)property?.GetValue(null, null);
+        }
+        catch (Exception e)
+        {
+            return CreatePlaceholderIcon(20, 20);
+        }
     }
 
     private Image CreatePlaceholderIcon(int width, int height)
