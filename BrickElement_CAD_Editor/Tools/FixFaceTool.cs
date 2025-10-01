@@ -1,4 +1,5 @@
 ﻿using App.Tools;
+using Core.Commands;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
@@ -8,7 +9,7 @@ public class FixFaceTool : SelectionTool
 {
     public override ToolType Type => ToolType.FIX_FACE;
 
-    public FixFaceTool(IScene scene, IRenderer renderer, IPropertyView propertyView): base(scene, renderer, propertyView)
+    public FixFaceTool(IScene scene, CommandHistory commandHistory, IRenderer renderer, IPropertyView propertyView): base(scene, commandHistory, renderer, propertyView)
     {
 
     }
@@ -27,10 +28,9 @@ public class FixFaceTool : SelectionTool
         // Cleanup fix face tool logic
     }
 
-    protected override void HandleLeftMouseButtonClick()
+    public override void HandleLeftMouseButtonClick(int x, int y)
     {
-        if (!IsActive) return;
-        base.HandleLeftMouseButtonClick();
+        base.HandleLeftMouseButtonClick(x, y);
 
         if (SelectedObject != null && SelectedObject is Plane3D face)
         {
@@ -48,14 +48,14 @@ public class FixFaceTool : SelectionTool
         // 2. Apply fix constraints to the face
     }
 
-    protected override void HandleQKeyPress()
-    {
-        if (!IsActive) return;
-        base.HandleQKeyPress();
+    //protected override void HandleQKeyPress()
+    //{
+    //    if (!IsActive) return;
+    //    base.HandleQKeyPress();
 
-        // Exit the tool when Q is pressed
-        // This would typically be handled by the ToolManager
-    }
+    //    // Exit the tool when Q is pressed
+    //    // This would typically be handled by the ToolManager
+    //}
 }
 
 
@@ -63,6 +63,12 @@ public class FixFaceTool : SelectionTool
 public class FemSolverTool : BaseTool
 {
     public override ToolType Type => ToolType.FEM_SOLVER;
+
+    public override string Name => "Fem Solver Tool";
+
+    public override string Description => "Fem Solver Tool";
+
+    public FemSolverTool(IScene scene, CommandHistory commandHistory): base(scene, commandHistory) { }
 
     protected override void OnToolActivate()
     {
@@ -77,10 +83,9 @@ public class FemSolverTool : BaseTool
         // Cleanup FEM solver logic
     }
 
-    protected override void HandleLeftMouseButtonClick()
+    public override void HandleLeftMouseButtonClick(int x, int y)
     {
-        if (!IsActive) return;
-        base.HandleLeftMouseButtonClick();
+        base.HandleLeftMouseButtonClick(x, y);
 
 
         // Implement FEM solver logic here
@@ -89,11 +94,11 @@ public class FemSolverTool : BaseTool
         // 2. Display results
     }
 
-    protected override void HandleQKeyPress()
-    {
-        if (!IsActive) return;
-        base.HandleQKeyPress();
+    //protected override void HandleQKeyPress()
+    //{
+    //    if (!IsActive) return;
+    //    base.HandleQKeyPress();
 
-        // Exit the tool when Q is pressed
-    }
+    //    // Exit the tool when Q is pressed
+    //}
 }

@@ -38,7 +38,7 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
         {
             // Subscribe to view events
             extraToolsView.OnSelectionModeChanged += ChangeSelectionMode;
-            extraToolsView.OnAddBrickElementToFaceItemClicked += AddBrickElementToFace;
+            extraToolsView.OnAddBrickElementToFaceItemClicked += ActivateAddBrickElementTool;
             extraToolsView.OnDivideBrickElementItemClicked += DivideBrickElement;
             extraToolsView.OnfixFaceItemClicked += HandleFixFaceItemClicked;
             extraToolsView.OnSetPressureItemClicked += HandleSetPressureItemClicked;
@@ -145,6 +145,11 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
             }
 
             return null;
+        }
+
+        private void ActivateAddBrickElementTool(object? sender, EventArgs e)
+        {
+            toolManager.ActivateTool<AddBrickElementTool>();
         }
 
         public void HandleFixFaceItemClicked(object? sender, EventArgs e)

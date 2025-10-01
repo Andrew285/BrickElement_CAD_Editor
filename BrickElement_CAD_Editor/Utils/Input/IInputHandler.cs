@@ -7,6 +7,6 @@ namespace UI.Utils.Input
     {
         void HandleMouseClick(MouseButton button, int x, int y);
         void HandleMouseMove(Vector2 mouseDelta);
-        void HandleKeyPress();
+        void HandleKeyPress(KeyboardKey key);
     }
 }

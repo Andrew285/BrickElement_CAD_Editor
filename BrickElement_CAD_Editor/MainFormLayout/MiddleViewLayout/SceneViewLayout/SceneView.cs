@@ -160,6 +160,8 @@ namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
                 BackColor = Color.Transparent
             };
 
+            gridOverlay.Enabled = false;
+
             // Coordinates display
             coordinatesLabel = new Label
             {
@@ -189,7 +191,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
             gridOverlay.Controls.Add(viewModeLabel);
 
             // Make overlay non-interactive
-            gridOverlay.MouseClick += (s, e) => viewportPanel.Focus();
+            //gridOverlay.MouseClick += (s, e) => viewportPanel.Focus();
         }
 
         private void DrawGrid(Graphics g, Size size)

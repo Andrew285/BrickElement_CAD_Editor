@@ -24,6 +24,7 @@ namespace UI.MainFormLayout
 
             MainViewPresenter = new MainViewPresenter(mainForm.MainView, renderer, scene, toolManager);
             mainForm.OnLoaded += HandleOnLoaded;
+            mainForm.Control.FormClosing += HandleFormClosing;
 
             languageService.LanguageChanged += OnLanguageChanged;
         }
@@ -31,7 +32,13 @@ namespace UI.MainFormLayout
         private void HandleOnLoaded(object sender, EventArgs e)
         {
             SceneViewPresenter.HandleOnLoaded(sender, e);
-            SceneViewPresenter.HandleOnSceneRendered(sender, e);
+            //SceneViewPresenter.HandleOnSceneRendered(sender, e);
+        }
+
+        private void HandleFormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Clean shutdown
+            SceneViewPresenter.StopRendering();
         }
 
         private void OnLanguageChanged(object sender, EventArgs e)

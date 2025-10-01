@@ -56,6 +56,12 @@ public class ExtraToolsView : IExtraToolsView
         // Custom renderer for modern look
         toolStrip.Renderer = new ModernToolStripRenderer();
 
+        toolStrip.MouseEnter += (s, e) =>
+        {
+            toolStrip.Focus();
+        };
+
+
         InitializeImageList();
     }
 

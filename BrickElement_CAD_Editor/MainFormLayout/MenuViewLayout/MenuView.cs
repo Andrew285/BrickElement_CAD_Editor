@@ -66,6 +66,11 @@ namespace UI.MainFormLayout.MenuViewLayout
 
             // Apply modern renderer
             _menuStrip.Renderer = new ModernMenuRenderer();
+
+            _menuStrip.MouseEnter += (s, e) =>
+            {
+                _menuStrip.Focus();
+            };
         }
 
         private void CreateMenuStructure()

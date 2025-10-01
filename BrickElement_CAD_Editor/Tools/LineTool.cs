@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using Core.Commands;
+using Core.Models.Scene;
+using System.Numerics;
 
 namespace App.Tools
 {
@@ -6,8 +8,14 @@ namespace App.Tools
     {
         public override ToolType Type => ToolType.LINE;
 
+        public override string Name => "Line Tool";
+
+        public override string Description => "Line Tool";
+
         private bool isDrawing = false;
         private Vector3? startPoint;
+        
+        public LineTool(IScene scene, CommandHistory commandHistory): base(scene, commandHistory) { }
 
         protected override void OnToolActivate()
         {
@@ -25,10 +33,9 @@ namespace App.Tools
             startPoint = null;
         }
 
-        protected override void HandleLeftMouseButtonClick()
+        public override void HandleLeftMouseButtonClick(int x, int y)
         {
-            if (!IsActive) return;
-            base.HandleLeftMouseButtonClick();
+            base.HandleLeftMouseButtonClick(x, y);
 
             if (!isDrawing)
             {
@@ -50,19 +57,19 @@ namespace App.Tools
             }
         }
 
-        protected override void HandleQKeyPress()
-        {
-            if (!IsActive) return;
-            base.HandleQKeyPress();
+        //protected override void HandleQKeyPress()
+        //{
+        //    if (!IsActive) return;
+        //    base.HandleQKeyPress();
 
-            if (isDrawing)
-            {
-                // Cancel current line drawing
-                isDrawing = false;
-                startPoint = null;
-                MessageBox.Show("Line drawing cancelled.",
-                              "Line Drawing", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
+        //    if (isDrawing)
+        //    {
+        //        // Cancel current line drawing
+        //        isDrawing = false;
+        //        startPoint = null;
+        //        MessageBox.Show("Line drawing cancelled.",
+        //                      "Line Drawing", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //    }
+        //}
     }
 }

@@ -1,10 +1,10 @@
-﻿using Core.Models.Geometry.Complex;
+﻿using App.Tools.Behaviors;
+using Core.Commands;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Services;
 using Core.Services.Events;
 using Raylib_cs;
-using System.Numerics;
 using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 
 namespace App.Tools
@@ -14,6 +14,7 @@ namespace App.Tools
         private readonly IScene scene;
         private readonly IRenderer renderer;
         private readonly IPropertyView propertyView;
+        private readonly CameraBehavior cameraBehavior;
 
         public SceneObject3D? SelectedObject { get; private set; }
         private SceneObject3D? previousSelectedObject;
@@ -21,20 +22,29 @@ namespace App.Tools
         public override ToolType Type => ToolType.SELECTION;
         public SelectionToolMode SelectionToolMode { get; private set; } = SelectionToolMode.COMPONENT_SELECTION;
 
+        public override string Name => "Selection Tool";
+        public override string Description => "Select object or component in scene";
+
         public event Action<SelectionToolMode>? OnSelectionToolModeChanged;
         public event Action<SceneObject3D>? OnObjectSelected;
         public event Action<SceneObject3D>? OnObjectDeselected;
 
-        public SelectionTool(IScene scene, IRenderer renderer, IPropertyView propertyView)
+        public SelectionTool(IScene scene, CommandHistory commandHistory, IRenderer renderer, IPropertyView propertyView)
+            : base(scene, commandHistory)
         {
             this.scene = scene ?? throw new ArgumentNullException(nameof(scene));
             this.renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
             this.propertyView = propertyView ?? throw new ArgumentNullException(nameof(propertyView));
+
+            this.cameraBehavior = new CameraBehavior(scene);
         }
 
         protected override void OnToolActivate()
         {
             base.OnToolActivate();
+
+            // Add camera behavior
+            AddBehavior(cameraBehavior);
 
             // Subscribe to events when tool is activated
             OnObjectSelected += propertyView.ShowProperties;
@@ -44,6 +54,9 @@ namespace App.Tools
         protected override void OnToolDeactivate()
         {
             base.OnToolDeactivate();
+
+            // Remove camera behavior
+            RemoveBehavior(cameraBehavior);
 
             // Unsubscribe from events when tool is deactivated
             OnObjectSelected -= propertyView.ShowProperties;
@@ -77,12 +90,15 @@ namespace App.Tools
             ChangeMode(nextMode);
         }
 
-        protected override void HandleLeftMouseButtonClick()
+        // Make this public so SelectionBehavior can call it
+        public override void HandleLeftMouseButtonClick(int x, int y)
         {
-            if (!IsActive) return;
+            base.HandleLeftMouseButtonClick(x, y);
+            PerformSelection(x, y);
+        }
 
-            base.HandleLeftMouseButtonClick();
-
+        private void PerformSelection(int x, int y)
+        {
             previousSelectedObject = SelectedObject;
             var raycastResult = renderer.RaycastObjects3D(scene.Objects3D.Values);
 
@@ -153,6 +169,14 @@ namespace App.Tools
             OnObjectDeselected?.Invoke(sceneObject);
         }
 
+        public void DeselectAll()
+        {
+            foreach (var obj in scene.Objects3D.Values)
+            {
+                Deselect(obj);
+            }
+        }
+
         private void DeselectCurrent()
         {
             if (SelectedObject != null)
@@ -161,56 +185,9 @@ namespace App.Tools
             }
         }
 
-        public void SelectAll()
+        protected override void OnHandleKeyPress(KeyboardKey key)
         {
-            foreach (var obj in scene.Objects3D.Values)
-            {
-                obj.IsSelected = true;
-            }
-        }
-
-        public void DeselectAll()
-        {
-            foreach (var obj in scene.Objects3D.Values)
-            {
-                if (obj is MeshObject3D meshObject)
-                {
-                    foreach (var v in meshObject.Mesh.VerticesSet)
-                    {
-                        v.IsSelected = false;
-                    }
-
-                    foreach (var e in meshObject.Mesh.EdgesSet)
-                    {
-                        e.IsSelected = false;
-                    }
-
-                    foreach (var f in meshObject.Mesh.FacesSet)
-                    {
-                        f.IsSelected = false;
-                    }
-                }
-                obj.IsSelected = false;
-            }
-
-            SelectedObject = null;
-        }
-
-        protected override void HandleMiddleMouseButtonClick(Vector2 mouseDelta)
-        {
-            if (!IsActive) return;
-
-            base.HandleMiddleMouseButtonClick(mouseDelta);
-            scene?.Camera?.UpdateRotation(mouseDelta);
-        }
-
-        public override void HandleKeyPress()
-        {
-            if (!IsActive) return;
-
-            base.HandleKeyPress();
-
-            if (Raylib.IsKeyPressed(KeyboardKey.Tab))
+            if (key == KeyboardKey.Tab)
             {
                 ToggleSelectionToolMode();
             }
@@ -220,7 +197,6 @@ namespace App.Tools
         {
             if (disposing)
             {
-                // Clean up event subscriptions
                 OnSelectionToolModeChanged = null;
                 OnObjectSelected = null;
                 OnObjectDeselected = null;

@@ -34,7 +34,7 @@ namespace App.Tools
 
             // Subscribe to events
             selectionTool.OnObjectSelected += OnFaceSelected;
-            selectionTool.OnKeyboardKeyPressed += HandleInput;
+            //selectionTool.OnKeyboardKeyPressed += HandleInput;
 
             // Provide user feedback
             MessageBox.Show("Select a face to add a cube. Press 'Q' to cancel.",
@@ -51,7 +51,7 @@ namespace App.Tools
             if (selectionTool != null)
             {
                 selectionTool.OnObjectSelected -= OnFaceSelected;
-                selectionTool.OnKeyboardKeyPressed -= HandleInput;
+                //selectionTool.OnKeyboardKeyPressed -= HandleInput;
             }
         }
 

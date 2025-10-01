@@ -1,5 +1,7 @@
 ﻿using App.Tools;
+using Core.Commands;
 using Core.Models.Geometry.Primitive.Plane;
+using Core.Models.Scene;
 using Core.Services.Events;
 
 namespace Core.Services
@@ -7,6 +9,12 @@ namespace Core.Services
     public class PressureTool : BaseTool
     {
         public override ToolType Type => ToolType.PRESSURE;
+
+        public override string Name => "Pressure Tool";
+
+        public override string Description => "Description";
+
+        public PressureTool(IScene scene, CommandHistory commandHistory): base(scene, commandHistory) { }
 
         protected override void OnToolActivate()
         {
@@ -21,10 +29,9 @@ namespace Core.Services
             // Cleanup pressure tool logic
         }
 
-        protected override void HandleLeftMouseButtonClick()
+        public override void HandleLeftMouseButtonClick(int x, int y)
         {
-            if (!IsActive) return;
-            base.HandleLeftMouseButtonClick();
+            base.HandleLeftMouseButtonClick(x, y);
 
             // Implement pressure application logic here
             // This would typically involve:
@@ -33,12 +40,12 @@ namespace Core.Services
             // 3. Apply pressure to the face
         }
 
-        protected override void HandleQKeyPress()
-        {
-            if (!IsActive) return;
-            base.HandleQKeyPress();
+        //protected override void HandleQKeyPress()
+        //{
+        //    if (!IsActive) return;
+        //    base.HandleQKeyPress();
 
-            // Exit the tool when Q is pressed
-        }
+        //    // Exit the tool when Q is pressed
+        //}
     }
 }

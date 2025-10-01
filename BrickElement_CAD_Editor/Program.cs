@@ -1,4 +1,5 @@
 ﻿using App.Tools;
+using Core.Commands;
 using Core.Models.Graphics.Cameras;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
@@ -58,8 +59,9 @@ namespace BrickElement_CAD_Editor
 
             IPropertyView propertyView = view.MainView.MiddleView.PropertyView;
 
-            ToolManager toolManager = new ToolManager();
-            toolManager.SetTool(new SelectionTool(scene, renderer, propertyView));
+            CommandHistory commandHistory = new CommandHistory();
+            ToolManager toolManager = new ToolManager(scene, commandHistory, renderer, propertyView);
+            //toolManager.SetTool(new SelectionTool(scene, renderer, propertyView));
 
             new MainFormPresenter(view, renderer, scene, toolManager, languageService);
 

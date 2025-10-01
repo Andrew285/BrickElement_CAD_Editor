@@ -1,56 +1,119 @@
-﻿using Raylib_cs;
+﻿using App.Tools.Behaviors;
+using Core.Commands;
+using Core.Models.Scene;
+using Core.Services;
+using Raylib_cs;
 using System.Numerics;
 using UI.Utils.Input;
-using Core.Services;
 
 namespace App.Tools
 {
+    /// <summary>
+    /// Represents the state of a tool during its lifecycle
+    /// </summary>
+    public enum ToolState
+    {
+        Inactive,       // Tool is not active
+        Ready,          // Tool is active and waiting for input
+        Working,        // Tool is performing an action
+        WaitingForInput // Tool is waiting for additional user input
+    }
+
     public enum ToolType
     {
         SELECTION,
+        ADD_BRICK_ELEMENT,
         LINE,
         FIX_FACE,
         PRESSURE,
         FEM_SOLVER
     }
 
-    public abstract class BaseTool : IInputHandler, ITool, ITool2, IDisposable
+    public abstract class BaseTool
     {
+        protected readonly IScene scene;
+        protected readonly CommandHistory commandHistory;
+        protected ToolState currentState;
+
         public abstract ToolType Type { get; }
 
-        public bool IsActive { get; private set; }
+        //public bool IsActive { get; private set; }
+        public abstract string Name { get; }
+        public abstract string Description { get; }
+        public ToolState CurrentState => currentState;
 
-        // Events for tool lifecycle
-        public event Action? OnActivated;
-        public event Action? OnDeactivated;
+        public event Action<ToolState>? StateChanged;
+        public event Action<string>? StatusMessageChanged;
 
-        // Input events
-        public event Action<KeyboardKey>? OnKeyboardKeyPressed;
-        public event Action<MouseButton, int, int>? OnMouseClicked;
-        public event Action<Vector2>? OnMouseMoved;
+        protected readonly List<IToolBehavior> behaviors = new List<IToolBehavior>();
 
-        protected BaseTool()
+        //// Input events
+        //public event Action<KeyboardKey>? OnKeyboardKeyPressed;
+        //public event Action<MouseButton, int, int>? OnMouseClicked;
+        //public event Action<Vector2>? OnMouseMoved;
+
+        protected BaseTool(IScene scene, CommandHistory commandHistory)
         {
-            IsActive = false;
+            this.scene = scene ?? throw new ArgumentNullException(nameof(scene));
+            this.commandHistory = commandHistory ?? throw new ArgumentNullException(nameof(commandHistory));
+            currentState = ToolState.Inactive;
         }
 
-        #region Tool Lifecycle
+        /// <summary>
+        /// Activates the tool, preparing it for use
+        /// </summary>
         public virtual void Activate()
         {
-            if (IsActive) return;
+            if (currentState != ToolState.Inactive)
+                return;
 
-            IsActive = true;
+            SetState(ToolState.Ready);
             OnToolActivate();
-            OnActivated?.Invoke();
         }
 
+        /// <summary>
+        /// Deactivates the tool, cleaning up any active operations
+        /// </summary>
         public virtual void Deactivate()
         {
-            if (!IsActive) return;
+            if (currentState == ToolState.Inactive)
+                return;
 
             OnToolDeactivate();
-            IsActive = false;
-            OnDeactivated?.Invoke();
+            SetState(ToolState.Inactive);
+        }
+
+        /// <summary>
+        /// Adds a behavior that this tool will delegate to
+        /// </summary>
+        protected void AddBehavior(IToolBehavior behavior)
+        {
+            if (!behaviors.Contains(behavior))
+            {
+                behaviors.Add(behavior);
+            }
+        }
+
+        /// <summary>
+        /// Removes a behavior from this tool
+        /// </summary>
+        protected void RemoveBehavior(IToolBehavior behavior)
+        {
+            behaviors.Remove(behavior);
+        }
+
+        protected void SetState(ToolState newState)
+        {
+            if (currentState == newState)
+                return;
+
+            currentState = newState;
+            StateChanged?.Invoke(newState);
+        }
+
+        protected void UpdateStatusMessage(string message)
+        {
+            StatusMessageChanged?.Invoke(message);
         }
 
         protected virtual void OnToolActivate()
@@ -62,51 +125,93 @@ namespace App.Tools
         {
             // Override in derived classes for deactivation logic
         }
-        #endregion
 
-        #region Input Handling
-        public virtual void HandleKeyPress()
+        /// <summary>
+        /// Cancels the current operation and returns to ready state
+        /// </summary>
+        protected virtual void CancelCurrentOperation()
         {
-            if (!IsActive) return;
-
-            if (Raylib.IsKeyPressed(KeyboardKey.Q))
+            if (currentState == ToolState.Working ||
+                currentState == ToolState.WaitingForInput)
             {
-                OnKeyboardKeyPressed?.Invoke(KeyboardKey.Q);
-                HandleQKeyPress();
-            }
-
-            // Add other common key handling here
-        }
-
-        public void HandleMouseClick(MouseButton button, int x, int y)
-        {
-            if (!IsActive) return;
-
-            OnMouseClicked?.Invoke(button, x, y);
-
-            switch (button)
-            {
-                case MouseButton.Left:
-                    HandleLeftMouseButtonClick();
-                    break;
-                case MouseButton.Right:
-                    HandleRightMouseButtonClick();
-                    break;
+                SetState(ToolState.Ready);
+                UpdateStatusMessage("Operation cancelled");
             }
         }
 
-        public void HandleMouseMove(Vector2 mouseDelta)
+        /// <summary>
+        /// Executes a command through the command history
+        /// </summary>
+        protected void ExecuteCommand(ICommand command)
         {
-            if (!IsActive) return;
-
-            OnMouseMoved?.Invoke(mouseDelta);
-            HandleMiddleMouseButtonClick(mouseDelta);
+            commandHistory.ExecuteCommand(command);
         }
 
-        protected virtual void HandleLeftMouseButtonClick() { }
-        protected virtual void HandleRightMouseButtonClick() { }
-        protected virtual void HandleMiddleMouseButtonClick(Vector2 mouseDelta) { }
-        protected virtual void HandleQKeyPress() { }
+        #region Input Handling with Behavior Delegation
+
+        public virtual void HandleKeyPress(KeyboardKey key = KeyboardKey.Null)
+        {
+            //if (key == KeyboardKey.Null) return;
+
+            // Delegate to behaviors
+            foreach (var behavior in behaviors)
+            {
+                behavior.HandleKeyPress(key);
+            }
+
+            // Then handle tool-specific logic
+            OnHandleKeyPress(key);
+        }
+
+        public virtual void HandleLeftMouseButtonClick(int x, int y)
+        {
+            // First, let behaviors handle it
+            foreach (var behavior in behaviors)
+            {
+                behavior.HandleLeftClick(x, y);
+            }
+
+            // Then handle tool-specific logic
+            OnHandleLeftClick(x, y);
+        }
+
+        public virtual void HandleRightMouseButtonClick(int x, int y)
+        {
+            foreach (var behavior in behaviors)
+            {
+                behavior.HandleRightClick(x, y);
+            }
+
+            OnHandleRightClick(x, y);
+        }
+
+        public virtual void HandleMiddleMouseButtonClick(int x, int y)
+        {
+            foreach (var behavior in behaviors)
+            {
+                behavior.HandleMiddleClick(x, y);
+            }
+
+            OnHandleMiddleClick(x, y);
+        }
+
+        public virtual void HandleMouseMove(Vector2 mouseDelta)
+        {
+            foreach (var behavior in behaviors)
+            {
+                behavior.HandleMouseMove(mouseDelta);
+            }
+
+            OnHandleMouseMove(mouseDelta);
+        }
+
+        // Virtual methods for derived tools to override
+        protected virtual void OnHandleKeyPress(KeyboardKey key) { }
+        protected virtual void OnHandleLeftClick(int x, int y) { }
+        protected virtual void OnHandleRightClick(int x, int y) { }
+        protected virtual void OnHandleMiddleClick(int x, int y) { }
+        protected virtual void OnHandleMouseMove(Vector2 delta) { }
+
         #endregion
 
         #region IDisposable
@@ -124,17 +229,17 @@ namespace App.Tools
             {
                 if (disposing)
                 {
-                    if (IsActive)
-                    {
-                        Deactivate();
-                    }
+                    //if (IsActive)
+                    //{
+                    //    Deactivate();
+                    //}
 
-                    // Clear events
-                    OnActivated = null;
-                    OnDeactivated = null;
-                    OnKeyboardKeyPressed = null;
-                    OnMouseClicked = null;
-                    OnMouseMoved = null;
+                    Deactivate();
+
+                    //// Clear events
+                    //OnKeyboardKeyPressed = null;
+                    //OnMouseClicked = null;
+                    //OnMouseMoved = null;
                 }
                 disposed = true;
             }
