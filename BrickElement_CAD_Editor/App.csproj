@@ -12,13 +12,14 @@
   <ItemGroup>
     <PackageReference Include="ConsoleTables" Version="2.6.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
-    <PackageReference Include="Pastel" Version="6.0.1" />
+    <PackageReference Include="Pastel" Version="7.0.1" />
     <PackageReference Include="Raylib-cs" Version="7.0.1" />
     <PackageReference Include="ReaLTaiizor" Version="3.8.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Triangulation\Triangulation.csproj" />
     <ProjectReference Include="..\Utils\Utils.csproj" />
   </ItemGroup>
 

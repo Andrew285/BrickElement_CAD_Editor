@@ -1,6 +1,7 @@
 ﻿using App.Tools;
 using Core.Models.Geometry.Complex;
 using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Meshing;
 using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Scene;
 using Raylib_cs;

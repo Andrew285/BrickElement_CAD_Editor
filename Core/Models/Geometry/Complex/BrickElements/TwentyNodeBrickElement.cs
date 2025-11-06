@@ -66,6 +66,10 @@ namespace Core.Models.Geometry.Complex.BrickElements
             LocalIndices = new Dictionary<Guid, int>();
 
             InitializeLocalIndices();
+            foreach (var v in vertices)
+            {
+                v.Parent = this;
+            }
             // TODO Add Position and Size
         }
 

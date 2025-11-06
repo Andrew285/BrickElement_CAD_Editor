@@ -2,7 +2,7 @@
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
 
-namespace Core.Models.Geometry.Complex.BrickElements
+namespace Core.Models.Geometry.Complex.Meshing
 {
     public interface IMesh
     {

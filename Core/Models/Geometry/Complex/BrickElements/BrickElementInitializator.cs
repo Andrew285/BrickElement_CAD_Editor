@@ -3,6 +3,7 @@ using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Plane.Face;
 using Core.Models.Geometry.Primitive.Point;
 using System.Numerics;
+using System.Windows.Forms.VisualStyles;
 
 namespace Core.Models.Geometry.Complex.BrickElements
 {
@@ -89,7 +90,33 @@ namespace Core.Models.Geometry.Complex.BrickElements
             {
                 return null;
             }
-            
+
+            if (vertices.Count == 8)
+            {
+                List<BasePoint3D> resultPoints = new List<BasePoint3D>();
+                resultPoints.AddRange(vertices);
+
+                // Bottom
+                resultPoints.Add(new BasePoint3D((resultPoints[0].Position + resultPoints[1].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[1].Position + resultPoints[2].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[2].Position + resultPoints[3].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[3].Position + resultPoints[0].Position) / 2));
+
+                // Middle
+                resultPoints.Add(new BasePoint3D((resultPoints[0].Position + resultPoints[4].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[1].Position + resultPoints[5].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[2].Position + resultPoints[6].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[3].Position + resultPoints[7].Position) / 2));
+
+                // Top
+                resultPoints.Add(new BasePoint3D((resultPoints[4].Position + resultPoints[5].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[5].Position + resultPoints[6].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[6].Position + resultPoints[7].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[7].Position + resultPoints[4].Position) / 2));
+
+                return CreateFrom(resultPoints);
+            }
+
             if (vertices.Count == 20)
             {
                 List<BasePoint3D> centerVertices = InitializeCenterVertices(vertices);

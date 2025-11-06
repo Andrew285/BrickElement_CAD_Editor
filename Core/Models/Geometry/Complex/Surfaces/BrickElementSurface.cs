@@ -1,15 +1,11 @@
 ﻿using Core.Maths;
 using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Meshing;
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
-using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Models.Text.VertexText;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Reflection.Metadata.Ecma335;
-using System.Windows.Forms.VisualStyles;
 
 namespace Core.Models.Geometry.Complex.Surfaces
 {
@@ -175,6 +171,22 @@ namespace Core.Models.Geometry.Complex.Surfaces
             HashSet<BasePlane3D> beFaces = newBrickElement.Mesh.FacesSet;
             foreach (var face in beFaces)
             {
+                // Update face vertices to reference existing mesh vertices
+                for (int i = 0; i < face.Vertices.Count; i++)
+                {
+                    if (Mesh.VerticesSet.Contains(face.Vertices[i]))
+                    {
+                        foreach (BasePoint3D value in Mesh.VerticesDictionary.Values)
+                        {
+                            if (value.Position == face.Vertices[i].Position)
+                            {
+                                face.Vertices[i] = value;
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 if (Mesh.Add(face))
                 {
                     facesMap.Add(face.ID, new HashSet<Guid>());
@@ -192,6 +204,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
             //Create New BrickElement with new Vertices
             TwentyNodeBrickElement? newBE = BrickElementInitializator.CreateFrom(newPointsForBE);
+            if (newBE == null) return;
 
             newBE.Mesh.EdgesDictionary.Clear();
             newBE.Mesh.EdgesSet.Clear();
@@ -279,6 +292,18 @@ namespace Core.Models.Geometry.Complex.Surfaces
             }
 
             return globalVertices;
+        }
+
+        public void ClearAll()
+        {
+            GlobalVertexIndices.Clear();
+            LocalVertexIndices.Clear();
+            facesMap.Clear();
+            edgesMap.Clear();
+            verticesMap.Clear();
+            BrickElements.Clear();
+
+            Mesh = new Mesh();
         }
     }
 }

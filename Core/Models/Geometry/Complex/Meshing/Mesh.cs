@@ -1,8 +1,9 @@
 ﻿using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
+using System.Numerics;
 
-namespace Core.Models.Geometry.Complex.BrickElements
+namespace Core.Models.Geometry.Complex.Meshing
 {
     public struct Mesh : IMesh
     {
@@ -84,6 +85,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
 
         public bool Add(BasePoint3D vertex)
         {
+            vertex.Position = RoundVector3(vertex.Position);
+
             if (!VerticesDictionary.ContainsKey(vertex.ID) && !VerticesSet.Contains(vertex))
             {
                 VerticesDictionary[vertex.ID] = vertex;
@@ -93,8 +96,20 @@ namespace Core.Models.Geometry.Complex.BrickElements
             return false;
         }
 
+        private static Vector3 RoundVector3(Vector3 v, int decimals = 6)
+        {
+            return new Vector3(
+                MathF.Round(v.X, decimals),
+                MathF.Round(v.Y, decimals),
+                MathF.Round(v.Z, decimals)
+            );
+        }
+
         public bool Add(BaseLine3D edge)
         {
+            edge.StartPoint.Position = RoundVector3(edge.StartPoint.Position);
+            edge.EndPoint.Position = RoundVector3(edge.EndPoint.Position);
+
             if (!EdgesDictionary.ContainsKey(edge.ID) && !EdgesSet.Contains(edge))
             {
                 EdgesDictionary[edge.ID] = edge;
@@ -106,6 +121,13 @@ namespace Core.Models.Geometry.Complex.BrickElements
 
         public bool Add(BasePlane3D face)
         {
+            //var element = FacesSet.FirstOrDefault(kv => kv.Equals(face));
+
+            foreach (var e in face.Vertices)
+            {
+                e.Position = RoundVector3(e.Position);
+            }
+
             if (!FacesDictionary.ContainsKey(face.ID) && !FacesSet.Contains(face))
             {
                 FacesDictionary[face.ID] = face;
