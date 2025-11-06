@@ -65,18 +65,49 @@ namespace Core.Services
             rowsCountByY = cubesCountByY + 1;
             rowsCountByX = cubesCountByX + 1;
 
+
             IMesh dividedMesh = GenerateDividedMesh(brickElementPosition);
             List<TwentyNodeBrickElement> brickElements = GenerateBrickElements(nValues);
 
-            //BrickElementSurface surface = BrickElementSurfaceInitializator.CreateFrom(scene, dividedMesh, brickElements);
-            BrickElementSurface surface = new BrickElementSurface(scene);
-            foreach (var b in brickElements)
-            {
-                surface.AddBrickElement(b);
-            }
+            BrickElementSurface surface = ApplyDivision(be, brickElements);
+
+            ////BrickElementSurface surface = BrickElementSurfaceInitializator.CreateFrom(scene, dividedMesh, brickElements);
+            //BrickElementSurface surface = new BrickElementSurface(scene);
+            //foreach (var b in brickElements)
+            //{
+            //    surface.AddBrickElement(b);
+            //}
+
+            //// Check if brick element is in Surface
+            //if (be.Parent != null && be.Parent is BrickElementSurface surface2)
+            //{
+            //    DivideBrickElementInSurface(surface2, be);
+            //}
 
 
             //OnBrickElementDivided?.Invoke(be, surface);
+            return surface;
+        }
+
+        //private void DivideBrickElementInSurface(BrickElementSurface surface, TwentyNodeBrickElement be)
+        //{
+        //    List<TwentyNodeBrickElement> neighbours = surface.FindNeighboursOf(be);
+        //}
+
+        private BrickElementSurface ApplyDivision(TwentyNodeBrickElement be, List<TwentyNodeBrickElement> dividedBrickElements)
+        {
+            // Check if brick element is in Surface
+            BrickElementSurface surface = new BrickElementSurface(scene);
+            if (be.Parent != null && be.Parent is BrickElementSurface)
+            {
+                surface = (BrickElementSurface)be.Parent;
+                surface.Remove(be);
+            }
+
+            foreach (var b in dividedBrickElements)
+            {
+                surface.AddBrickElement(b);
+            }
             return surface;
         }
 

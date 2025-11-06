@@ -1,5 +1,6 @@
 ﻿using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
+using Core.Models.Geometry.Primitive.Plane.Face;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Utils;
@@ -114,6 +115,20 @@ namespace Core.Models.Geometry.Complex.BrickElements
             foreach (Point3D vertex in CenterVertices)
             {
                 vertex.Move(moveVector);
+            }
+        }
+
+        public BasePlane3D GetFaceByType(FaceType type)
+        {
+            switch (type)
+            {
+                case FaceType.FRONT: return Mesh.FacesDictionary.ElementAt(0).Value;
+                case FaceType.RIGHT: return Mesh.FacesDictionary.ElementAt(1).Value;
+                case FaceType.BACK: return Mesh.FacesDictionary.ElementAt(2).Value;
+                case FaceType.LEFT: return Mesh.FacesDictionary.ElementAt(3).Value;
+                case FaceType.BOTTOM: return Mesh.FacesDictionary.ElementAt(4).Value;
+                case FaceType.TOP: return Mesh.FacesDictionary.ElementAt(5).Value;
+                default: return Mesh.FacesDictionary.ElementAt(0).Value;
             }
         }
     }

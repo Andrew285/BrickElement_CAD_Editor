@@ -3,19 +3,32 @@ using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Meshing;
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
+using Core.Models.Geometry.Primitive.Plane.Face;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Scene;
 using Core.Models.Text.VertexText;
 
 namespace Core.Models.Geometry.Complex.Surfaces
 {
+    public class FaceAttachment
+    {
+        public Guid BrickElementId { get; set; }
+        public FaceType FaceTypeInBrickElement { get; set; } // Which face type THIS brick element sees this geometry as
+
+        public FaceAttachment(Guid brickElementId, FaceType faceTypeInBrickElement)
+        {
+            BrickElementId = brickElementId;
+            FaceTypeInBrickElement = faceTypeInBrickElement;
+        }
+    }
+
     public class BrickElementSurface: MeshObject3D
     {
         private Dictionary<Guid, HashSet<Guid>> verticesMap {  get; set; } = new Dictionary<Guid, HashSet<Guid>>();
 
         private Dictionary<Guid, HashSet<Guid>> edgesMap { get; set; } = new Dictionary<Guid, HashSet<Guid>>();
 
-        public Dictionary<Guid, HashSet<Guid>> facesMap { get; set; } = new Dictionary<Guid, HashSet<Guid>>();
+        public Dictionary<Guid, List<FaceAttachment>> facesMap { get; set; } = new Dictionary<Guid, List<FaceAttachment>>();
 
         public Dictionary<Guid, TwentyNodeBrickElement> BrickElements { get; set; } = new Dictionary<Guid, TwentyNodeBrickElement>();
 
@@ -168,9 +181,13 @@ namespace Core.Models.Geometry.Complex.Surfaces
             }
 
             // Add Faces
-            HashSet<BasePlane3D> beFaces = newBrickElement.Mesh.FacesSet;
-            foreach (var face in beFaces)
+            List<BasePlane3D> originalBEFaces = newBrickElement.Mesh.FacesSet.ToList();
+
+            foreach (var face in originalBEFaces)
             {
+                // Get the face type BEFORE we potentially merge with existing face
+                FaceType originalFaceType = face.FaceType;
+
                 // Update face vertices to reference existing mesh vertices
                 for (int i = 0; i < face.Vertices.Count; i++)
                 {
@@ -187,17 +204,59 @@ namespace Core.Models.Geometry.Complex.Surfaces
                     }
                 }
 
-                if (Mesh.Add(face))
+
+                foreach (var trianglePlane in face.TrianglePlanes)
                 {
-                    facesMap.Add(face.ID, new HashSet<Guid>());
+                    // Оновіть Point1
+                    var matchingPoint1 = Mesh.VerticesDictionary.Values
+                        .FirstOrDefault(v => v.Position == trianglePlane.Point1.Position);
+                    if (matchingPoint1 != null)
+                    {
+                        trianglePlane.Point1 = matchingPoint1;
+                    }
+
+                    // Оновіть Point2
+                    var matchingPoint2 = Mesh.VerticesDictionary.Values
+                        .FirstOrDefault(v => v.Position == trianglePlane.Point2.Position);
+                    if (matchingPoint2 != null)
+                    {
+                        trianglePlane.Point2 = matchingPoint2;
+                    }
+
+                    // Оновіть Point3
+                    var matchingPoint3 = Mesh.VerticesDictionary.Values
+                        .FirstOrDefault(v => v.Position == trianglePlane.Point3.Position);
+                    if (matchingPoint3 != null)
+                    {
+                        trianglePlane.Point3 = matchingPoint3;
+                    }
                 }
 
-                if (Mesh.FacesSet.Contains(face))
+
+
+                Guid meshFaceId;
+                bool isNewFace = Mesh.Add2(face);
+
+                if (isNewFace)
                 {
-                    Guid id = Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
-                    facesMap[id].Add(newBrickElement.ID);
-                    newFacesForBE.Add(Mesh.FacesDictionary[id]);
+                    // Brand new face - get its ID and initialize the map
+                    meshFaceId = face.ID;
+                    facesMap.Add(meshFaceId, new List<FaceAttachment>());
                 }
+                else
+                {
+                    // Face already exists (shared between brick elements)
+                    meshFaceId = Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
+                    Mesh.FacesDictionary[meshFaceId].IsDrawable = false;
+                    Mesh.FacesDictionary[face.ID].IsDrawable = false;
+                }
+
+                // CRITICAL: Add the attachment with the face type from THIS brick element's perspective
+                facesMap[meshFaceId].Add(new FaceAttachment(newBrickElement.ID, originalFaceType));
+
+                // Get the actual face from the mesh to add to newFacesForBE
+                //newFacesForBE.Add(Mesh.FacesDictionary[meshFaceId]);
+                newFacesForBE.Add(face);
             }
 
             OptimiseMesh();
@@ -225,6 +284,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
             if (newBE != null)
             {
                 newBE.Parent = this;
+                // TODO: Why we use different ID here?
                 BrickElements.Add(newBrickElement.ID, newBE);
 
                 // Generate Global Indices
@@ -239,7 +299,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
                 return null;
             }
 
-            Guid beID = facesMap[faceToAttach.ID].ElementAt(0);
+            Guid beID = facesMap[faceToAttach.ID][0].BrickElementId;
             TwentyNodeBrickElement beToAttach = BrickElements[beID];
             TwentyNodeBrickElement? newBrickElement = BrickElementInitializator.CreateFrom(faceToAttach, beToAttach);
 
@@ -251,6 +311,125 @@ namespace Core.Models.Geometry.Complex.Surfaces
             return newBrickElement;
         }
 
+        public void Remove(TwentyNodeBrickElement be)
+        {
+            if (!BrickElements.ContainsKey(be.ID)) return;
+
+            BrickElements.Remove(be.ID);
+
+            // Remove faces with proper face type handling
+            List<Guid> facesToRemove = new List<Guid>();
+
+            foreach (var face in be.Mesh.FacesSet)
+            {
+                Guid faceId = Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
+
+                if (facesMap.ContainsKey(faceId))
+                {
+                    // Remove this brick element's attachment
+                    var removedAttachment = facesMap[faceId].FirstOrDefault(a => a.BrickElementId == be.ID);
+                    facesMap[faceId].RemoveAll(attachment => attachment.BrickElementId == be.ID);
+
+                    // If exactly one brick element remains attached to this face
+                    if (facesMap[faceId].Count == 1)
+                    {
+                        var remainingAttachment = facesMap[faceId][0];
+                        var meshFace = Mesh.FacesDictionary[faceId];
+                        //Mesh.FacesDictionary.Remove(faceId);
+                        //Mesh.FacesSet.Remove(face);
+
+                        // Update the mesh face to use the remaining brick element's face type
+                        //meshFace.FaceType = remainingAttachment.FaceTypeInBrickElement;
+                        //meshFace.IsDrawable = false;
+
+                        //meshFace.IsDrawable = true;
+
+                        // Also update the face in the remaining brick element's mesh
+                        var remainingBE = BrickElements[remainingAttachment.BrickElementId];
+                        //var remainingBEFace = remainingBE.Mesh.FacesSet.FirstOrDefault(f =>
+                        //    Mesh.FacesDictionary.ContainsKey(f.ID) &&
+                        //    Mesh.FacesDictionary[f.ID].Equals(meshFace));
+
+                        var remainingBEFace = remainingBE.Mesh.FacesSet.FirstOrDefault(f =>
+     f.Vertices.Count == meshFace.Vertices.Count &&
+     f.Vertices.All(v => meshFace.Vertices.Any(mv => mv.Position == v.Position)));
+
+
+                        //var remainingBEFace = remainingBE.GetFaceByType(remainingAttachment.FaceTypeInBrickElement);
+
+                        if (remainingBEFace != null)
+                        {
+                            //remainingBEFace.FaceType = remainingAttachment.FaceTypeInBrickElement;
+                            remainingBEFace.IsDrawable = true;
+                        }
+                    }
+                    // If no brick elements use this face, remove it completely
+                    else if (facesMap[faceId].Count == 0)
+                    {
+                        facesToRemove.Add(faceId);
+                        Mesh.FacesDictionary.Remove(faceId);
+                        Mesh.FacesSet.Remove(face);
+                    }
+                }
+            }
+
+            foreach (var faceId in facesToRemove)
+            {
+                facesMap.Remove(faceId);
+            }
+
+            // Remove edges
+            List<Guid> edgesToRemove = new List<Guid>();
+            foreach (var edge in be.Mesh.EdgesSet)
+            {
+                Guid edgeId = Mesh.EdgesDictionary.FirstOrDefault(kv => kv.Value.Equals(edge)).Key;
+
+                if (edgesMap.ContainsKey(edgeId))
+                {
+                    edgesMap[edgeId].Remove(be.ID);
+
+                    if (edgesMap[edgeId].Count == 0)
+                    {
+                        edgesToRemove.Add(edgeId);
+                        Mesh.EdgesDictionary.Remove(edgeId);
+                        Mesh.EdgesSet.Remove(edge);
+                    }
+                }
+            }
+
+            foreach (var edgeId in edgesToRemove)
+            {
+                edgesMap.Remove(edgeId);
+            }
+
+            // Remove vertices
+            List<Guid> verticesToRemove = new List<Guid>();
+            foreach (var vertex in be.Mesh.VerticesSet)
+            {
+                Guid vertexId = Mesh.VerticesDictionary.FirstOrDefault(kv => kv.Value.Equals(vertex)).Key;
+
+                if (verticesMap.ContainsKey(vertexId))
+                {
+                    verticesMap[vertexId].Remove(be.ID);
+
+                    if (verticesMap[vertexId].Count == 0)
+                    {
+                        verticesToRemove.Add(vertexId);
+                        Mesh.VerticesDictionary.Remove(vertexId);
+                        Mesh.VerticesSet.Remove(vertex);
+                    }
+                }
+            }
+
+            foreach (var vertexId in verticesToRemove)
+            {
+                verticesMap.Remove(vertexId);
+            }
+
+            InitializeGlobalAndLocalVertices();
+            OptimiseMesh();
+        }
+
         public void OptimiseMesh()
         {
             foreach (var face in facesMap)
@@ -259,6 +438,10 @@ namespace Core.Models.Geometry.Complex.Surfaces
                 {
                     Mesh.FacesDictionary[face.Key].IsDrawable = false;
                 }
+                //else if (face.Value.Count == 1)
+                //{
+                //    Mesh.FacesDictionary[face.Key].IsDrawable = true;
+                //}
             }
 
             foreach (var edge in edgesMap)
@@ -293,6 +476,35 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
             return globalVertices;
         }
+
+        //public bool Contains(TwentyNodeBrickElement be)
+        //{
+        //    return BrickElements.Contains()
+        //}
+
+        public List<TwentyNodeBrickElement> FindNeighboursOf(TwentyNodeBrickElement be)
+        {
+            List<TwentyNodeBrickElement> resultBrickElements = new List<TwentyNodeBrickElement>();
+
+            List<FaceAttachment> faces = this.facesMap[be.Mesh.FacesSet.ElementAt(5).ID];
+            foreach (var face in faces)
+            {
+                //if (BrickElements[face].ID == be.ID)
+                //{
+                //    continue;
+                //}
+                //resultBrickElements.Add(BrickElements[face]);
+            }
+            return resultBrickElements;
+        }
+
+        public void Divide(TwentyNodeBrickElement be)
+        {
+            if (!BrickElements.ContainsKey(be.ID)) return;
+
+            this.Remove(be);
+        }
+
 
         public void ClearAll()
         {

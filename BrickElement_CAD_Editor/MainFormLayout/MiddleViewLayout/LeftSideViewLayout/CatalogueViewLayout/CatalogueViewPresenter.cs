@@ -89,24 +89,39 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
 
 
             CubeBrickElement be1 = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
-            //CubeBrickElement be2 = new CubeBrickElement(new Vector3(0, 2, 0), new Vector3(2, 2, 2));
+            CubeBrickElement be2 = new CubeBrickElement(new Vector3(0, 2, 0), new Vector3(2, 2, 2));
+            CubeBrickElement be3 = new CubeBrickElement(new Vector3(0, -2, 0), new Vector3(2, 2, 2));
+            CubeBrickElement be4 = new CubeBrickElement(new Vector3(2, 2, 0), new Vector3(2, 2, 2));
+            CubeBrickElement be5 = new CubeBrickElement(new Vector3(-2, 2, 0), new Vector3(2, 2, 2));
+            CubeBrickElement be6 = new CubeBrickElement(new Vector3(0, 2, 2), new Vector3(2, 2, 2));
+            CubeBrickElement be7 = new CubeBrickElement(new Vector3(0, 2, -2), new Vector3(2, 2, 2));
 
             BrickElementSurface surface = new BrickElementSurface(scene);
 
             surface.AddBrickElement(be1);
-            //surface.AddBrickElement(be2);
+            surface.AddBrickElement(be2);
+            surface.AddBrickElement(be3);
+            surface.AddBrickElement(be4);
+            surface.AddBrickElement(be5);
+            surface.AddBrickElement(be6);
+            surface.AddBrickElement(be7);
 
+            surface.Remove(be1);
+            surface.Remove(be2);
 
-            BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
-            BrickElementSurface surface2 = divisionManager.Divide(surface.BrickElements.ElementAt(0).Value, new Vector3(2, 2, 2), new Vector3(2, 1, 1));
+            //BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
+            //BrickElementSurface surface2 = divisionManager.Divide(surface.BrickElements.ElementAt(0).Value, new Vector3(2, 2, 2), new Vector3(2, 1, 1));
 
-            surface.ClearAll();
-            foreach (var b in surface2.BrickElements)
-            {
-                surface.AddBrickElement(b.Value);
-            }
+            //surface.ClearAll();
+            //foreach (var b in surface2.BrickElements)
+            //{
+            //    surface.AddBrickElement(b.Value);
+            //}
 
             scene.AddObject3D(surface);
+
+            //surface.Mesh.FacesDictionary.ElementAt(5).Value.IsDrawable = false;
+            //surface.Mesh.FacesDictionary.ElementAt(10).Value.IsDrawable = false;
 
             surface.Mesh.PrintMesh();
 

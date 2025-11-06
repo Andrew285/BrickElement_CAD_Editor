@@ -7,9 +7,9 @@ namespace Core.Models.Geometry.Primitive.Plane
 {
     public class TrianglePlane3D : SceneObject3D
     {
-        public BasePoint3D Point1 { get; }
-        public BasePoint3D Point2 { get; }
-        public BasePoint3D Point3 { get; }
+        public BasePoint3D Point1 { get; set; }
+        public BasePoint3D Point2 { get; set; }
+        public BasePoint3D Point3 { get; set; }
 
         public bool DrawCustom { get; set; } = false;
         public bool AreLinesDrawable { get; set; } = false;

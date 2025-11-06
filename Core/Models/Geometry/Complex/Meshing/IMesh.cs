@@ -30,5 +30,6 @@ namespace Core.Models.Geometry.Complex.Meshing
         bool Add(BasePoint3D vertex);
         bool Add(BaseLine3D edge);
         bool Add(BasePlane3D face);
+        bool Add2(BasePlane3D face);
     }
 }

@@ -134,8 +134,31 @@ namespace Core.Models.Geometry.Complex.Meshing
                 FacesSet.Add(face);
                 return true;
             }
+
             return false;
         }
 
+        public bool Add2(BasePlane3D face)
+        {
+            var element = FacesSet.FirstOrDefault(kv => kv.Equals(face));
+
+            foreach (var e in face.Vertices)
+            {
+                e.Position = RoundVector3(e.Position);
+            }
+
+            if (!FacesDictionary.ContainsKey(face.ID) && !FacesSet.Contains(face))
+            {
+                FacesDictionary[face.ID] = face;
+                FacesSet.Add(face);
+                return true;
+            }
+            else
+            {
+                FacesDictionary[face.ID] = face;
+                FacesSet.Add(face);
+                return false;
+            }
+        }
     }
 }
