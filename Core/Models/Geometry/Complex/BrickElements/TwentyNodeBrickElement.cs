@@ -52,16 +52,18 @@ namespace Core.Models.Geometry.Complex.BrickElements
             }
         }
 
-        public TwentyNodeBrickElement(Vector3 position, Vector3 size): base()
+        public TwentyNodeBrickElement(Vector3 position, Vector3 size, Guid? id = null) : base()
         {
             CenterVertices = new List<BasePoint3D>();
             LocalIndices = new Dictionary<Guid, int>();
 
             this.position = position;
             this.size = size;
+
+            if (id != null) ID = (Guid)id;
         }
 
-        public TwentyNodeBrickElement(List<BasePoint3D> vertices, List<BasePoint3D> centerVertices, List<BaseLine3D> edges, List<BasePlane3D> faces): base(vertices, edges, faces)
+        public TwentyNodeBrickElement(List<BasePoint3D> vertices, List<BasePoint3D> centerVertices, List<BaseLine3D> edges, List<BasePlane3D> faces, Guid? id = null) : base(vertices, edges, faces)
         {
             this.CenterVertices = centerVertices;
             LocalIndices = new Dictionary<Guid, int>();
@@ -71,6 +73,9 @@ namespace Core.Models.Geometry.Complex.BrickElements
             {
                 v.Parent = this;
             }
+
+            if (id != null) ID = (Guid)id;
+
             // TODO Add Position and Size
         }
 

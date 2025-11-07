@@ -84,7 +84,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
             return null;
         }
 
-        public static TwentyNodeBrickElement? CreateFrom(List<BasePoint3D> vertices)
+        public static TwentyNodeBrickElement? CreateFrom(List<BasePoint3D> vertices, Guid? id = null)
         {
             if (vertices.Count == 0)
             {
@@ -114,7 +114,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
                 resultPoints.Add(new BasePoint3D((resultPoints[6].Position + resultPoints[7].Position) / 2));
                 resultPoints.Add(new BasePoint3D((resultPoints[7].Position + resultPoints[4].Position) / 2));
 
-                return CreateFrom(resultPoints);
+                return CreateFrom(resultPoints, id);
             }
 
             if (vertices.Count == 20)
@@ -123,7 +123,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
                 List<BaseLine3D> edges = InitializeEdges(vertices);
                 List<BasePlane3D> faces = InitializeFaces(vertices, centerVertices);
 
-                return new TwentyNodeBrickElement(vertices, centerVertices, edges, faces);
+                return new TwentyNodeBrickElement(vertices, centerVertices, edges, faces, id);
             }
 
             return null;

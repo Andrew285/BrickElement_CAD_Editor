@@ -71,16 +71,24 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
 
 
             Vector3 size = new Vector3(2, 2, 2);
-            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0.5f, 0.5f, -0.5f), size);
+            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0f, 0f, 0f), size);
+            CubeBrickElement cbe2 = new CubeBrickElement(new Vector3(0f, 2f, 0f), size);
             BrickElementSurface surface = new BrickElementSurface(scene);
-            surface.AddBrickElement(cbe);
 
-            MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(cbe.Mesh.VerticesSet.ToList());
-            PatternManager patternManager = new PatternManager();
-            patternManager.Use(surface, Core.Models.Geometry.Primitive.Plane.Face.FaceType.BOTTOM, pattern);
+            surface.AddBrickElement(cbe);
+            surface.AddBrickElement(cbe2);
+
+            //surface.Remove(cbe);
 
             scene.AddObject3D(surface);
-            surface.Mesh.FacesSet.ElementAt(17).IsSelected = true;
+
+            //MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(cbe.Mesh.VerticesSet.ToList());
+            //PatternManager patternManager = new PatternManager();
+            //patternManager.Use(surface, Core.Models.Geometry.Primitive.Plane.Face.FaceType.BOTTOM, pattern);
+
+            BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
+            divisionManager.Divide(surface.BrickElements.ElementAt(0).Value, size, new Vector3(1, 1, 3));
+            //surface.Mesh.FacesSet.ElementAt(17).IsSelected = true;
             surface.Mesh.PrintMesh();
 
 

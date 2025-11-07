@@ -4,6 +4,7 @@ using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Scene;
 using Core.Services;
 using System.Numerics;
+using Triangulation;
 
 namespace UI.MainFormLayout.ExtraToolsViewLayout
 {

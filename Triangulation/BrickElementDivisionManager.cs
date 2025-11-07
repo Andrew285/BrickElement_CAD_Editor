@@ -3,11 +3,13 @@ using Core.Models.Geometry.Complex.Meshing;
 using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
+using Core.Models.Geometry.Primitive.Plane.Face;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Scene;
 using System.Numerics;
+using Triangulation.Patterns;
 
-namespace Core.Services
+namespace Triangulation
 {
     public class BrickElementDivisionManager
     {
@@ -100,8 +102,34 @@ namespace Core.Services
             BrickElementSurface surface = new BrickElementSurface(scene);
             if (be.Parent != null && be.Parent is BrickElementSurface)
             {
+                // Try to get element from surface
+                TwentyNodeBrickElement beFromSurface = surface.BrickElements.GetValueOrDefault(be.ID);
+
+                // Find neighbours of this element
                 surface = (BrickElementSurface)be.Parent;
+                List<Tuple<FaceType, TwentyNodeBrickElement>> neighboursOfBe = surface.FindNeighboursOf(be);
+
+                // Remove element that should be divided
                 surface.Remove(be);
+
+                // Use patterns for neighbours
+                foreach (var neighbourElementPair in neighboursOfBe)
+                {
+                    FaceType neighbourFaceType = neighbourElementPair.Item1;
+                    TwentyNodeBrickElement neighbourElement = neighbourElementPair.Item2;
+
+                    if (neighbourFaceType == FaceType.BOTTOM)
+                    {
+                        MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(neighbourElement.Mesh.VerticesSet.ToList());
+                        PatternManager patternManager = new PatternManager();
+                        BrickElementSurface neighbourDividedSurface = patternManager.Use(surface, neighbourFaceType, pattern);
+
+                        //foreach (var b in neighbourDividedSurface.BrickElements.Values)
+                        //{
+                        //    surface.AddBrickElement(b);
+                        //}
+                    }
+                }
             }
 
             foreach (var b in dividedBrickElements)
