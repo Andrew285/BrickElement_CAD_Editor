@@ -35,7 +35,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
         [DisplayName("Центральні вершини")]
         [Description("Визначає чи малювати вершини, що знаходяться посередині кожної грані шестигранника")]
         public bool AreCenterVerticesDrawable { get; set; } = true;
-        protected List<BasePoint3D> CenterVertices { get; set; }
+        public List<BasePoint3D> CenterVertices { get; set; }
 
         public Dictionary<Guid, int> LocalIndices { get; private set; }
 

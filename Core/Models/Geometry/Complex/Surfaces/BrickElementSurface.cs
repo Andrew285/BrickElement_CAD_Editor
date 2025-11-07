@@ -235,7 +235,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
 
                 Guid meshFaceId;
-                bool isNewFace = Mesh.Add2(face);
+                bool isNewFace = Mesh.Add(face);
 
                 if (isNewFace)
                 {
@@ -246,9 +246,10 @@ namespace Core.Models.Geometry.Complex.Surfaces
                 else
                 {
                     // Face already exists (shared between brick elements)
+                    face.FaceType = FaceType.NONE;
                     meshFaceId = Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
                     Mesh.FacesDictionary[meshFaceId].IsDrawable = false;
-                    Mesh.FacesDictionary[face.ID].IsDrawable = false;
+                    //Mesh.FacesDictionary[face.ID].IsDrawable = false;
                 }
 
                 // CRITICAL: Add the attachment with the face type from THIS brick element's perspective
@@ -351,8 +352,8 @@ namespace Core.Models.Geometry.Complex.Surfaces
                         //    Mesh.FacesDictionary[f.ID].Equals(meshFace));
 
                         var remainingBEFace = remainingBE.Mesh.FacesSet.FirstOrDefault(f =>
-     f.Vertices.Count == meshFace.Vertices.Count &&
-     f.Vertices.All(v => meshFace.Vertices.Any(mv => mv.Position == v.Position)));
+                             f.Vertices.Count == meshFace.Vertices.Count &&
+                             f.Vertices.All(v => meshFace.Vertices.Any(mv => mv.Position == v.Position)));
 
 
                         //var remainingBEFace = remainingBE.GetFaceByType(remainingAttachment.FaceTypeInBrickElement);
@@ -360,7 +361,23 @@ namespace Core.Models.Geometry.Complex.Surfaces
                         if (remainingBEFace != null)
                         {
                             //remainingBEFace.FaceType = remainingAttachment.FaceTypeInBrickElement;
-                            remainingBEFace.IsDrawable = true;
+                            var newFace = FaceInitializator.GenerateFaceByType(remainingAttachment.FaceTypeInBrickElement, remainingBE.Mesh.VerticesSet.ToList(), remainingBE.CenterVertices);
+                            newFace.FaceType = remainingAttachment.FaceTypeInBrickElement;
+                            newFace.Parent = remainingBE;
+                            newFace.IsDrawable = true;
+                            remainingBE.Mesh.FacesSet.Remove(remainingBEFace);
+                            remainingBE.Mesh.FacesDictionary.Remove(remainingBEFace.ID);
+                            remainingBE.Mesh.FacesDictionary[newFace.ID] = newFace;
+                            remainingBE.Mesh.FacesSet.Add(newFace);
+
+                            Mesh.FacesDictionary.Remove(faceId);
+                            Mesh.FacesSet.Remove(meshFace);
+                            Mesh.FacesDictionary[newFace.ID] = newFace;
+                            Mesh.FacesSet.Add(newFace);
+
+                            List<FaceAttachment> faceAttachments = facesMap[faceId];
+                            facesMap.Remove(faceId);
+                            facesMap.Add(newFace.ID, faceAttachments);
                         }
                     }
                     // If no brick elements use this face, remove it completely

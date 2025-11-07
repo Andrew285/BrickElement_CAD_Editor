@@ -128,7 +128,7 @@ namespace Core.Models.Geometry.Complex
 
             if (AreFacesDrawable)
             {
-                DrawFaces(renderer, Mesh.FacesDictionary);
+                DrawFaces(renderer, Mesh.FacesSet);
             }
 
             //if (AreTriangleFacesDrawable)
@@ -149,9 +149,9 @@ namespace Core.Models.Geometry.Complex
         }
 
 
-        protected void DrawFaces(IRenderer renderer, Dictionary<Guid, BasePlane3D> objects)
+        protected void DrawFaces(IRenderer renderer, IEnumerable<BasePlane3D> objects)
         {
-            foreach (Plane3D obj in objects.Values)
+            foreach (Plane3D obj in objects)
             {
                 if (obj.IsDrawable)
                 {
