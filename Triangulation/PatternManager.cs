@@ -20,7 +20,7 @@ namespace Triangulation
 
         private BrickElementSurface AddBrickElementsToSurface(BrickElementSurface surface, List<TwentyNodeBrickElement> bes)
         {
-            surface.ClearAll();
+            //surface.ClearAll();
             foreach (TwentyNodeBrickElement be in bes)
             {
                 surface.AddBrickElement(be);

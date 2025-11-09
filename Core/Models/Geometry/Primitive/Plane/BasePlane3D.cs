@@ -303,7 +303,7 @@ namespace Core.Models.Geometry.Primitive.Plane
         {
             base.Move(moveVector);
 
-            foreach (Point3D vertex in vertices)
+            foreach (BasePoint3D vertex in vertices)
             {
                 vertex.Move(moveVector);
             }

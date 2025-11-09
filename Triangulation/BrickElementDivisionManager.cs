@@ -117,17 +117,20 @@ namespace Triangulation
                 {
                     FaceType neighbourFaceType = neighbourElementPair.Item1;
                     TwentyNodeBrickElement neighbourElement = neighbourElementPair.Item2;
+                    surface.Remove(neighbourElement);
 
                     if (neighbourFaceType == FaceType.BOTTOM)
                     {
-                        MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(neighbourElement.Mesh.VerticesSet.ToList());
+                        MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(neighbourElement.Mesh.VerticesSet.ToList(), PatternDirection.UP);
                         PatternManager patternManager = new PatternManager();
                         BrickElementSurface neighbourDividedSurface = patternManager.Use(surface, neighbourFaceType, pattern);
+                    }
 
-                        //foreach (var b in neighbourDividedSurface.BrickElements.Values)
-                        //{
-                        //    surface.AddBrickElement(b);
-                        //}
+                    if (neighbourFaceType == FaceType.TOP)
+                    {
+                        MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(neighbourElement.Mesh.VerticesSet.ToList(), PatternDirection.DOWN);
+                        PatternManager patternManager = new PatternManager();
+                        BrickElementSurface neighbourDividedSurface = patternManager.Use(surface, neighbourFaceType, pattern);
                     }
                 }
             }

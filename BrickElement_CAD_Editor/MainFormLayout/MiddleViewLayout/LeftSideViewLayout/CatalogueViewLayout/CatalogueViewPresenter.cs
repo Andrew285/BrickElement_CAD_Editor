@@ -73,10 +73,12 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             Vector3 size = new Vector3(2, 2, 2);
             CubeBrickElement cbe = new CubeBrickElement(new Vector3(0f, 0f, 0f), size);
             CubeBrickElement cbe2 = new CubeBrickElement(new Vector3(0f, 2f, 0f), size);
+            CubeBrickElement cbe3 = new CubeBrickElement(new Vector3(0f, -2f, 0f), size);
             BrickElementSurface surface = new BrickElementSurface(scene);
 
             surface.AddBrickElement(cbe);
             surface.AddBrickElement(cbe2);
+            surface.AddBrickElement(cbe3);
 
             //surface.Remove(cbe);
 
@@ -89,7 +91,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
             divisionManager.Divide(surface.BrickElements.ElementAt(0).Value, size, new Vector3(1, 1, 3));
             //surface.Mesh.FacesSet.ElementAt(17).IsSelected = true;
-            surface.Mesh.PrintMesh();
+            //surface.Mesh.PrintMesh();
 
 
 
