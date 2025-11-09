@@ -74,11 +74,15 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             CubeBrickElement cbe = new CubeBrickElement(new Vector3(0f, 0f, 0f), size);
             CubeBrickElement cbe2 = new CubeBrickElement(new Vector3(0f, 2f, 0f), size);
             CubeBrickElement cbe3 = new CubeBrickElement(new Vector3(0f, -2f, 0f), size);
+            CubeBrickElement cbe4 = new CubeBrickElement(new Vector3(2f, 0f, 0f), size);
+            CubeBrickElement cbe5 = new CubeBrickElement(new Vector3(-2f, 0f, 0f), size);
             BrickElementSurface surface = new BrickElementSurface(scene);
 
             surface.AddBrickElement(cbe);
             surface.AddBrickElement(cbe2);
             surface.AddBrickElement(cbe3);
+            surface.AddBrickElement(cbe4);
+            surface.AddBrickElement(cbe5);
 
             //surface.Remove(cbe);
 

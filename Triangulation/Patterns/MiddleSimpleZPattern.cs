@@ -153,7 +153,137 @@ namespace Triangulation.Patterns
                             firstFacePoints[2],
                         }
                     }
-                }
+                },
+                {
+                    FaceType.LEFT,
+                    new BasePoint3D[][]
+                    {
+                        // CUBE 1 - FIXED
+                        new BasePoint3D[] {
+                            // BOTTOM
+                            secondFacePoints[0],
+                            secondFacePoints[1],
+                            secondFacePoints[3],
+                            secondFacePoints[2],
+
+                            // TOP
+                            firstFacePoints[0],
+                            firstFacePoints[1],
+                            firstFacePoints[3],
+                            firstFacePoints[2],
+                        },
+
+                        // CUBE 2 - FIXED
+                        new BasePoint3D[] {
+                            // BOTTOM
+                            secondFacePoints[2],
+                            secondFacePoints[3],
+                            secondFacePoints[5],
+                            secondFacePoints[4],
+
+                            // TOP
+                            firstFacePoints[2],
+                            firstFacePoints[3],
+                            firstFacePoints[5],
+                            firstFacePoints[4],
+                        },
+
+                        // CUBE 3 - FIXED
+                        new BasePoint3D[] {
+                            // BOTTOM
+                            secondFacePoints[4],
+                            secondFacePoints[5],
+                            secondFacePoints[7],
+                            secondFacePoints[6],
+
+                            // TOP
+                            firstFacePoints[4],
+                            firstFacePoints[5],
+                            firstFacePoints[7],
+                            firstFacePoints[6],
+                        },
+
+                        // CUBE 4
+                        new BasePoint3D[] {
+                            // BOTTOM
+                            secondFacePoints[3],
+                            secondFacePoints[1],
+                            secondFacePoints[7],
+                            secondFacePoints[5],
+
+                            // TOP
+                            firstFacePoints[3],
+                            firstFacePoints[1],
+                            firstFacePoints[7],
+                            firstFacePoints[5],
+                        }
+                    }
+                },
+                 {
+                    FaceType.RIGHT,
+                    new BasePoint3D[][]
+                    {
+                        // CUBE 1 - FIXED
+                        new BasePoint3D[] {
+                            // BOTTOM
+                            secondFacePoints[0],
+                            secondFacePoints[1],
+                            secondFacePoints[3],
+                            secondFacePoints[2],
+
+                            // TOP
+                            firstFacePoints[0],
+                            firstFacePoints[1],
+                            firstFacePoints[3],
+                            firstFacePoints[2],
+                        },
+
+                        // CUBE 2 - FIXED
+                        new BasePoint3D[] {
+                            // BOTTOM
+                            secondFacePoints[2],
+                            secondFacePoints[3],
+                            secondFacePoints[5],
+                            secondFacePoints[4],
+
+                            // TOP
+                            firstFacePoints[2],
+                            firstFacePoints[3],
+                            firstFacePoints[5],
+                            firstFacePoints[4],
+                        },
+
+                        // CUBE 3 - FIXED
+                        new BasePoint3D[] {
+                            // BOTTOM
+                            secondFacePoints[4],
+                            secondFacePoints[5],
+                            secondFacePoints[7],
+                            secondFacePoints[6],
+
+                            // TOP
+                            firstFacePoints[4],
+                            firstFacePoints[5],
+                            firstFacePoints[7],
+                            firstFacePoints[6],
+                        },
+
+                        // CUBE 4
+                        new BasePoint3D[] {
+                            // BOTTOM
+                            secondFacePoints[0],
+                            secondFacePoints[2],
+                            secondFacePoints[4],
+                            secondFacePoints[6],
+
+                            // TOP
+                            firstFacePoints[0],
+                            firstFacePoints[2],
+                            firstFacePoints[4],
+                            firstFacePoints[6],
+                        }
+                    }
+                },
             };
         }
 
@@ -252,7 +382,7 @@ namespace Triangulation.Patterns
                 ///     | /             \ |
                 ///     0 --- ~ --- ~ --- 3
                 case PatternDirection.DOWN:
-                    {
+                {
                         return new List<BasePoint3D>
                     {
                         new BasePoint3D(allPatternPoints[0]),
@@ -264,14 +394,54 @@ namespace Triangulation.Patterns
                         new BasePoint3D(allPatternPoints[14]),
                         new BasePoint3D(allPatternPoints[15]),
                     };
-                    }
-                case PatternDirection.LEFT:
-                {
-                    break;
                 }
+                ///     12 --- ~ --- ~ -- 15
+                ///     |               / |
+                ///     |             /   |
+                ///     8 --- ~ --- 10    ~
+                ///     |           |     |
+                ///     |           |     |
+                ///     4 --- ~ --- 6     ~
+                ///     |             \   |
+                ///     |               \ |
+                ///     0 --- ~ --- ~ --- 3
                 case PatternDirection.RIGHT:
                 {
-                    break;
+                        return new List<BasePoint3D>
+                    {
+                        new BasePoint3D(allPatternPoints[0]),
+                        new BasePoint3D(allPatternPoints[3]),
+                        new BasePoint3D(allPatternPoints[4]),
+                        new BasePoint3D(allPatternPoints[6]),
+                        new BasePoint3D(allPatternPoints[8]),
+                        new BasePoint3D(allPatternPoints[10]),
+                        new BasePoint3D(allPatternPoints[12]),
+                        new BasePoint3D(allPatternPoints[15]),
+                    };
+                }
+                ///     12 --- ~ --- ~ -- 15
+                ///     |  \              |
+                ///     |    \            |
+                ///     ~     9 --- ~ --- 11
+                ///     |     |           |
+                ///     |     |           |
+                ///     ~     5 --- ~ --- 7
+                ///     |   /             |
+                ///     | /               |
+                ///     0 --- ~ --- ~ --- 3
+                case PatternDirection.LEFT:
+                {
+                        return new List<BasePoint3D>
+                    {
+                        new BasePoint3D(allPatternPoints[0]),
+                        new BasePoint3D(allPatternPoints[3]),
+                        new BasePoint3D(allPatternPoints[5]),
+                        new BasePoint3D(allPatternPoints[7]),
+                        new BasePoint3D(allPatternPoints[9]),
+                        new BasePoint3D(allPatternPoints[11]),
+                        new BasePoint3D(allPatternPoints[12]),
+                        new BasePoint3D(allPatternPoints[15]),
+                    };
                 }
                 default: { break; }
             }
@@ -323,7 +493,47 @@ namespace Triangulation.Patterns
                               }
                           );
                     }
-                    default:
+                    case PatternDirection.RIGHT:
+                    {
+                        return Tuple.Create
+                            (
+                                new List<BasePoint3D>()
+                                {
+                                    originalBrickElementPoints[4],
+                                    originalBrickElementPoints[5],
+                                    originalBrickElementPoints[6],
+                                    originalBrickElementPoints[7],
+                                },
+                                new List<BasePoint3D>()
+                                {
+                                    originalBrickElementPoints[0],
+                                    originalBrickElementPoints[1],
+                                    originalBrickElementPoints[2],
+                                    originalBrickElementPoints[3],
+                                }
+                            );
+                    }
+                    case PatternDirection.LEFT:
+                        {
+                        return Tuple.Create
+                            (
+                                new List<BasePoint3D>()
+                                {
+                                    originalBrickElementPoints[4],
+                                    originalBrickElementPoints[5],
+                                    originalBrickElementPoints[6],
+                                    originalBrickElementPoints[7],
+                                },
+                                new List<BasePoint3D>()
+                                {
+                                    originalBrickElementPoints[0],
+                                    originalBrickElementPoints[1],
+                                    originalBrickElementPoints[2],
+                                    originalBrickElementPoints[3],
+                                }
+                            );
+                        }
+                default:
                     {
                         break;
                     }

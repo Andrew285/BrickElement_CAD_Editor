@@ -40,6 +40,14 @@ namespace Triangulation
         private IScene scene;
         //public Action<TwentyNodeBrickElement, BrickElementSurface> OnBrickElementDivided;
 
+        private Dictionary<FaceType, PatternDirection> FacePatternConnections = new Dictionary<FaceType, PatternDirection>()
+        {
+            { FaceType.BOTTOM, PatternDirection.UP },
+            { FaceType.TOP, PatternDirection.DOWN },
+            { FaceType.RIGHT, PatternDirection.LEFT },
+            { FaceType.LEFT, PatternDirection.RIGHT },
+        };
+
         public BrickElementDivisionManager(IScene scene)
         {
             this.scene = scene;
@@ -119,19 +127,11 @@ namespace Triangulation
                     TwentyNodeBrickElement neighbourElement = neighbourElementPair.Item2;
                     surface.Remove(neighbourElement);
 
-                    if (neighbourFaceType == FaceType.BOTTOM)
-                    {
-                        MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(neighbourElement.Mesh.VerticesSet.ToList(), PatternDirection.UP);
-                        PatternManager patternManager = new PatternManager();
-                        BrickElementSurface neighbourDividedSurface = patternManager.Use(surface, neighbourFaceType, pattern);
-                    }
+                    PatternDirection direction = FacePatternConnections[neighbourFaceType];
 
-                    if (neighbourFaceType == FaceType.TOP)
-                    {
-                        MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(neighbourElement.Mesh.VerticesSet.ToList(), PatternDirection.DOWN);
-                        PatternManager patternManager = new PatternManager();
-                        BrickElementSurface neighbourDividedSurface = patternManager.Use(surface, neighbourFaceType, pattern);
-                    }
+                    MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(neighbourElement.Mesh.VerticesSet.ToList(), direction);
+                    PatternManager patternManager = new PatternManager();
+                    BrickElementSurface neighbourDividedSurface = patternManager.Use(surface, neighbourFaceType, pattern);
                 }
             }
 
