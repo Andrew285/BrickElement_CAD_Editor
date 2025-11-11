@@ -77,7 +77,12 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             CubeBrickElement cbe3 = new CubeBrickElement(new Vector3(0f, -2f, 0f), size);
             CubeBrickElement cbe4 = new CubeBrickElement(new Vector3(2f, 0f, 0f), size);
             CubeBrickElement cbe5 = new CubeBrickElement(new Vector3(-2f, 0f, 0f), size);
+
+            // Corners
             CubeBrickElement cbe6 = new CubeBrickElement(new Vector3(-2f, 2f, 0f), size);
+            CubeBrickElement cbe7 = new CubeBrickElement(new Vector3(2f, 2f, 0f), size);
+            CubeBrickElement cbe8 = new CubeBrickElement(new Vector3(2f, -2f, 0f), size);
+            CubeBrickElement cbe9 = new CubeBrickElement(new Vector3(-2f, -2f, 0f), size);
             BrickElementSurface surface = new BrickElementSurface(scene);
 
             surface.AddBrickElement(cbe);
@@ -86,7 +91,9 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             surface.AddBrickElement(cbe4);
             surface.AddBrickElement(cbe5);
             surface.AddBrickElement(cbe6);
-
+            surface.AddBrickElement(cbe7);
+            surface.AddBrickElement(cbe8);
+            surface.AddBrickElement(cbe9);
 
             //surface.Remove(cbe);
 
@@ -103,9 +110,10 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
             divisionManager.Divide(surface.BrickElements.ElementAt(0).Value, size, new Vector3(1, 1, 3));
             //surface.Mesh.FacesSet.ElementAt(18).IsSelected = true;
-            surface.Mesh.VerticesSet.ElementAt(25).IsSelected = true;
-            surface.Mesh.VerticesSet.ElementAt(47).IsSelected = true;
-            surface.AreFacesDrawable = false;
+            //surface.Mesh.VerticesSet.ElementAt(25).IsSelected = true;
+            //surface.Mesh.VerticesSet.ElementAt(47).IsSelected = true;
+            //surface.Mesh.FacesSet.ElementAt(56).IsSelected = true;
+            //surface.AreFacesDrawable = false;
             surface.Mesh.PrintMesh();
 
 
