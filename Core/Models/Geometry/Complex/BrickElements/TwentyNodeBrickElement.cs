@@ -136,5 +136,14 @@ namespace Core.Models.Geometry.Complex.BrickElements
                 default: return Mesh.FacesDictionary.ElementAt(0).Value;
             }
         }
+
+        public BasePlane3D? GetSafelyFaceByType(FaceType type)
+        {
+            foreach (var face in Mesh.FacesSet)
+            {
+                if (face.FaceType == type) return face;
+            }
+            return null;
+        }
     }
 }

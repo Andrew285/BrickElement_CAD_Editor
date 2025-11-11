@@ -6,6 +6,7 @@ using ConsoleTables;
 using Core.Maths;
 using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
+using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
@@ -76,6 +77,7 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             CubeBrickElement cbe3 = new CubeBrickElement(new Vector3(0f, -2f, 0f), size);
             CubeBrickElement cbe4 = new CubeBrickElement(new Vector3(2f, 0f, 0f), size);
             CubeBrickElement cbe5 = new CubeBrickElement(new Vector3(-2f, 0f, 0f), size);
+            CubeBrickElement cbe6 = new CubeBrickElement(new Vector3(-2f, 2f, 0f), size);
             BrickElementSurface surface = new BrickElementSurface(scene);
 
             surface.AddBrickElement(cbe);
@@ -83,6 +85,8 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             surface.AddBrickElement(cbe3);
             surface.AddBrickElement(cbe4);
             surface.AddBrickElement(cbe5);
+            surface.AddBrickElement(cbe6);
+
 
             //surface.Remove(cbe);
 
@@ -92,13 +96,21 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             //PatternManager patternManager = new PatternManager();
             //patternManager.Use(surface, Core.Models.Geometry.Primitive.Plane.Face.FaceType.BOTTOM, pattern);
 
+            //CornerSimplePattern pattern = new CornerSimplePattern(cbe.Mesh.VerticesSet.ToList(), CornerType.TOP_LEFT);
+            //PatternManager patternManager = new PatternManager();
+            //patternManager.Use(surface, CornerType.TOP_LEFT, pattern);
+
             BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
             divisionManager.Divide(surface.BrickElements.ElementAt(0).Value, size, new Vector3(1, 1, 3));
-            //surface.Mesh.FacesSet.ElementAt(17).IsSelected = true;
-            //surface.Mesh.PrintMesh();
+            //surface.Mesh.FacesSet.ElementAt(18).IsSelected = true;
+            surface.Mesh.VerticesSet.ElementAt(25).IsSelected = true;
+            surface.Mesh.VerticesSet.ElementAt(47).IsSelected = true;
+            surface.AreFacesDrawable = false;
+            surface.Mesh.PrintMesh();
 
 
-
+            //BaseLine3D line = new Line3D(new BasePoint3D(new Vector3(0, 0, 0)), new BasePoint3D(new Vector3(1, 1, 1)));
+            //Console.WriteLine(line.GetHashCode());
 
 
 

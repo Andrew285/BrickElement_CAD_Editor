@@ -8,9 +8,9 @@ namespace Triangulation
 {
     public class PatternManager
     {
-        public BrickElementSurface Use(BrickElementSurface surface, FaceType faceToUsePattern, BasePattern pattern)
+        public BrickElementSurface Use<TKey>(BrickElementSurface surface, TKey faceToUsePattern, BasePattern<TKey> pattern) where TKey : Enum
         {
-            Dictionary<FaceType, BasePoint3D[][]> patternCubesPoints = pattern.points;
+            Dictionary<TKey, BasePoint3D[][]> patternCubesPoints = pattern.points;
             BasePoint3D[][] patternPointsBasedOnFace = patternCubesPoints[faceToUsePattern];
             List<TwentyNodeBrickElement> patternBrickElements = GenerateBrickElementsFromPoints(patternPointsBasedOnFace);
             BrickElementSurface resultSurface = AddBrickElementsToSurface(surface, patternBrickElements);

@@ -15,7 +15,7 @@ namespace Core.Models.Text.VertexText
         {
             List<LabelObject> labelObjects = new List<LabelObject>();
 
-            foreach (Point3D vertex in vertices)
+            foreach (BasePoint3D vertex in vertices)
             {
                 //int index = vertices.IndexOf(vertex) + 1;
 

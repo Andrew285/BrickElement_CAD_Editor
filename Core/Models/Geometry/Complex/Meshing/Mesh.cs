@@ -96,7 +96,7 @@ namespace Core.Models.Geometry.Complex.Meshing
             return false;
         }
 
-        private static Vector3 RoundVector3(Vector3 v, int decimals = 6)
+        private static Vector3 RoundVector3(Vector3 v, int decimals = 5)
         {
             return new Vector3(
                 MathF.Round(v.X, decimals),
