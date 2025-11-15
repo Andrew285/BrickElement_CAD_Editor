@@ -7,6 +7,7 @@ using Core.Maths;
 using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Geometry.Primitive.Line;
+using Core.Models.Geometry.Primitive.Plane.Face;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
@@ -73,21 +74,42 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
 
             Vector3 size = new Vector3(2, 2, 2);
             CubeBrickElement cbe = new CubeBrickElement(new Vector3(0f, 0f, 0f), size);
-            CubeBrickElement cbe2 = new CubeBrickElement(new Vector3(0f, 2f, 0f), size);
-            CubeBrickElement cbe3 = new CubeBrickElement(new Vector3(0f, -2f, 0f), size);
+            //CubeBrickElement cbe2 = new CubeBrickElement(new Vector3(0f, 2f, 0f), size);
+            //CubeBrickElement cbe3 = new CubeBrickElement(new Vector3(0f, -2f, 0f), size);
             CubeBrickElement cbe4 = new CubeBrickElement(new Vector3(2f, 0f, 0f), size);
             CubeBrickElement cbe5 = new CubeBrickElement(new Vector3(-2f, 0f, 0f), size);
 
-            // Corners
+            //Corners
             CubeBrickElement cbe6 = new CubeBrickElement(new Vector3(-2f, 2f, 0f), size);
             CubeBrickElement cbe7 = new CubeBrickElement(new Vector3(2f, 2f, 0f), size);
             CubeBrickElement cbe8 = new CubeBrickElement(new Vector3(2f, -2f, 0f), size);
             CubeBrickElement cbe9 = new CubeBrickElement(new Vector3(-2f, -2f, 0f), size);
+
+
+            CubeBrickElement cbeTopX = new CubeBrickElement(new Vector3(0f, 2f, 0f), size);
+            CubeBrickElement cbeBottomX = new CubeBrickElement(new Vector3(0f, -2f, 0f), size);
+            CubeBrickElement cbeFrontX = new CubeBrickElement(new Vector3(0f, 0f, 2f), size);
+            CubeBrickElement cbeBackX = new CubeBrickElement(new Vector3(0f, 0f, -2f), size);
+
+            CubeBrickElement cbeFrontY = new CubeBrickElement(new Vector3(0f, 0f, 2f), size);
+
+
+            CubeBrickElement cbeBackTopX = new CubeBrickElement(new Vector3(0f, 2f, -2f), size);
+            CubeBrickElement cbeFrontTopX = new CubeBrickElement(new Vector3(0f, 2f, 2f), size);
+            CubeBrickElement cbeBackBottomX = new CubeBrickElement(new Vector3(0f, -2f, -2f), size);
+            CubeBrickElement cbeFrontBottomX = new CubeBrickElement(new Vector3(0f, -2f, 2f), size);
+
+            CubeBrickElement cbeBackLeftY = new CubeBrickElement(new Vector3(-2f, 0f, -2f), size);
+            CubeBrickElement cbeBackRightY = new CubeBrickElement(new Vector3(2f, 0f, -2f), size);
+            CubeBrickElement cbeFrontLeftY = new CubeBrickElement(new Vector3(-2f, 0f, 2f), size);
+            CubeBrickElement cbeFrontRightY = new CubeBrickElement(new Vector3(2f, 0f, 2f), size);
+
+
             BrickElementSurface surface = new BrickElementSurface(scene);
 
             surface.AddBrickElement(cbe);
-            surface.AddBrickElement(cbe2);
-            surface.AddBrickElement(cbe3);
+            //surface.AddBrickElement(cbe2);
+            //surface.AddBrickElement(cbe3);
             surface.AddBrickElement(cbe4);
             surface.AddBrickElement(cbe5);
             surface.AddBrickElement(cbe6);
@@ -95,30 +117,66 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLay
             surface.AddBrickElement(cbe8);
             surface.AddBrickElement(cbe9);
 
+            surface.AddBrickElement(cbeTopX);
+            surface.AddBrickElement(cbeBottomX);
+            surface.AddBrickElement(cbeFrontX);
+            surface.AddBrickElement(cbeBackX);
+
+            surface.AddBrickElement(cbeBackTopX);
+            surface.AddBrickElement(cbeFrontTopX);
+            surface.AddBrickElement(cbeBackBottomX);
+            surface.AddBrickElement(cbeFrontBottomX);
+
+            surface.AddBrickElement(cbeBackLeftY);
+            surface.AddBrickElement(cbeBackRightY);
+            surface.AddBrickElement(cbeFrontLeftY);
+            surface.AddBrickElement(cbeFrontRightY);
+
+            //surface.AddBrickElement(cbeFrontY);
+
             //surface.Remove(cbe);
 
             scene.AddObject3D(surface);
 
-            //MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(cbe.Mesh.VerticesSet.ToList());
+            //surface.Remove(cbe);
+            //MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(cbe.Mesh.VerticesSet.ToList(), PatternDirection.RIGHT);
             //PatternManager patternManager = new PatternManager();
-            //patternManager.Use(surface, Core.Models.Geometry.Primitive.Plane.Face.FaceType.BOTTOM, pattern);
+            //patternManager.Use(surface, Core.Models.Geometry.Primitive.Plane.Face.FaceType.LEFT, pattern);
 
             //CornerSimplePattern pattern = new CornerSimplePattern(cbe.Mesh.VerticesSet.ToList(), CornerType.TOP_LEFT);
             //PatternManager patternManager = new PatternManager();
             //patternManager.Use(surface, CornerType.TOP_LEFT, pattern);
 
+
+            //FaceType faceType = FaceType.FRONT;
+            //PatternDirection direction = PatternDirection.BACK;
+            //CrossSimplePattern pattern = new CrossSimplePattern(cbe.Mesh.VerticesSet.ToList(), direction, faceType);
+            //PatternManager patternManager = new PatternManager();
+            //patternManager.Use(surface, faceType, pattern);
+
             BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
-            divisionManager.Divide(surface.BrickElements.ElementAt(0).Value, size, new Vector3(1, 1, 3));
+            divisionManager.Divide(surface.BrickElements.ElementAt(0).Value, size, new Vector3(3, 3, 3));
+
+
             //surface.Mesh.FacesSet.ElementAt(18).IsSelected = true;
             //surface.Mesh.VerticesSet.ElementAt(25).IsSelected = true;
             //surface.Mesh.VerticesSet.ElementAt(47).IsSelected = true;
             //surface.Mesh.FacesSet.ElementAt(56).IsSelected = true;
             //surface.AreFacesDrawable = false;
-            surface.Mesh.PrintMesh();
+            //surface.Mesh.PrintMesh();
+            //VertexIndexGroup vertexIndexGroup = new VertexIndexGroup(surface.GetGlobalVertices());
+            //scene.AddObject2D(vertexIndexGroup);
 
 
             //BaseLine3D line = new Line3D(new BasePoint3D(new Vector3(0, 0, 0)), new BasePoint3D(new Vector3(1, 1, 1)));
             //Console.WriteLine(line.GetHashCode());
+
+
+
+
+
+
+
 
 
 

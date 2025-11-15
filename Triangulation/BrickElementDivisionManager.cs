@@ -6,6 +6,8 @@ using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Plane.Face;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Scene;
+using Core.Utils;
+using MathNet.Numerics.RootFinding;
 using System.Numerics;
 using System.Reflection;
 using System.Windows.Forms;
@@ -42,12 +44,24 @@ namespace Triangulation
         private IScene scene;
         //public Action<TwentyNodeBrickElement, BrickElementSurface> OnBrickElementDivided;
 
-        private Dictionary<FaceType, PatternDirection> FacePatternConnections = new Dictionary<FaceType, PatternDirection>()
+        public static Dictionary<FaceType, PatternDirection> FacePatternConnections = new Dictionary<FaceType, PatternDirection>()
         {
             { FaceType.BOTTOM, PatternDirection.UP },
             { FaceType.TOP, PatternDirection.DOWN },
             { FaceType.RIGHT, PatternDirection.LEFT },
             { FaceType.LEFT, PatternDirection.RIGHT },
+            { FaceType.FRONT, PatternDirection.LEFT },
+            { FaceType.BACK, PatternDirection.RIGHT },
+        };
+
+        public static Dictionary<FaceType, PatternDirection> FaceDirectionsForCrossPattern = new Dictionary<FaceType, PatternDirection>()
+        {
+            { FaceType.BOTTOM, PatternDirection.UP },
+            { FaceType.TOP, PatternDirection.DOWN },
+            { FaceType.RIGHT, PatternDirection.LEFT },
+            { FaceType.LEFT, PatternDirection.RIGHT },
+            { FaceType.FRONT, PatternDirection.BACK },
+            { FaceType.BACK, PatternDirection.FRONT },
         };
 
         private Dictionary<FaceType, List<FaceType>> CornerFaceConnectionsByFace = new Dictionary<FaceType, List<FaceType>>()
@@ -60,27 +74,81 @@ namespace Triangulation
             { FaceType.LEFT, new List<FaceType>{FaceType.FRONT, FaceType.TOP, FaceType.BACK, FaceType.BOTTOM } },
         };
 
+        //private Dictionary<Tuple<FaceType, FaceType>, CornerType> CornerTypesByFaceConnections = new Dictionary<Tuple<FaceType, FaceType>, CornerType>()
+        //{
+        //    { Tuple.Create(FaceType.BOTTOM, FaceType.LEFT), CornerType.TOP_LEFT },
+        //    { Tuple.Create(FaceType.BOTTOM, FaceType.RIGHT), CornerType.TOP_RIGHT },
+        //    { Tuple.Create(FaceType.BOTTOM, FaceType.FRONT), CornerType.TOP_FRONT },
+        //    { Tuple.Create(FaceType.BOTTOM, FaceType.BACK), CornerType.TOP_BACK },
+
+        //    { Tuple.Create(FaceType.LEFT, FaceType.BOTTOM), CornerType.TOP_LEFT },
+        //    { Tuple.Create(FaceType.RIGHT, FaceType.BOTTOM), CornerType.TOP_RIGHT },
+        //    { Tuple.Create(FaceType.FRONT, FaceType.BOTTOM), CornerType.TOP_FRONT },
+        //    { Tuple.Create(FaceType.BACK, FaceType.BOTTOM), CornerType.TOP_BACK },
+
+        //    { Tuple.Create(FaceType.TOP, FaceType.LEFT), CornerType.BOTTOM_LEFT },
+        //    { Tuple.Create(FaceType.TOP, FaceType.RIGHT), CornerType.BOTTOM_RIGHT },
+        //    { Tuple.Create(FaceType.TOP, FaceType.FRONT), CornerType.BOTTOM_FRONT },
+        //    { Tuple.Create(FaceType.TOP, FaceType.BACK), CornerType.BOTTOM_BACK },
+
+        //    { Tuple.Create(FaceType.LEFT, FaceType.TOP), CornerType.BOTTOM_LEFT },
+        //    { Tuple.Create(FaceType.RIGHT, FaceType.TOP), CornerType.BOTTOM_RIGHT },
+        //    { Tuple.Create(FaceType.FRONT, FaceType.TOP), CornerType.BOTTOM_FRONT },
+        //    { Tuple.Create(FaceType.BACK, FaceType.TOP), CornerType.BOTTOM_BACK },
+        //};
+
         private Dictionary<Tuple<FaceType, FaceType>, CornerType> CornerTypesByFaceConnections = new Dictionary<Tuple<FaceType, FaceType>, CornerType>()
         {
-            { Tuple.Create(FaceType.BOTTOM, FaceType.LEFT), CornerType.TOP_LEFT },
-            { Tuple.Create(FaceType.BOTTOM, FaceType.RIGHT), CornerType.TOP_RIGHT },
-            { Tuple.Create(FaceType.BOTTOM, FaceType.FRONT), CornerType.TOP_FRONT },
-            { Tuple.Create(FaceType.BOTTOM, FaceType.BACK), CornerType.TOP_BACK },
+            { Tuple.Create(FaceType.TOP, FaceType.BACK), CornerType.TOP_BACK },
+            { Tuple.Create(FaceType.BACK, FaceType.TOP), CornerType.TOP_BACK },
 
-            { Tuple.Create(FaceType.LEFT, FaceType.BOTTOM), CornerType.TOP_LEFT },
-            { Tuple.Create(FaceType.RIGHT, FaceType.BOTTOM), CornerType.TOP_RIGHT },
-            { Tuple.Create(FaceType.FRONT, FaceType.BOTTOM), CornerType.TOP_FRONT },
-            { Tuple.Create(FaceType.BACK, FaceType.BOTTOM), CornerType.TOP_BACK },
+            { Tuple.Create(FaceType.TOP, FaceType.FRONT), CornerType.TOP_FRONT },
+            { Tuple.Create(FaceType.FRONT, FaceType.TOP), CornerType.TOP_FRONT },
 
-            { Tuple.Create(FaceType.TOP, FaceType.LEFT), CornerType.BOTTOM_LEFT },
-            { Tuple.Create(FaceType.TOP, FaceType.RIGHT), CornerType.BOTTOM_RIGHT },
-            { Tuple.Create(FaceType.TOP, FaceType.FRONT), CornerType.BOTTOM_FRONT },
-            { Tuple.Create(FaceType.TOP, FaceType.BACK), CornerType.BOTTOM_BACK },
+            { Tuple.Create(FaceType.BOTTOM, FaceType.BACK), CornerType.BOTTOM_BACK },
+            { Tuple.Create(FaceType.BACK, FaceType.BOTTOM), CornerType.BOTTOM_BACK },
 
-            { Tuple.Create(FaceType.LEFT, FaceType.TOP), CornerType.BOTTOM_LEFT },
-            { Tuple.Create(FaceType.RIGHT, FaceType.TOP), CornerType.BOTTOM_RIGHT },
-            { Tuple.Create(FaceType.FRONT, FaceType.TOP), CornerType.BOTTOM_FRONT },
-            { Tuple.Create(FaceType.BACK, FaceType.TOP), CornerType.BOTTOM_BACK },
+            { Tuple.Create(FaceType.BOTTOM, FaceType.FRONT), CornerType.BOTTOM_FRONT },
+            { Tuple.Create(FaceType.FRONT, FaceType.BOTTOM), CornerType.BOTTOM_FRONT },
+
+            { Tuple.Create(FaceType.BACK, FaceType.LEFT), CornerType.BACK_LEFT },
+            { Tuple.Create(FaceType.LEFT, FaceType.BACK), CornerType.BACK_LEFT },
+
+            { Tuple.Create(FaceType.BACK, FaceType.RIGHT), CornerType.BACK_RIGHT },
+            { Tuple.Create(FaceType.RIGHT, FaceType.BACK), CornerType.BACK_RIGHT },
+
+            { Tuple.Create(FaceType.FRONT, FaceType.LEFT), CornerType.FRONT_LEFT },
+            { Tuple.Create(FaceType.LEFT, FaceType.FRONT), CornerType.FRONT_LEFT },
+
+            { Tuple.Create(FaceType.FRONT, FaceType.RIGHT), CornerType.FRONT_RIGHT },
+            { Tuple.Create(FaceType.RIGHT, FaceType.FRONT), CornerType.FRONT_RIGHT },
+
+            { Tuple.Create(FaceType.TOP, FaceType.LEFT), CornerType.TOP_LEFT },
+            { Tuple.Create(FaceType.LEFT, FaceType.TOP), CornerType.TOP_LEFT },
+
+            { Tuple.Create(FaceType.TOP, FaceType.RIGHT), CornerType.TOP_RIGHT },
+            { Tuple.Create(FaceType.RIGHT, FaceType.TOP), CornerType.TOP_RIGHT },
+
+            { Tuple.Create(FaceType.BOTTOM, FaceType.LEFT), CornerType.BOTTOM_LEFT },
+            { Tuple.Create(FaceType.LEFT, FaceType.BOTTOM), CornerType.BOTTOM_LEFT },
+
+            { Tuple.Create(FaceType.BOTTOM, FaceType.RIGHT), CornerType.BOTTOM_RIGHT },
+            { Tuple.Create(FaceType.RIGHT, FaceType.BOTTOM), CornerType.BOTTOM_RIGHT },
+        };
+
+
+        public Dictionary<AxisType, List<FaceType>> allowedFacesForDiviosionByAxis = new Dictionary<AxisType, List<FaceType>>()
+        {
+            { AxisType.X, new List<FaceType>() { FaceType.FRONT, FaceType.TOP, FaceType.BACK, FaceType.BOTTOM } },
+            { AxisType.Y, new List<FaceType>() { FaceType.FRONT, FaceType.RIGHT, FaceType.BACK, FaceType.LEFT } },
+            { AxisType.Z, new List<FaceType>() { FaceType.LEFT, FaceType.TOP, FaceType.RIGHT, FaceType.BOTTOM } },
+        };
+
+        public Dictionary<AxisType, List<CornerType>> allowedCornersForDiviosionByAxis = new Dictionary<AxisType, List<CornerType>>()
+        {
+            { AxisType.X, new List<CornerType>() { CornerType.TOP_BACK, CornerType.TOP_FRONT, CornerType.BOTTOM_BACK, CornerType.BOTTOM_FRONT } },
+            { AxisType.Y, new List<CornerType>() { CornerType.BACK_LEFT, CornerType.BACK_RIGHT, CornerType.FRONT_LEFT, CornerType.FRONT_RIGHT } },
+            { AxisType.Z, new List<CornerType>() { CornerType.TOP_LEFT, CornerType.TOP_RIGHT, CornerType.BOTTOM_LEFT, CornerType.BOTTOM_RIGHT } },
         };
 
         public BrickElementDivisionManager(IScene scene)
@@ -150,48 +218,99 @@ namespace Triangulation
 
                 // Find neighbours of this element
                 surface = (BrickElementSurface)be.Parent;
-                List<Tuple<FaceType, TwentyNodeBrickElement>> neighboursOfBe = surface.FindNeighboursOf(be);
+                BrickElementNeighboursData neighboursOfBe = surface.FindNeighboursOf(be);
 
                 // Remove element that should be divided
                 surface.Remove(be);
 
-                // Use patterns for neighbours
-                foreach (var neighbourElementPair in neighboursOfBe)
+
+                Dictionary<Guid, FaceNeighboursData> faceNeighboursMap = new Dictionary<Guid, FaceNeighboursData>();
+                Dictionary<Guid, CornerNeighboursData> cornerNeighboursMap = new Dictionary<Guid, CornerNeighboursData>();
+
+
+                AxisType axisTypeForDivision = AxisType.X;
+                if (cubesCountByX > 1)
                 {
-                    FaceType neighbourFaceType = neighbourElementPair.Item1;
-                    TwentyNodeBrickElement neighbourElement = neighbourElementPair.Item2;
-                    //surface.Remove(neighbourElement);
+                    axisTypeForDivision = AxisType.X;
+                    FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
+                }
 
-                    PatternDirection direction = FacePatternConnections[neighbourFaceType];
+                if (cubesCountByY > 1)
+                {
+                    axisTypeForDivision = AxisType.Y;
+                    FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
+                }
 
-                    MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(neighbourElement.Mesh.VerticesSet.ToList(), direction);
-                    PatternManager patternManager = new PatternManager();
-                    //BrickElementSurface neighbourDividedSurface = patternManager.Use(surface, neighbourFaceType, pattern);
+                if (cubesCountByZ > 1)
+                {
+                    axisTypeForDivision = AxisType.Z;
+                    FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
+                }
 
+                PatternManager patternManager = new PatternManager();
 
-                    // Add Corner pattern if it exists
-                    var cornerFaceConnections = CornerFaceConnectionsByFace[neighbourFaceType];
-                    foreach (FaceType cornerFaceTypeConnection in cornerFaceConnections)
+                // Use patterns for corner neighbours
+                foreach (var cornerNeighbour in cornerNeighboursMap)
+                {
+                    Guid elementId = cornerNeighbour.Key;
+                    TwentyNodeBrickElement cornerBrickElement = surface.BrickElements[elementId];
+                    CornerType cornerType = cornerNeighbour.Value.cornerType;
+                    AxisType axisDivision = cornerNeighbour.Value.axisDivision;
+
+                    CornerSimplePattern? cornerPattern = null;
+                    if (axisDivision == AxisType.X)
                     {
-                        BasePlane3D? faceForCornerPattern = neighbourElement.GetFaceByType(cornerFaceTypeConnection);
-                        if (faceForCornerPattern == null) continue; // no attachment
-
-                        if (!surface.facesMap.ContainsKey(faceForCornerPattern.ID)) continue; // no attachment
-                        List<FaceAttachment> faceCornerAttachments = surface.facesMap[faceForCornerPattern.ID];
-                        if (faceCornerAttachments.Count <= 1) continue; // no attachment
-
-                        Guid cornerBrickElementId = faceCornerAttachments.Find(f => f.BrickElementId != neighbourElement.ID).BrickElementId;
-                        TwentyNodeBrickElement cornerBrickElement = surface.BrickElements[cornerBrickElementId];
-
-                        CornerType cornerPatternType = CornerTypesByFaceConnections[Tuple.Create(FaceManager.GetOppositeFaceOf(neighbourFaceType), FaceManager.GetOppositeFaceOf(cornerFaceTypeConnection))];
-                        CornerSimplePattern cornerPattern = new CornerSimplePattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerPatternType);
-
-                        surface.Remove(cornerBrickElement);
-                        BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(surface, cornerPatternType, cornerPattern); // ?
+                        cornerPattern = new CornerSimpleXPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
+                    }
+                    else if (axisDivision == AxisType.Y)
+                    {
+                        cornerPattern = new CornerSimpleYPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
+                    }
+                    else if (axisDivision == AxisType.Z)
+                    {
+                        cornerPattern = new CornerSimpleZPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
                     }
 
-                    surface.Remove(neighbourElement);
-                    BrickElementSurface neighbourDividedSurface = patternManager.Use(surface, neighbourFaceType, pattern);
+                    if (cornerPattern == null) continue;
+
+                    surface.Remove(cornerBrickElement);
+                    BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(surface, cornerType, cornerPattern); // ?
+                }
+
+                // User patterns for face neighbours
+                foreach (var faceNeighbour in faceNeighboursMap)
+                {
+                    Guid elementId = faceNeighbour.Key;
+                    TwentyNodeBrickElement faceBrickElement = surface.BrickElements[elementId];
+                    PatternDirection patternDirection = faceNeighbour.Value.direction;
+                    FaceType faceType = faceNeighbour.Value.faceType;
+                    BasePattern<FaceType>? pattern = null;
+                    AxisType axisDivision = faceNeighbour.Value.axisDivision;
+
+                    if (faceNeighbour.Value.amount > 1)
+                    {
+                        pattern = new CrossSimplePattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection, faceType);
+                    }
+                    else
+                    {
+                        if (axisDivision == AxisType.X)
+                        {
+                            pattern = new MiddleSimpleXPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
+                        }
+                        else if (axisDivision == AxisType.Y)
+                        {
+                            pattern = new MiddleSimpleYPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
+                        }
+                        else if (axisDivision == AxisType.Z)
+                        {
+                            pattern = new MiddleSimpleZPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
+                        }
+                    }
+
+                    if (pattern == null) continue;
+
+                    surface.Remove(faceBrickElement);
+                    BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(surface, faceType, pattern); // ?
                 }
             }
 
@@ -200,6 +319,119 @@ namespace Triangulation
                 surface.AddBrickElement(b);
             }
             return surface;
+        }
+
+        private void FindNeighbourDivisionMap(BrickElementSurface surface, BrickElementNeighboursData neighboursOfBe, AxisType axisTypeForDivision, Dictionary<Guid, FaceNeighboursData> faceNeighboursMap, Dictionary<Guid, CornerNeighboursData> cornerNeighboursMap)
+        {
+            // Use patterns for neighbours
+            foreach (var neighbourElementPair in neighboursOfBe.faceNeighbours)
+            {
+                FaceType neighbourFaceType = neighbourElementPair.Key;
+                if (!allowedFacesForDiviosionByAxis[axisTypeForDivision].Contains(neighbourFaceType)) continue;
+
+                TwentyNodeBrickElement neighbourElement = neighbourElementPair.Value;
+
+                PatternDirection direction = FacePatternConnections[neighbourFaceType];
+
+                FaceNeighboursData faceNeighbourData;
+                bool faceNFound = faceNeighboursMap.TryGetValue(neighbourElement.ID, out faceNeighbourData);
+                if (faceNFound)
+                {
+                    faceNeighbourData.amount++;
+                    faceNeighbourData.direction = FaceDirectionsForCrossPattern[neighbourFaceType];
+                    faceNeighboursMap[neighbourElement.ID] = faceNeighbourData;
+                }
+                else
+                {
+                    faceNeighbourData = new FaceNeighboursData
+                    {
+                        amount = 1,
+                        faceType = neighbourFaceType,
+                        direction = direction,
+                        axisDivision = axisTypeForDivision,
+                    };
+                    faceNeighboursMap.Add(neighbourElement.ID, faceNeighbourData);
+                }
+
+                //MiddleSimplePattern pattern = null;
+                //if (axisTypeForDivision == AxisType.X)
+                //{
+                //    pattern = new MiddleSimpleXPattern(neighbourElement.Mesh.VerticesSet.ToList(), direction);
+                //}
+                //else if (axisTypeForDivision == AxisType.Z)
+                //{
+                //    pattern = new MiddleSimpleZPattern(neighbourElement.Mesh.VerticesSet.ToList(), direction);
+                //}
+
+                //PatternManager patternManager = new PatternManager();
+
+                // Add Corner pattern if it exists
+                var cornerFaceConnections = CornerFaceConnectionsByFace[neighbourFaceType];
+                foreach (FaceType cornerFaceTypeConnection in cornerFaceConnections)
+                {
+                    BasePlane3D? faceForCornerPattern = neighbourElement.GetFaceByType(cornerFaceTypeConnection);
+                    if (faceForCornerPattern == null) continue; // no attachment
+
+                    if (!surface.facesMap.ContainsKey(faceForCornerPattern.ID)) continue; // no attachment
+                    List<FaceAttachment> faceCornerAttachments = surface.facesMap[faceForCornerPattern.ID];
+                    if (faceCornerAttachments.Count <= 1) continue; // no attachment
+
+                    Guid cornerBrickElementId = faceCornerAttachments.Find(f => f.BrickElementId != neighbourElement.ID).BrickElementId;
+                    TwentyNodeBrickElement cornerBrickElement = surface.BrickElements[cornerBrickElementId];
+
+                    //CornerType cornerPatternType = CornerTypesByFaceConnections[Tuple.Create(FaceManager.GetOppositeFaceOf(neighbourFaceType), FaceManager.GetOppositeFaceOf(cornerFaceTypeConnection))];
+                    CornerType cornerPatternType = CornerTypesByFaceConnections[Tuple.Create(FaceManager.GetOppositeFaceOf(neighbourFaceType), cornerFaceTypeConnection)];
+                    if (!allowedCornersForDiviosionByAxis[axisTypeForDivision].Contains(cornerPatternType)) continue;
+
+                    //CornerSimplePattern cornerPattern = null;
+                    //if (axisTypeForDivision == AxisType.X)
+                    //{
+                    //    cornerPattern = new CornerSimpleXPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerPatternType);
+                    //}
+                    //else if (axisTypeForDivision == AxisType.Z)
+                    //{
+                    //    cornerPattern = new CornerSimpleZPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerPatternType);
+                    //}
+
+                    CornerNeighboursData cornerNeighbourData;
+                    bool cornerNFound = cornerNeighboursMap.TryGetValue(cornerBrickElementId, out cornerNeighbourData);
+                    if (cornerNFound)
+                    {
+                        cornerNeighbourData.amount++;
+                    }
+                    else
+                    {
+                        cornerNeighbourData = new CornerNeighboursData
+                        {
+                            amount = 1,
+                            cornerType = cornerPatternType,
+                            axisDivision = axisTypeForDivision,
+                        };
+                        cornerNeighboursMap.Add(cornerBrickElementId, cornerNeighbourData);
+                    }
+
+                    //surface.Remove(cornerBrickElement);
+                    //BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(surface, cornerPatternType, cornerPattern); // ?
+                }
+
+                //surface.Remove(neighbourElement);
+                //BrickElementSurface neighbourDividedSurface = patternManager.Use(surface, neighbourFaceType, pattern);
+            }
+        }
+
+        struct FaceNeighboursData
+        {
+            public int amount;
+            public FaceType faceType;
+            public PatternDirection direction;
+            public AxisType axisDivision;
+        }
+
+        struct CornerNeighboursData
+        {
+            public int amount;
+            public CornerType cornerType;
+            public AxisType axisDivision;
         }
 
         //public BrickElementSurface FindSurfaceContains(TwentyNodeBrickElement be)

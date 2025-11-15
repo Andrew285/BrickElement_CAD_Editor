@@ -44,8 +44,9 @@ namespace App.Tools
             // Register other tools
             RegisterTool(new AddBrickElementTool(scene, commandHistory, selectionTool));
             //RegisterTool(new DivideBrickElementTool(scene, commandHistory, selectionTool));
-            RegisterTool(new PressureTool(scene, commandHistory));
-            //RegisterTool(new FemSolverTool());
+            RegisterTool(new FixFaceTool(scene, commandHistory, renderer, propertyView));
+            RegisterTool(new PressureTool(scene, commandHistory, selectionTool, renderer, propertyView));
+            RegisterTool(new FemSolverTool(scene, commandHistory, renderer, propertyView));
 
             // Activate selection tool by default
             ActivateTool(ToolType.SELECTION);

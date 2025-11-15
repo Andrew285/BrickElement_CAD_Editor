@@ -73,6 +73,14 @@ namespace Core.Models.Geometry.Complex.BrickElements
             {
                 v.Parent = this;
             }
+            foreach (var e in edges)
+            {
+                e.Parent = this;
+            }
+            foreach (var f in faces)
+            {
+                f.Parent = this;
+            }
 
             if (id != null) ID = (Guid)id;
 

@@ -1,38 +1,65 @@
 ﻿
+using App.DataTableLayout;
+using Core.Commands;
 using Core.Maths;
 using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
+using Core.Models.Geometry.Primitive.Plane;
+using Core.Models.Graphics.Rendering;
+using Core.Models.Scene;
+using Core.Services;
 using Core.Services.Events;
 using System.Data;
+using System.Diagnostics.Metrics;
+using System.IO;
 using System.Numerics;
-using App.DataTableLayout;
-
+using System.Runtime.CompilerServices;
+using System.Text;
+using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 using static Core.Maths.FEM;
 using static Core.Maths.StressSolver;
-using Core.Services;
-using System.Text;
-using System.Runtime.CompilerServices;
-using System.IO;
-using System.Diagnostics.Metrics;
 
 namespace App.Tools
 {
-    public class FemSolverTool : ITool2
+    public class FemSolverTool : SelectionTool
     {
+        public FemSolverTool(IScene scene, CommandHistory commandHistory, IRenderer renderer, IPropertyView propertyView) : base(scene, commandHistory, renderer, propertyView)
+        {
+        }
+
+        public override ToolType Type => ToolType.FEM_SOLVER;
+
+        //public override string Name => "FEM_SOLVER";
+
+        //public override string Description => "FEM_SOLVER";
 
         public void Activate()
         {
-            EventBus.Subscribe<SelectedObjectEvent>(OnCalculateDeformation);
+            //EventBus.Subscribe<SelectedObjectEvent>(OnCalculateDeformation);
         }
 
         public void Deactivate()
         {
-            EventBus.Unsubscribe<SelectedObjectEvent>(OnCalculateDeformation);
+            //EventBus.Unsubscribe<SelectedObjectEvent>(OnCalculateDeformation);
         }
 
-        public void OnCalculateDeformation(SelectedObjectEvent e)
+        public override void HandleLeftMouseButtonClick(int x, int y)
         {
-            if (e.Object is BrickElementSurface surface)
+            base.HandleLeftMouseButtonClick(x, y);
+
+            OnCalculateDeformation(SelectedObject);
+            // Implement fix face logic here
+            // This would typically involve:
+            // 1. Raycast to find clicked face
+            // 2. Apply fix constraints to the face
+        }
+
+
+
+
+        public void OnCalculateDeformation(SceneObject obj)
+        {
+            if (obj is BrickElementSurface surface)
             {
                 if (surface != null)
                 {
@@ -84,13 +111,14 @@ namespace App.Tools
 
                     // find all ZU (fixed faces)
                     List<int> globalFixedVertices = new List<int>();
-                    foreach (var face in surface.Mesh.FacesDictionary.Values)
+                    foreach (var face in surface.Mesh.FacesSet)
                     {
                         if (face.IsFixed)
                         {
                             foreach (var vertex in face.correctOrderVertices)
                             {
-                                int globalIndex = surface.GlobalVertexIndices[vertex.ID];
+                                //int globalIndex = surface.GlobalVertexIndices[vertex.ID];
+                                int globalIndex = surface.GlobalVertexIndices.First(v => v.Key == vertex.ID).Value;
                                 if (!globalFixedVertices.Contains(globalIndex))
                                 {
                                     globalFixedVertices.Add(globalIndex);

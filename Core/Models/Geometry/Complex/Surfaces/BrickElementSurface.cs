@@ -206,6 +206,22 @@ namespace Core.Models.Geometry.Complex.Surfaces
                     }
                 }
 
+                // Update face vertices to reference existing mesh vertices
+                for (int i = 0; i < face.correctOrderVertices.Count; i++)
+                {
+                    if (Mesh.VerticesSet.Contains(face.correctOrderVertices[i]))
+                    {
+                        foreach (BasePoint3D value in Mesh.VerticesDictionary.Values)
+                        {
+                            if (value.Position == face.correctOrderVertices[i].Position)
+                            {
+                                face.correctOrderVertices[i] = value;
+                                break;
+                            }
+                        }
+                    }
+                }
+
 
                 foreach (var trianglePlane in face.TrianglePlanes)
                 {
@@ -540,9 +556,11 @@ namespace Core.Models.Geometry.Complex.Surfaces
         //    return BrickElements.Contains()
         //}
 
-        public List<Tuple<FaceType, TwentyNodeBrickElement>> FindNeighboursOf(TwentyNodeBrickElement be)
+        public BrickElementNeighboursData FindNeighboursOf(TwentyNodeBrickElement be)
         {
-            List<Tuple<FaceType, TwentyNodeBrickElement>> resultBrickElements = new List<Tuple<FaceType, TwentyNodeBrickElement>>();
+            //List<Tuple<FaceType, TwentyNodeBrickElement>> resultBrickElements = new List<Tuple<FaceType, TwentyNodeBrickElement>>();
+            Dictionary<FaceType, TwentyNodeBrickElement> faceNeighbours = new Dictionary<FaceType, TwentyNodeBrickElement>();
+            Dictionary<Tuple<FaceType, FaceType>, TwentyNodeBrickElement> cornerNeighbours = new Dictionary<Tuple<FaceType, FaceType>, TwentyNodeBrickElement>();
 
             foreach (var face in be.Mesh.FacesSet)
             {
@@ -554,10 +572,15 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
                     Guid neighbourId = neighbourAttachment.BrickElementId;
                     TwentyNodeBrickElement neighbourBrickElement = BrickElements[neighbourId];
-                    resultBrickElements.Add(Tuple.Create(neighbourAttachment.FaceTypeInBrickElement, neighbourBrickElement));
+                    faceNeighbours.Add(neighbourAttachment.FaceTypeInBrickElement, neighbourBrickElement);
                 }
             }
-            return resultBrickElements;
+
+            return new BrickElementNeighboursData
+            {
+                faceNeighbours = faceNeighbours,
+                cornerNeighbours = cornerNeighbours,
+            };
         }
 
         public void Divide(TwentyNodeBrickElement be)
@@ -579,5 +602,11 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
             Mesh = new Mesh();
         }
+    }
+
+    public struct BrickElementNeighboursData
+    {
+        public Dictionary<FaceType, TwentyNodeBrickElement> faceNeighbours { get; set; }
+        public Dictionary<Tuple<FaceType, FaceType>, TwentyNodeBrickElement> cornerNeighbours { get; set; }
     }
 }

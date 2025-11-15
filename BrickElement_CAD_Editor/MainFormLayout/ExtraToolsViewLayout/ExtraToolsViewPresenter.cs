@@ -155,7 +155,7 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
 
         public void HandleFixFaceItemClicked(object? sender, EventArgs e)
         {
-            //toolManager.ActivateTool<FixFaceTool>();
+            toolManager.ActivateTool<FixFaceTool>();
         }
 
         public void HandleSetPressureItemClicked(object? sender, EventArgs e)

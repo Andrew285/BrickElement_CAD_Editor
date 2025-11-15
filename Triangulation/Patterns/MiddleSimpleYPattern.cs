@@ -3,51 +3,51 @@ using Core.Models.Geometry.Primitive.Point;
 
 namespace Triangulation.Patterns
 {
-    public class MiddleSimpleZPattern: MiddleSimplePattern
+    public class MiddleSimpleYPattern: MiddleSimplePattern
     {
-        public MiddleSimpleZPattern(List<BasePoint3D> originalPoints, PatternDirection direction) : base(originalPoints, direction) { }
+        public MiddleSimpleYPattern(List<BasePoint3D> originalPoints, PatternDirection direction) : base(originalPoints, direction) { }
 
         public override Tuple<List<BasePoint3D>, List<BasePoint3D>> GenerateAllPointsByOriginalFacePoints(List<BasePoint3D> originalBrickElementPoints, PatternDirection direction)
         {
             switch (direction)
             {
-                case PatternDirection.UP:
+                case PatternDirection.FRONT:
                     {
                         return Tuple.Create
                             (
                                 new List<BasePoint3D>()
                                 {
-                                    originalBrickElementPoints[3],
-                                    originalBrickElementPoints[0],
-                                    originalBrickElementPoints[4],
+                                    originalBrickElementPoints[6],
                                     originalBrickElementPoints[7],
+                                    originalBrickElementPoints[4],
+                                    originalBrickElementPoints[5],
                                 },
                                 new List<BasePoint3D>()
                                 {
-                                    originalBrickElementPoints[1],
+                                    originalBrickElementPoints[3],
                                     originalBrickElementPoints[2],
-                                    originalBrickElementPoints[6],
-                                    originalBrickElementPoints[5],
+                                    originalBrickElementPoints[1],
+                                    originalBrickElementPoints[0],
                                 }
                             );
                     }
-                case PatternDirection.DOWN:
+                case PatternDirection.BACK:
                     {
                         return Tuple.Create
                           (
                               new List<BasePoint3D>()
                               {
-                                    originalBrickElementPoints[3],
-                                    originalBrickElementPoints[0],
                                     originalBrickElementPoints[4],
+                                    originalBrickElementPoints[5],
+                                    originalBrickElementPoints[6],
                                     originalBrickElementPoints[7],
                               },
                               new List<BasePoint3D>()
                               {
                                     originalBrickElementPoints[1],
+                                    originalBrickElementPoints[0],
+                                    originalBrickElementPoints[3],
                                     originalBrickElementPoints[2],
-                                    originalBrickElementPoints[6],
-                                    originalBrickElementPoints[5],
                               }
                           );
                     }
@@ -57,16 +57,16 @@ namespace Triangulation.Patterns
                             (
                                 new List<BasePoint3D>()
                                 {
-                                    originalBrickElementPoints[4],
-                                    originalBrickElementPoints[5],
                                     originalBrickElementPoints[6],
-                                    originalBrickElementPoints[7],
+                                    originalBrickElementPoints[5],
+                                    originalBrickElementPoints[1],
+                                    originalBrickElementPoints[2],
                                 },
                                 new List<BasePoint3D>()
                                 {
+                                    originalBrickElementPoints[7],
+                                    originalBrickElementPoints[4],
                                     originalBrickElementPoints[0],
-                                    originalBrickElementPoints[1],
-                                    originalBrickElementPoints[2],
                                     originalBrickElementPoints[3],
                                 }
                             );
@@ -77,16 +77,16 @@ namespace Triangulation.Patterns
                             (
                                 new List<BasePoint3D>()
                                 {
-                                    originalBrickElementPoints[4],
-                                    originalBrickElementPoints[5],
                                     originalBrickElementPoints[6],
-                                    originalBrickElementPoints[7],
+                                    originalBrickElementPoints[5],
+                                    originalBrickElementPoints[1],
+                                    originalBrickElementPoints[2],
                                 },
                                 new List<BasePoint3D>()
                                 {
+                                    originalBrickElementPoints[7],
+                                    originalBrickElementPoints[4],
                                     originalBrickElementPoints[0],
-                                    originalBrickElementPoints[1],
-                                    originalBrickElementPoints[2],
                                     originalBrickElementPoints[3],
                                 }
                             );
