@@ -1,9 +1,5 @@
-﻿using App.Properties;
-using ReaLTaiizor.Util;
-using System.IO;
-using System.Reflection;
-using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout;
-using UI.Utils.ViewLayout.CustomPanelView;
+﻿using App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout;
+using App.Utils.ViewLayout.CustomPanelView;
 
 public class CatalogueView : PanelView, ICatalogueView
 {

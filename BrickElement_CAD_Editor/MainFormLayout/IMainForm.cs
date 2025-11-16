@@ -1,6 +1,6 @@
-﻿using UI.Utils.ViewLayout.ControlUtil;
+﻿using App.Utils.ViewLayout.ControlUtil;
 
-namespace UI.MainFormLayout
+namespace App.MainFormLayout
 {
     public interface IMainForm: IView<Form>
     {

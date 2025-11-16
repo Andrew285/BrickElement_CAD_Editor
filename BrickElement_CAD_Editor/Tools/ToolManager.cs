@@ -1,9 +1,9 @@
-﻿using Core.Commands;
+﻿using App.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
+using Core.Commands;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Services;
 using Raylib_cs;
-using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 
 namespace App.Tools
 {

@@ -1,7 +1,7 @@
-﻿using Core.Models.Scene;
-using UI.Utils.ViewLayout.CustomPanelView;
+﻿using App.Utils.ViewLayout.CustomPanelView;
+using Core.Models.Scene;
 
-namespace UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.PropertyViewLayout
 {
     public class PropertyView : PanelView, IPropertyView
     {

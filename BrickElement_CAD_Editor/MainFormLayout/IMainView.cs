@@ -1,9 +1,9 @@
-﻿using UI.MainFormLayout.ExtraToolsViewLayout;
-using UI.MainFormLayout.MenuViewLayout;
-using UI.MainFormLayout.MiddleViewLayout;
-using UI.Utils.ViewLayout.ControlUtil;
+﻿using App.MainFormLayout.ExtraToolsViewLayout;
+using App.MainFormLayout.MenuViewLayout;
+using App.MainFormLayout.MiddleViewLayout;
+using App.Utils.ViewLayout.ControlUtil;
 
-namespace UI.MainFormLayout
+namespace App.MainFormLayout
 {
     public interface IMainView: IView<TableLayoutPanel>
     {

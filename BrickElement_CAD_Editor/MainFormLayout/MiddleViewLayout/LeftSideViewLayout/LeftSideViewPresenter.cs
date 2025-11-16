@@ -1,10 +1,10 @@
-﻿using App.Tools;
+﻿using App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout;
+using App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout;
+using App.Tools;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout;
-using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout;
 
-namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout
 {
     public class LeftSideViewPresenter
     {

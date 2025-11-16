@@ -11,7 +11,21 @@ namespace Core.Models.Geometry.Complex.BrickElements
 {
     public class TwentyNodeBrickElement : MeshObject3D
     {
+        [DisplayName("Сітка")]
+        [Description("Ділить даний елемент на задану кількість по осях")]
+        [TypeConverter(typeof(Vector3Converter))]
+        public Vector3 DivisionValue 
+        {
+            get { return divisionValue; }
+            set 
+            {
+                divisionValue = value;
+                OnDivisionValueChanged?.Invoke(this, divisionValue);
+            } 
+        }
         private Vector3 divisionValue = Vector3.One;
+        public event Action<TwentyNodeBrickElement, Vector3>? OnDivisionValueChanged;
+
         public override bool IsSelected
         {
             get => base.IsSelected;

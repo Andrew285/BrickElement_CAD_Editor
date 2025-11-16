@@ -1,5 +1,4 @@
-using Core.Services;
-using UI.MainFormLayout;
+using App.MainFormLayout;
 
 namespace BrickElement_CAD_Editor
 {

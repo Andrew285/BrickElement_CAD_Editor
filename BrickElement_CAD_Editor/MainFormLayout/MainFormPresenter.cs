@@ -1,12 +1,10 @@
-﻿using App.Tools;
+﻿using App.MainFormLayout.MiddleViewLayout.SceneViewLayout;
+using App.Tools;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Services;
-using Raylib_cs;
-using UI.MainFormLayout.MiddleViewLayout.SceneViewLayout;
-using UI.Utils.ViewLayout.ControlUtil;
 
-namespace UI.MainFormLayout
+namespace App.MainFormLayout
 {
     public class MainFormPresenter
     {

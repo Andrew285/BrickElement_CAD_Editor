@@ -1,23 +1,16 @@
 ﻿
 using App.DataTableLayout;
+using App.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 using Core.Commands;
 using Core.Maths;
 using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
-using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using Core.Services;
-using Core.Services.Events;
 using System.Data;
-using System.Diagnostics.Metrics;
-using System.IO;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using System.Text;
-using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 using static Core.Maths.FEM;
-using static Core.Maths.StressSolver;
 
 namespace App.Tools
 {

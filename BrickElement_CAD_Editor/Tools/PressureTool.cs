@@ -1,11 +1,10 @@
-﻿using App.Tools;
+﻿using App.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
+using App.Tools;
 using App.Tools.Behaviors;
 using Core.Commands;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using Core.Services.Events;
-using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 
 namespace Core.Services
 {

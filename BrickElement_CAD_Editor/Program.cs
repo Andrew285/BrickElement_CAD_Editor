@@ -1,12 +1,12 @@
-﻿using App.Tools;
+﻿using App.MainFormLayout;
+using App.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
+using App.Tools;
+using App.Utils.ConsoleLogging;
 using Core.Commands;
 using Core.Models.Graphics.Cameras;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Services;
-using UI.MainFormLayout;
-using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
-using UI.Utils.ConsoleLogging;
 
 namespace BrickElement_CAD_Editor
 {

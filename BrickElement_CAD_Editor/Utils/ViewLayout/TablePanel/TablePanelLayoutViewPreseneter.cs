@@ -1,4 +1,4 @@
-﻿namespace UI.Utils.ViewLayout.TablePanel
+﻿namespace App.Utils.ViewLayout.TablePanel
 {
     public class TableLayoutPanelViewPreseneter
     {

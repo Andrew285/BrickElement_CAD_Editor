@@ -1,6 +1,6 @@
-﻿using UI.Utils.ViewLayout.ControlUtil;
+﻿using App.Utils.ViewLayout.ControlUtil;
 
-namespace UI.MainFormLayout.MenuViewLayout
+namespace App.MainFormLayout.MenuViewLayout
 {
     public interface IMenuView: IView<MenuStrip>
     {

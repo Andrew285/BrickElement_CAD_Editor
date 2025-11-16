@@ -1,6 +1,6 @@
 ﻿using Pastel;
 
-namespace UI.Utils.ConsoleLogging
+namespace App.Utils.ConsoleLogging
 {
     public static class LogMe
     {

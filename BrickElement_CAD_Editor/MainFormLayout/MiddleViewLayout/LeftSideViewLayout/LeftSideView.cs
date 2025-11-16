@@ -1,8 +1,9 @@
-﻿using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout;
-using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout;
-using UI.Utils.ViewLayout.TablePanel;
+﻿
+using App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout;
+using App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout;
+using App.Utils.ViewLayout.TablePanel;
 
-namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout
 {
     public class LeftSideView : TableLayoutPanelView, ILeftSideView
     {

@@ -1,6 +1,6 @@
 ﻿using Core.Services;
 
-namespace UI.MainFormLayout.MenuViewLayout
+namespace App.MainFormLayout.MenuViewLayout
 {
     public class MenuView : IMenuView
     {

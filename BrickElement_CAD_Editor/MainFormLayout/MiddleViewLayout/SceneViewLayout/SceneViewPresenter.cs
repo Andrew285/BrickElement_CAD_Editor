@@ -3,7 +3,7 @@ using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Raylib_cs;
 
-namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.SceneViewLayout
 {
     public class SceneViewPresenter
     {

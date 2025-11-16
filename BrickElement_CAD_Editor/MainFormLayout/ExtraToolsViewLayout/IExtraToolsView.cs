@@ -1,7 +1,7 @@
 ﻿using App.Tools;
-using UI.Utils.ViewLayout.ControlUtil;
+using App.Utils.ViewLayout.ControlUtil;
 
-namespace UI.MainFormLayout.ExtraToolsViewLayout
+namespace App.MainFormLayout.ExtraToolsViewLayout
 {
     public interface IExtraToolsView: IView<Panel>
     {

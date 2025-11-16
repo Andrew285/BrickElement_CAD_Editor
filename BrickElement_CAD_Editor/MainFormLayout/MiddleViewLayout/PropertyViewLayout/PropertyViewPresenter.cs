@@ -1,4 +1,4 @@
-﻿namespace UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout
+﻿namespace App.MainFormLayout.MiddleViewLayout.PropertyViewLayout
 {
     public class PropertyViewPresenter
     {

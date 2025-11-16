@@ -1,6 +1,6 @@
-﻿using UI.Utils.ViewLayout.CustomPanelView;
+﻿using App.Utils.ViewLayout.CustomPanelView;
 
-namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.SceneViewLayout
 {
     public class SceneView : PanelView, ISceneView
     {

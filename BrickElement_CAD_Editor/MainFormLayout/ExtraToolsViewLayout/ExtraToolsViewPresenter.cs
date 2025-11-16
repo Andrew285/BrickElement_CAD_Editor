@@ -1,9 +1,12 @@
-﻿using App.DivideFormLayout;
+﻿using App;
+using App.MainFormLayout.ExtraToolsViewLayout;
 using App.Tools;
 using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Scene;
 using Core.Services;
 using System.Numerics;
+using System.Windows.Forms;
 using Triangulation;
 
 namespace UI.MainFormLayout.ExtraToolsViewLayout
@@ -13,6 +16,7 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
         private readonly IExtraToolsView extraToolsView;
         private readonly ToolManager toolManager;
         private readonly IScene scene;
+        private readonly BrickElementDivisionManager divisionManager;
 
         // Actions and temporary tools
         private AddCubeToFaceAction? addCubeToFaceAction;
@@ -33,6 +37,9 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
             {
                 HandleToolChanged(toolManager.CurrentTool);
             }
+
+            // Initialize division manager
+            this.divisionManager = new BrickElementDivisionManager(scene);
         }
 
         private void InitializeEventSubscriptions()
@@ -47,6 +54,9 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
 
             // Subscribe to tool manager events
             toolManager.OnToolChanged += HandleToolChanged;
+
+            // Subscribe to scene events
+            scene.OnObjectAddedToScene += HandleObjectAddedToScene;
         }
 
         private void HandleToolChanged(BaseTool? tool)
@@ -120,7 +130,7 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
 
                 if (nValues.HasValue)
                 {
-                    divisionManager.Divide(selectedBrickElement, selectedBrickElement.Size, nValues.Value);
+                    BrickElementSurface surface = divisionManager.Divide(selectedBrickElement, selectedBrickElement.Size, nValues.Value);
                 }
             }
             catch (Exception ex)
@@ -132,19 +142,24 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
 
         private Vector3? GetDivisionValues()
         {
-            using var divideForm = new DivideForm();
-            var divideFormPresenter = new DivideFormPresenter(divideForm);
+            //using (DividingFrom form = new DividingFrom())
+            //{
+            //    if (form.ShowDialog() == DialogResult.Cancel)
+            //    {
+            //        return new Vector3(1, 1, 1); 
+            //    }
+            //}
 
-            if (divideForm.ShowDialog() == DialogResult.OK)
+            return null; 
+        }
+
+        private Form? FindParentForm()
+        {
+            // Якщо extraToolsView це Control
+            if (extraToolsView is Control control)
             {
-                if (int.TryParse(divideForm.ValueX, out int resultX) &&
-                    int.TryParse(divideForm.ValueY, out int resultY) &&
-                    int.TryParse(divideForm.ValueZ, out int resultZ))
-                {
-                    return new Vector3(resultX, resultY, resultZ);
-                }
+                return control.FindForm();
             }
-
             return null;
         }
 
@@ -198,6 +213,52 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
                 {
                     isSelectionToolModeUpdating = false;
                 }
+            }
+        }
+
+        // Handle when new objects are added to scene
+        private void HandleObjectAddedToScene(SceneObject3D obj)
+        {
+            if (obj is TwentyNodeBrickElement brickElement)
+            {
+                // Subscribe to division value changes
+                brickElement.OnDivisionValueChanged += HandleBrickElementDivisionValueChanged;
+            }
+        }
+
+        // Handle division value changes
+        private void HandleBrickElementDivisionValueChanged(TwentyNodeBrickElement element, Vector3 newDivisionValue)
+        {
+            try
+            {
+                // Check if element belongs to surface
+                BrickElementSurface? surface = scene.GetSurfaceOf(element);
+
+                TwentyNodeBrickElement beToDivide = element;
+                if (surface != null)
+                {
+                    beToDivide = surface.BrickElements[element.ID];
+                }
+
+
+                // Perform the division
+                BrickElementSurface surface2 = divisionManager.Divide(
+                    beToDivide,
+                    beToDivide.Size,
+                    newDivisionValue
+                );
+
+                // Update the scene
+                scene.HandleOnBrickElementDivided(beToDivide, surface2);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error during automatic division: {ex.Message}",
+                    "Division Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 

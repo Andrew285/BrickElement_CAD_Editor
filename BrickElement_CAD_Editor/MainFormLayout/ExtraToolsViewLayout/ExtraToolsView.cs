@@ -1,7 +1,6 @@
-﻿using App.Tools;
+﻿using App.MainFormLayout.ExtraToolsViewLayout;
+using App.Tools;
 using System.Reflection;
-using System.Resources;
-using UI.MainFormLayout.ExtraToolsViewLayout;
 
 public class ExtraToolsView : IExtraToolsView
 {

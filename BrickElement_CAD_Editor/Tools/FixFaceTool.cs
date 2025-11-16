@@ -1,9 +1,9 @@
-﻿using App.Tools;
+﻿using App.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
+using App.Tools;
 using Core.Commands;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 
 public class FixFaceTool : SelectionTool
 {

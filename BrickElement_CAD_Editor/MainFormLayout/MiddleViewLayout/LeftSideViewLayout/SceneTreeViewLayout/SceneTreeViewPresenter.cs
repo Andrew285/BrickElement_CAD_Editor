@@ -6,7 +6,7 @@ using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Scene;
 using Raylib_cs;
 
-namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout
 {
     public class SceneTreeViewPresenter
     {
