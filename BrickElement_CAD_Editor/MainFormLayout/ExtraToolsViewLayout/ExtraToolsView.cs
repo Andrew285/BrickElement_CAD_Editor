@@ -1,6 +1,7 @@
 ﻿using App.MainFormLayout.ExtraToolsViewLayout;
 using App.Tools;
 using System.Reflection;
+using System.Numerics;
 
 public class ExtraToolsView : IExtraToolsView
 {
@@ -8,6 +9,14 @@ public class ExtraToolsView : IExtraToolsView
     private ToolStrip toolStrip;
     private ImageList imageList;
     private ToolStripComboBox selectionModeCombo;
+
+    // Division container controls
+    private ToolStripControlHost divisionContainerHost;
+    private Panel divisionContainerPanel;
+    private TextBox divisionXTextBox;
+    private TextBox divisionYTextBox;
+    private TextBox divisionZTextBox;
+    private Button applyDivisionButton;
 
     public Panel Control { get { return panel; } set { panel = value; } }
 
@@ -17,6 +26,7 @@ public class ExtraToolsView : IExtraToolsView
     public event EventHandler? OnSetPressureItemClicked;
     public event EventHandler? OnFemSolverItemClicked;
     public event Action<SelectionToolMode> OnSelectionModeChanged;
+    public event EventHandler<Vector3>? OnDivisionApplied;
 
     public ExtraToolsView()
     {
@@ -33,7 +43,217 @@ public class ExtraToolsView : IExtraToolsView
         };
 
         CreateModernToolStrip();
+        CreateDivisionContainer();
+
         panel.Controls.Add(toolStrip);
+    }
+
+    private void CreateDivisionContainer()
+    {
+        // Create a panel to host the division controls
+        divisionContainerPanel = new Panel
+        {
+            Height = 35,
+            Width = 400,
+            BackColor = Color.Transparent,
+            Padding = new Padding(0)
+        };
+
+        var flowPanel = new FlowLayoutPanel
+        {
+            FlowDirection = FlowDirection.LeftToRight,
+            AutoSize = true,
+            WrapContents = false,
+            Dock = DockStyle.Fill,
+            Padding = new Padding(0),
+            Margin = new Padding(0)
+        };
+
+        // Division label
+        var divisionLabel = new Label
+        {
+            Text = "Division:",
+            AutoSize = true,
+            Font = new Font("Segoe UI", 8.5F),
+            ForeColor = Color.FromArgb(80, 80, 80),
+            Margin = new Padding(5, 8, 5, 0),
+            TextAlign = ContentAlignment.MiddleLeft
+        };
+        flowPanel.Controls.Add(divisionLabel);
+
+        // X input
+        flowPanel.Controls.Add(CreateCompactDivisionInput("X:", out divisionXTextBox));
+
+        // Y input
+        flowPanel.Controls.Add(CreateCompactDivisionInput("Y:", out divisionYTextBox));
+
+        // Z input
+        flowPanel.Controls.Add(CreateCompactDivisionInput("Z:", out divisionZTextBox));
+
+        // Apply button
+        applyDivisionButton = new Button
+        {
+            Text = "Apply",
+            Width = 70,
+            Height = 28,
+            FlatStyle = FlatStyle.Flat,
+            BackColor = Color.FromArgb(0, 120, 215),
+            ForeColor = Color.White,
+            Font = new Font("Segoe UI", 8.5F),
+            Cursor = Cursors.Hand,
+            Margin = new Padding(8, 3, 0, 0)
+        };
+
+        applyDivisionButton.FlatAppearance.BorderSize = 0;
+        applyDivisionButton.Click += ApplyDivisionButton_Click;
+
+        // Hover effects
+        applyDivisionButton.MouseEnter += (s, e) => applyDivisionButton.BackColor = Color.FromArgb(0, 100, 195);
+        applyDivisionButton.MouseLeave += (s, e) => applyDivisionButton.BackColor = Color.FromArgb(0, 120, 215);
+
+        flowPanel.Controls.Add(applyDivisionButton);
+
+        divisionContainerPanel.Controls.Add(flowPanel);
+
+        // Create ToolStripControlHost to embed the panel in ToolStrip
+        divisionContainerHost = new ToolStripControlHost(divisionContainerPanel)
+        {
+            Margin = new Padding(5, 0, 5, 0),
+            AutoSize = false,
+            Width = 400
+        };
+    }
+
+    private Panel CreateCompactDivisionInput(string labelText, out TextBox textBox)
+    {
+        var container = new Panel
+        {
+            Width = 60,
+            Height = 30,
+            Margin = new Padding(3, 3, 3, 0)
+        };
+
+        var label = new Label
+        {
+            Text = labelText,
+            AutoSize = true,
+            Location = new Point(0, 6),
+            Font = new Font("Segoe UI", 8F),
+            ForeColor = Color.FromArgb(80, 80, 80)
+        };
+
+        textBox = new TextBox
+        {
+            Width = 40,
+            Location = new Point(18, 3),
+            Font = new Font("Segoe UI", 8.5F),
+            Text = "1",
+            TextAlign = HorizontalAlignment.Center,
+            BorderStyle = BorderStyle.FixedSingle
+        };
+
+        // Only allow numeric input
+        textBox.KeyPress += (s, e) =>
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        };
+
+        container.Controls.Add(label);
+        container.Controls.Add(textBox);
+
+        return container;
+    }
+
+    private void ApplyDivisionButton_Click(object? sender, EventArgs e)
+    {
+        int x = int.Parse(divisionXTextBox.Text);
+        int y = int.Parse(divisionYTextBox.Text);
+        int z = int.Parse(divisionZTextBox.Text);
+
+        if (x < 1 || y < 1 || z < 1)
+        {
+            MessageBox.Show("Division values must be at least 1", "Invalid Input",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        Vector3 divisionValues = new Vector3(x, y, z);
+        OnDivisionApplied?.Invoke(this, divisionValues);
+
+        //try
+        //{
+        //    int x = int.Parse(divisionXTextBox.Text);
+        //    int y = int.Parse(divisionYTextBox.Text);
+        //    int z = int.Parse(divisionZTextBox.Text);
+
+        //    if (x < 1 || y < 1 || z < 1)
+        //    {
+        //        MessageBox.Show("Division values must be at least 1", "Invalid Input",
+        //            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //        return;
+        //    }
+
+        //    Vector3 divisionValues = new Vector3(x, y, z);
+        //    OnDivisionApplied?.Invoke(this, divisionValues);
+        //}
+        //catch (FormatException)
+        //{
+        //    MessageBox.Show("Please enter valid numeric values", "Invalid Input",
+        //        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //}
+    }
+
+    public void ShowDivisionContainer()
+    {
+        if (divisionContainerHost != null && !toolStrip.Items.Contains(divisionContainerHost))
+        {
+            // Reset to default values
+            divisionXTextBox.Text = "1";
+            divisionYTextBox.Text = "1";
+            divisionZTextBox.Text = "1";
+
+            // Add division container after the separator, before other buttons
+            // Find the position after "Divide Element" button
+            int insertIndex = FindInsertIndexForDivision();
+
+            if (insertIndex >= 0)
+            {
+                toolStrip.Items.Insert(insertIndex, divisionContainerHost);
+            }
+        }
+    }
+
+    public void HideDivisionContainer()
+    {
+        if (divisionContainerHost != null && toolStrip.Items.Contains(divisionContainerHost))
+        {
+            toolStrip.Items.Remove(divisionContainerHost);
+        }
+    }
+
+    private int FindInsertIndexForDivision()
+    {
+        // Find position after "Divide Element" button and its separator
+        for (int i = 0; i < toolStrip.Items.Count; i++)
+        {
+            if (toolStrip.Items[i] is ToolStripButton btn &&
+                btn.ToolTipText == "Divide selected brick element")
+            {
+                // Insert after the next separator
+                for (int j = i + 1; j < toolStrip.Items.Count; j++)
+                {
+                    if (toolStrip.Items[j] is ToolStripSeparator)
+                    {
+                        return j + 1;
+                    }
+                }
+                return i + 1;
+            }
+        }
+        return toolStrip.Items.Count;
     }
 
     private void CreateModernToolStrip()
@@ -52,14 +272,8 @@ public class ExtraToolsView : IExtraToolsView
             RenderMode = ToolStripRenderMode.Professional
         };
 
-        // Custom renderer for modern look
         toolStrip.Renderer = new ModernToolStripRenderer();
-
-        toolStrip.MouseEnter += (s, e) =>
-        {
-            toolStrip.Focus();
-        };
-
+        toolStrip.MouseEnter += (s, e) => toolStrip.Focus();
 
         InitializeImageList();
     }
@@ -72,7 +286,6 @@ public class ExtraToolsView : IExtraToolsView
 
         try
         {
-            // Load icons with fallback to placeholder
             imageList.Images.Add("select", LoadIconOrPlaceholder("ic_select"));
             imageList.Images.Add("add", LoadIconOrPlaceholder("ic_add"));
             imageList.Images.Add("divide", LoadIconOrPlaceholder("ic_add"));
@@ -82,7 +295,6 @@ public class ExtraToolsView : IExtraToolsView
         }
         catch
         {
-            // Create placeholder images
             for (int i = 0; i < 6; i++)
             {
                 imageList.Images.Add(CreatePlaceholderIcon(20, 20));
@@ -92,7 +304,6 @@ public class ExtraToolsView : IExtraToolsView
 
     private Image LoadIconOrPlaceholder(string iconName)
     {
-        // Try to load icon, return placeholder if failed
         try
         {
             PropertyInfo property = typeof(App.Properties.Images).GetProperty(iconName,
@@ -125,11 +336,9 @@ public class ExtraToolsView : IExtraToolsView
     {
         toolStrip.Items.Clear();
 
-        // Selection mode dropdown
         CreateSelectionModeDropdown();
         AddSeparator();
 
-        // Tool buttons
         CreateToolButton("Add Element", imageList.Images["add"], "Add brick element to selected face",
             (s, e) => OnAddBrickElementToFaceItemClicked?.Invoke(this, e));
 
@@ -152,7 +361,6 @@ public class ExtraToolsView : IExtraToolsView
 
     private void CreateSelectionModeDropdown()
     {
-        // Label for dropdown
         var selectionLabel = new ToolStripLabel("Selection:");
         selectionLabel.ForeColor = Color.FromArgb(80, 80, 80);
         selectionLabel.Margin = new Padding(5, 0, 2, 0);
@@ -173,7 +381,7 @@ public class ExtraToolsView : IExtraToolsView
             "Component"
         });
 
-        selectionModeCombo.SelectedIndex = 2; // Default to Component
+        selectionModeCombo.SelectedIndex = 2;
 
         selectionModeCombo.SelectedIndexChanged += (s, e) =>
         {
@@ -204,8 +412,6 @@ public class ExtraToolsView : IExtraToolsView
         };
 
         button.Click += clickHandler;
-
-        // Modern button styling
         button.MouseEnter += (s, e) => button.BackColor = Color.FromArgb(230, 240, 250);
         button.MouseLeave += (s, e) => button.BackColor = Color.Transparent;
 
@@ -240,7 +446,6 @@ public class ExtraToolsView : IExtraToolsView
         panel.Invalidate();
     }
 
-    // Custom renderer for modern appearance
     private class ModernToolStripRenderer : ToolStripProfessionalRenderer
     {
         protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)

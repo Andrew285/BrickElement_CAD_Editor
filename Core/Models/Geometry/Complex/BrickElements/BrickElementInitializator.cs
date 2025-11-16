@@ -123,7 +123,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
                 List<BaseLine3D> edges = InitializeEdges(vertices);
                 List<BasePlane3D> faces = InitializeFaces(vertices, centerVertices);
 
-                return new TwentyNodeBrickElement(vertices, centerVertices, edges, faces, id);
+                TwentyNodeBrickElement be = new TwentyNodeBrickElement(vertices, centerVertices, edges, faces, id);
+                return be;
             }
 
             return null;

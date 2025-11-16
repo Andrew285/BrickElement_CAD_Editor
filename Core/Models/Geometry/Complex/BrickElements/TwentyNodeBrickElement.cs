@@ -82,6 +82,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
             this.CenterVertices = centerVertices;
             LocalIndices = new Dictionary<Guid, int>();
 
+            Size = new Vector3(2, 2, 2);
+
             InitializeLocalIndices();
             foreach (var v in vertices)
             {
@@ -97,6 +99,15 @@ namespace Core.Models.Geometry.Complex.BrickElements
             }
 
             if (id != null) ID = (Guid)id;
+
+
+            // Initialize position
+            Vector3 posVector = Vector3.Zero;
+            foreach (var centerPoint in CenterVertices)
+            {
+                posVector += centerPoint.Position;
+            }
+            position = posVector / CenterVertices.Count;
 
             // TODO Add Position and Size
         }

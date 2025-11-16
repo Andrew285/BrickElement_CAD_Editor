@@ -459,6 +459,8 @@ namespace Triangulation
 
         private List<BasePoint3D> GenerateVertices(Vector3 offset)
         {
+            vertexDictionary.Clear();
+
             List<BasePoint3D> vertices = new List<BasePoint3D>();
             for (int y = 0; y < verticesCountByY; y++)
             {

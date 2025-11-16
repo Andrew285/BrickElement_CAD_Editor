@@ -51,19 +51,19 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
             extraToolsView.OnfixFaceItemClicked += HandleFixFaceItemClicked;
             extraToolsView.OnSetPressureItemClicked += HandleSetPressureItemClicked;
             extraToolsView.OnFemSolverItemClicked += HandleFemSolverItemClicked;
+            extraToolsView.OnDivisionApplied += HandleDivisionApplied; // New event
 
             // Subscribe to tool manager events
             toolManager.OnToolChanged += HandleToolChanged;
 
-            // Subscribe to scene events
-            scene.OnObjectAddedToScene += HandleObjectAddedToScene;
+            //// Subscribe to scene events
+            //scene.OnObjectAddedToScene += HandleObjectAddedToScene;
         }
 
         private void HandleToolChanged(BaseTool? tool)
         {
             if (tool == null) return;
 
-            // Clean up previous tool subscriptions
             CleanupToolSubscriptions();
 
             if (tool.Type == ToolType.SELECTION)
@@ -73,8 +73,94 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
                 if (tool is SelectionTool selectionTool)
                 {
                     selectionTool.OnSelectionToolModeChanged += HandleSelectionToolModeChanged;
+                    selectionTool.OnObjectSelected += HandleSelectedObjectChanged; // Subscribe to selection changes
                 }
             }
+        }
+
+        // New method to handle selection changes
+        private void HandleSelectedObjectChanged(SceneObject3D? selectedObject)
+        {
+            if (selectedObject is TwentyNodeBrickElement)
+            {
+                extraToolsView.ShowDivisionContainer();
+            }
+            else
+            {
+                extraToolsView.HideDivisionContainer();
+            }
+        }
+
+        // New method to handle division application
+        private void HandleDivisionApplied(object? sender, Vector3 divisionValues)
+        {
+            if (toolManager.CurrentTool is not SelectionTool selectionTool)
+            {
+                return;
+            }
+
+            var selectedObject = selectionTool.SelectedObject;
+            if (selectedObject is not TwentyNodeBrickElement selectedBrickElement)
+            {
+                MessageBox.Show("No brick element selected", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            TwentyNodeBrickElement beToDivide = selectedBrickElement;
+
+            BrickElementSurface? surface = scene.GetSurfaceOf(selectedBrickElement);
+            if (surface != null)
+            {
+                beToDivide = surface.BrickElements[selectedBrickElement.ID];
+            }
+
+
+            BrickElementSurface resultSurface = divisionManager.Divide(
+                beToDivide,
+                beToDivide.Size,
+                divisionValues
+            );
+
+            if (surface == null)
+            {
+                //scene.HandleOnBrickElementDivided(beToDivide, resultSurface);
+            }
+
+            MessageBox.Show("Division applied successfully", "Success",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+            //try
+            //{
+            //    TwentyNodeBrickElement beToDivide = selectedBrickElement;
+
+            //    BrickElementSurface? surface = scene.GetSurfaceOf(selectedBrickElement);
+            //    if (surface != null)
+            //    {
+            //        beToDivide = surface.BrickElements[selectedBrickElement.ID];
+            //    }
+
+
+            //    BrickElementSurface resultSurface = divisionManager.Divide(
+            //        beToDivide,
+            //        beToDivide.Size,
+            //        divisionValues
+            //    );
+
+            //    if (surface == null)
+            //    {
+            //        //scene.HandleOnBrickElementDivided(beToDivide, resultSurface);
+            //    }
+
+            //    MessageBox.Show("Division applied successfully", "Success",
+            //        MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Error applying division: {ex.Message}", "Division Error",
+            //        MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
         }
 
         private void CleanupToolSubscriptions()
@@ -142,11 +228,11 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
 
         private Vector3? GetDivisionValues()
         {
-            //using (DividingFrom form = new DividingFrom())
+            //using (MyForm form = new MyForm())
             //{
             //    if (form.ShowDialog() == DialogResult.Cancel)
             //    {
-            //        return new Vector3(1, 1, 1); 
+            //        return new Vector3(1, 1, 1);
             //    }
             //}
 
