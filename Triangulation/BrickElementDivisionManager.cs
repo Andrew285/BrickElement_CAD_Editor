@@ -8,6 +8,7 @@ using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Scene;
 using Core.Utils;
 using MathNet.Numerics.RootFinding;
+using System.Drawing;
 using System.Numerics;
 using System.Reflection;
 using System.Windows.Forms;
@@ -179,7 +180,28 @@ namespace Triangulation
             rowsCountByX = cubesCountByX + 1;
 
 
-            IMesh dividedMesh = GenerateDividedMesh(brickElementPosition);
+            //IMesh dividedMesh = GenerateDividedMesh(brickElementPosition);
+            IMesh dividedMesh = GenerateDividedMesh(new Vector3(0, 0, 0));
+            IMesh copiedMesh = dividedMesh.DeepCopy();
+            BrickElementSurface foundSurface = scene.GetSurfaceOf(be);
+            if (foundSurface.SuperBrickElementsPoints.ContainsKey(be.ID))
+            {
+                SuperElementData data = foundSurface.SuperBrickElementsPoints[be.ID];
+                data.localInnerMeshVertices = dividedMesh.VerticesSet.ToList();
+                foundSurface.SuperBrickElementsPoints[be.ID] = data;
+
+                VertexApproximation vertexApproximation = new VertexApproximation();
+                vertexApproximation.Transform(be.Mesh.VerticesSet.ToList(), copiedMesh.VerticesSet.ToList(), dividedMesh);
+
+                //for (int i = 0; i < vertexDictionary.Count; i++)
+                //{
+                //    var a = vertexDictionary.ElementAt(i);
+                //    Vector3 aV = a.Key;
+                //    vertexDictionary.Remove(a.Key);
+                //    vertexDictionary.Add(a.Key, copiedMesh.VerticesSet.ElementAt(i));
+                //}
+            }
+
             List<TwentyNodeBrickElement> brickElements = GenerateBrickElements(nValues);
 
             BrickElementSurface surface = ApplyDivision(be, brickElements);
@@ -209,6 +231,8 @@ namespace Triangulation
 
         private BrickElementSurface ApplyDivision(TwentyNodeBrickElement be, List<TwentyNodeBrickElement> dividedBrickElements)
         {
+            Guid? superElementId = (be.IsSuperElement) ? be.ID: null;
+
             // Check if brick element is in Surface
             BrickElementSurface surface = new BrickElementSurface(scene);
             if (be.Parent != null && be.Parent is BrickElementSurface)
@@ -256,25 +280,31 @@ namespace Triangulation
                     TwentyNodeBrickElement cornerBrickElement = surface.BrickElements[elementId];
                     CornerType cornerType = cornerNeighbour.Value.cornerType;
                     AxisType axisDivision = cornerNeighbour.Value.axisDivision;
+                    BasePattern<CornerType>? standartCornerPattern = null;
 
+                    CubeBrickElement standartElement = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
                     CornerSimplePattern? cornerPattern = null;
                     if (axisDivision == AxisType.X)
                     {
                         cornerPattern = new CornerSimpleXPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
+                        standartCornerPattern = new CornerSimpleXPattern(standartElement.Mesh.VerticesSet.ToList(), cornerType);
                     }
                     else if (axisDivision == AxisType.Y)
                     {
                         cornerPattern = new CornerSimpleYPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
+                        standartCornerPattern = new CornerSimpleYPattern(standartElement.Mesh.VerticesSet.ToList(), cornerType);
                     }
                     else if (axisDivision == AxisType.Z)
                     {
                         cornerPattern = new CornerSimpleZPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
+                        standartCornerPattern = new CornerSimpleZPattern(standartElement.Mesh.VerticesSet.ToList(), cornerType);
                     }
 
                     if (cornerPattern == null) continue;
 
+                    Guid? cornerSuperElementId = (cornerBrickElement.IsSuperElement) ? cornerBrickElement.ID : null;
                     surface.Remove(cornerBrickElement);
-                    BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(surface, cornerType, cornerPattern); // ?
+                    BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(scene, surface, cornerType, cornerPattern, standartCornerPattern, cornerSuperElementId);
                 }
 
                 // User patterns for face neighbours
@@ -285,38 +315,47 @@ namespace Triangulation
                     PatternDirection patternDirection = faceNeighbour.Value.direction;
                     FaceType faceType = faceNeighbour.Value.faceType;
                     BasePattern<FaceType>? pattern = null;
+                    BasePattern<FaceType>? standartFacepattern = null;
                     AxisType axisDivision = faceNeighbour.Value.axisDivision;
+
+                    IMesh copiedMesh = faceBrickElement.Mesh.DeepCopy();
+                    CubeBrickElement standartElement = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
 
                     if (faceNeighbour.Value.amount > 1)
                     {
                         pattern = new CrossSimplePattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection, faceType);
+                        standartFacepattern = new CrossSimplePattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection, faceType);
                     }
                     else
                     {
                         if (axisDivision == AxisType.X)
                         {
                             pattern = new MiddleSimpleXPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
+                            standartFacepattern = new MiddleSimpleXPattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection);
                         }
                         else if (axisDivision == AxisType.Y)
                         {
                             pattern = new MiddleSimpleYPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
+                            standartFacepattern = new MiddleSimpleYPattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection);
                         }
                         else if (axisDivision == AxisType.Z)
                         {
                             pattern = new MiddleSimpleZPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
+                            standartFacepattern = new MiddleSimpleZPattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection);
                         }
                     }
 
                     if (pattern == null) continue;
 
+                    Guid? faceSuperElementId = (faceBrickElement.IsSuperElement) ? faceBrickElement.ID : null;
                     surface.Remove(faceBrickElement);
-                    BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(surface, faceType, pattern); // ?
+                    BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(scene, surface, faceType, pattern, standartFacepattern, faceSuperElementId);
                 }
             }
 
             foreach (var b in dividedBrickElements)
             {
-                surface.AddBrickElement(b);
+                surface.AddBrickElement(b, superElementId);
             }
             return surface;
         }
@@ -448,11 +487,11 @@ namespace Triangulation
         public IMesh GenerateDividedMesh(Vector3 offset)
         {
             List<BasePoint3D> vertices = GenerateVertices(offset);
-            List<BaseLine3D> edges = GenerateEdges();
+            //List<BaseLine3D> edges = GenerateEdges();
 
             Mesh mesh = new Mesh();
             mesh.AddRange(vertices);
-            mesh.AddRange(edges);
+            //mesh.AddRange(edges);
 
             return mesh;
         }

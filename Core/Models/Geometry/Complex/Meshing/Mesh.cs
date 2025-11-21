@@ -160,5 +160,123 @@ namespace Core.Models.Geometry.Complex.Meshing
                 return false;
             }
         }
+
+        public Mesh DeepCopy()
+        {
+            var newMesh = new Mesh();
+
+            // Dictionary to map old vertex IDs to new copied vertices
+            var vertexMap = new Dictionary<Guid, BasePoint3D>();
+
+            // Deep copy vertices
+            foreach (var kvp in VerticesDictionary)
+            {
+                var originalVertex = kvp.Value;
+                var copiedVertex = new BasePoint3D(originalVertex.Position)
+                {
+                    ID = kvp.Key,
+                    NonSelectedColor = originalVertex.NonSelectedColor,
+                    SelectedColor = originalVertex.SelectedColor
+                };
+
+                newMesh.VerticesDictionary[kvp.Key] = copiedVertex;
+                newMesh.VerticesSet.Add(copiedVertex);
+                vertexMap[kvp.Key] = copiedVertex;
+            }
+
+            // Deep copy edges
+            foreach (var kvp in EdgesDictionary)
+            {
+                var originalEdge = kvp.Value;
+
+                // Use vertex map to get corresponding copied vertices
+                var copiedStartPoint = vertexMap.ContainsKey(originalEdge.StartPoint.ID)
+                    ? vertexMap[originalEdge.StartPoint.ID]
+                    : new BasePoint3D(originalEdge.StartPoint.Position) { ID = originalEdge.StartPoint.ID };
+
+                var copiedEndPoint = vertexMap.ContainsKey(originalEdge.EndPoint.ID)
+                    ? vertexMap[originalEdge.EndPoint.ID]
+                    : new BasePoint3D(originalEdge.EndPoint.Position) { ID = originalEdge.EndPoint.ID };
+
+                var copiedEdge = new Line3D(copiedStartPoint, copiedEndPoint)
+                {
+                    ID = kvp.Key
+                };
+
+                newMesh.EdgesDictionary[kvp.Key] = copiedEdge;
+                newMesh.EdgesSet.Add(copiedEdge);
+            }
+
+            // Deep copy faces
+            foreach (var kvp in FacesDictionary)
+            {
+                var originalFace = kvp.Value;
+
+                // Copy triangle planes
+                var copiedTrianglePlanes = new List<TrianglePlane3D>();
+                foreach (var trianglePlane in originalFace.TrianglePlanes)
+                {
+                    var copiedP1 = vertexMap.ContainsKey(trianglePlane.Point1.ID)
+                        ? vertexMap[trianglePlane.Point1.ID]
+                        : new BasePoint3D(trianglePlane.Point1.Position) { ID = trianglePlane.Point1.ID };
+
+                    var copiedP2 = vertexMap.ContainsKey(trianglePlane.Point2.ID)
+                        ? vertexMap[trianglePlane.Point2.ID]
+                        : new BasePoint3D(trianglePlane.Point2.Position) { ID = trianglePlane.Point2.ID };
+
+                    var copiedP3 = vertexMap.ContainsKey(trianglePlane.Point3.ID)
+                        ? vertexMap[trianglePlane.Point3.ID]
+                        : new BasePoint3D(trianglePlane.Point3.Position) { ID = trianglePlane.Point3.ID };
+
+                    var copiedTriangle = new TrianglePlane3D(copiedP1, copiedP2, copiedP3)
+                    {
+                        NonSelectedColor = trianglePlane.NonSelectedColor,
+                        SelectedColor = trianglePlane.SelectedColor,
+                        DrawCustom = trianglePlane.DrawCustom,
+                        AreLinesDrawable = trianglePlane.AreLinesDrawable
+                    };
+
+                    copiedTrianglePlanes.Add(copiedTriangle);
+                }
+
+                // Copy correct order vertices
+                var copiedCorrectOrderVertices = new List<BasePoint3D>();
+                foreach (var vertex in originalFace.correctOrderVertices)
+                {
+                    var copiedVertex = vertexMap.ContainsKey(vertex.ID)
+                        ? vertexMap[vertex.ID]
+                        : new BasePoint3D(vertex.Position) { ID = vertex.ID };
+                    copiedCorrectOrderVertices.Add(copiedVertex);
+                }
+
+                // Copy center point
+                var copiedCenterPoint = new BasePoint3D(originalFace.CenterPoint.Position)
+                {
+                    ID = originalFace.CenterPoint.ID,
+                    NonSelectedColor = originalFace.CenterPoint.NonSelectedColor,
+                    SelectedColor = originalFace.CenterPoint.SelectedColor
+                };
+
+                // Create the copied face
+                var copiedFace = new Plane3D(copiedTrianglePlanes, copiedCorrectOrderVertices, copiedCenterPoint)
+                {
+                    ID = kvp.Key,
+                    FaceType = originalFace.FaceType,
+                    Pressure = originalFace.Pressure,
+                    IsFixed = originalFace.IsFixed,
+                    IsStressed = originalFace.IsStressed,
+                    NonSelectedColor = originalFace.NonSelectedColor,
+                    SelectedColor = originalFace.SelectedColor,
+                    DrawCustom = originalFace.DrawCustom,
+                    AreTriangleFacesDrawable = originalFace.AreTriangleFacesDrawable,
+                    IsAttached = originalFace.IsAttached
+                };
+
+                newMesh.FacesDictionary[kvp.Key] = copiedFace;
+                newMesh.FacesSet.Add(copiedFace);
+            }
+
+            return newMesh;
+        }
     }
 }

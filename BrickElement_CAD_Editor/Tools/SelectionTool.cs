@@ -1,6 +1,9 @@
 ﻿using App.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
 using App.Tools.Behaviors;
+using App.Utils.ConsoleLogging;
 using Core.Commands;
+using Core.Models.Geometry.Complex;
+using Core.Models.Geometry.Complex.Meshing;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Services;
@@ -190,6 +193,13 @@ namespace App.Tools
             if (key == KeyboardKey.Tab)
             {
                 ToggleSelectionToolMode();
+            }
+            else if (key == KeyboardKey.P)
+            {
+                if (SelectedObject is MeshObject3D meshable)
+                {
+                    meshable.Mesh.PrintMesh();
+                }
             }
         }
 

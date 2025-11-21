@@ -421,18 +421,18 @@ namespace Core.Models.Geometry.Primitive.Plane
         public override bool Equals(object obj)
         {
             if (obj is not BasePlane3D other) return false;
-            if (this.Vertices.Count != other.Vertices.Count) return false;
+            if (this.correctOrderVertices.Count != other.correctOrderVertices.Count) return false;
 
             var comparer = new Vector3EqualityComparer();
-            var thisPositions = new HashSet<Vector3>(this.Vertices.Select(v => v.Position), comparer);
-            var otherPositions = new HashSet<Vector3>(other.Vertices.Select(v => v.Position), comparer);
+            var thisPositions = new HashSet<Vector3>(this.correctOrderVertices.Select(v => v.Position), comparer);
+            var otherPositions = new HashSet<Vector3>(other.correctOrderVertices.Select(v => v.Position), comparer);
             return thisPositions.SetEquals(otherPositions);
         }
 
         public override int GetHashCode()
         {
             // Keep the hash compatible with Equals
-            var sortedPositions = Vertices.Select(v => v.Position)
+            var sortedPositions = correctOrderVertices.Select(v => v.Position)
                 .OrderBy(p => p.X).ThenBy(p => p.Y).ThenBy(p => p.Z)
                 .ToList();
 

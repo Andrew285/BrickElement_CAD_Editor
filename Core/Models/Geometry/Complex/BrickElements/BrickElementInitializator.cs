@@ -12,76 +12,130 @@ namespace Core.Models.Geometry.Complex.BrickElements
         public static TwentyNodeBrickElement? CreateFrom(BasePlane3D face, TwentyNodeBrickElement be)
         {
             List<BasePoint3D> vertices = FaceManager.GetFacePoints(face.FaceType, be.Mesh.VerticesDictionary.Values);
-            if (vertices.Count == 8)
+            Vector3 normal = face.CalculateNormal();
+
+            //if (vertices.Count == 8)
+            //{
+            //    Vector3 normal = face.CalculateNormal();
+
+            //    List<BasePoint3D> bottomPoints = new List<BasePoint3D>();
+            //    List<BasePoint3D> upPoints = new List<BasePoint3D>();
+            //    List<BasePoint3D> middlePoints = new List<BasePoint3D>();
+
+            //    foreach (var v in face.correctOrderVertices)
+            //    {
+            //        bottomPoints.Add(v);
+            //    }
+
+            //    foreach (var v in face.correctOrderVertices)
+            //    {
+            //        BasePoint3D newP = new BasePoint3D(v.Position + normal * 2);
+            //        upPoints.Add(newP);
+            //    }
+
+            //    BasePoint3D mP1 = new BasePoint3D((bottomPoints[0].Position + upPoints[0].Position) / 2);
+            //    BasePoint3D mP2 = new BasePoint3D((bottomPoints[1].Position + upPoints[1].Position) / 2);
+            //    BasePoint3D mP3 = new BasePoint3D((bottomPoints[2].Position + upPoints[2].Position) / 2);
+            //    BasePoint3D mP4 = new BasePoint3D((bottomPoints[3].Position + upPoints[3].Position) / 2);
+
+            //    middlePoints.AddRange( new List<BasePoint3D> { mP1, mP2, mP3, mP4 });
+
+
+            //    List<BasePoint3D> resultPoints = new List<BasePoint3D>()
+            //    {
+            //        bottomPoints[0],
+            //        bottomPoints[1],
+            //        bottomPoints[2],
+            //        bottomPoints[3],
+
+            //        upPoints[0],
+            //        upPoints[1],
+            //        upPoints[2],
+            //        upPoints[3],
+
+            //        bottomPoints[4],
+            //        bottomPoints[5],
+            //        bottomPoints[6],
+            //        bottomPoints[7],
+
+            //        middlePoints[0],
+            //        middlePoints[1],
+            //        middlePoints[2],
+            //        middlePoints[3],
+
+            //        upPoints[4],
+            //        upPoints[5],
+            //        upPoints[6],
+            //        upPoints[7],
+            //    };
+
+            //    return CreateFrom(resultPoints);
+
+
+            FaceType faceType = face.FaceType;
+            FaceType secondFaceType = FaceManager.GetOppositeFaceOf(faceType);
+
+            List<int> firstFaceVerticesIndices = FaceManager.GetFaceIndices(secondFaceType);
+            List<int> secondFaceVerticesIndices = FaceManager.GetFaceIndices(faceType);
+            List<int> middleFacesVerticesIndices = FaceManager.GetIndicesBetweenFaces(faceType, secondFaceType);
+
+            List<BasePoint3D> secondPlanePoints = new List<BasePoint3D>();
+            BasePoint3D[] resultVertices = new BasePoint3D[20];
+            for (int i = 0; i < vertices.Count; i++)
             {
-                Vector3 normal = face.CalculateNormal();
-                FaceType faceType = face.FaceType;
-                FaceType secondFaceType = FaceManager.GetOppositeFaceOf(faceType);
+                //if (vertex.PointType != Point3D.Type.Corner)
+                //{
+                //    continue;
+                //}
 
-                List<int> firstFaceVerticesIndices = FaceManager.GetFaceIndices(secondFaceType);
-                List<int> secondFaceVerticesIndices = FaceManager.GetFaceIndices(faceType);
-                List<int> middleFacesVerticesIndices = FaceManager.GetIndicesBetweenFaces(faceType, secondFaceType);
+                BasePoint3D vertex = vertices[i];
 
-                List<BasePoint3D> secondPlanePoints = new List<BasePoint3D>();
-                BasePoint3D[] resultVertices = new BasePoint3D[20];
-                for (int i = 0; i < vertices.Count; i++)
+                int firstFaceLocalIndex = firstFaceVerticesIndices[i];
+                resultVertices[firstFaceLocalIndex] = vertex;
+                int positionIndex = firstFaceVerticesIndices.IndexOf(firstFaceLocalIndex);
+
+                if (positionIndex == -1)
                 {
-                    //if (vertex.PointType != Point3D.Type.Corner)
-                    //{
-                    //    continue;
-                    //}
-
-                    BasePoint3D vertex = vertices[i];
-
-                    int firstFaceLocalIndex = firstFaceVerticesIndices[i];
-                    resultVertices[firstFaceLocalIndex] = vertex;
-                    int positionIndex = firstFaceVerticesIndices.IndexOf(firstFaceLocalIndex);
-
-                    if (positionIndex == -1)
-                    {
-                        throw new Exception("Incorrect Local Index");
-                    }
-
-                    int secondFaceLocalIndex = secondFaceVerticesIndices[positionIndex];
-                    if (secondFaceLocalIndex == -1)
-                    {
-                        throw new Exception("Incorrect Local Index");
-                    }
-
-                    BasePoint3D secondVertex = new Point3D(vertex);
-                    //secondVertex.LocalIndex = secondFaceLocalIndex;
-                    secondVertex.Position += normal * 2f;
-                    resultVertices[secondFaceLocalIndex] = secondVertex;
-
-                    //secondPlanePoints.Add(secondVertex);
-
-
-                    //if (vertex.PointType != Point3D.Type.Corner)
-                    //{
-                    //    continue;
-                    //}
-
-                    // middle point
-                    if (i % 2 == 0)
-                    {
-                        int middleIndex = i / 2;
-                        int localIndex = middleFacesVerticesIndices[middleIndex];
-
-                        BasePoint3D middleVertex = new Point3D(vertex);
-                        middleVertex.Position += normal * 1f;
-                        resultVertices[localIndex] = middleVertex;
-                    }
+                    throw new Exception("Incorrect Local Index");
                 }
 
-                TwentyNodeBrickElement? resultBrickElement = CreateFrom(resultVertices.ToList());
-                if (resultBrickElement != null)
+                int secondFaceLocalIndex = secondFaceVerticesIndices[positionIndex];
+                if (secondFaceLocalIndex == -1)
                 {
-                    SetParent(resultBrickElement);
+                    throw new Exception("Incorrect Local Index");
                 }
-                return resultBrickElement;
+
+                BasePoint3D secondVertex = new Point3D(vertex);
+                //secondVertex.LocalIndex = secondFaceLocalIndex;
+                secondVertex.Position += normal * 2f;
+                resultVertices[secondFaceLocalIndex] = secondVertex;
+
+                //secondPlanePoints.Add(secondVertex);
+
+
+                //if (vertex.PointType != Point3D.Type.Corner)
+                //{
+                //    continue;
+                //}
+
+                // middle point
+                if (i % 2 == 0)
+                {
+                    int middleIndex = i / 2;
+                    int localIndex = middleFacesVerticesIndices[middleIndex];
+
+                    BasePoint3D middleVertex = new Point3D(vertex);
+                    middleVertex.Position += normal * 1f;
+                    resultVertices[localIndex] = middleVertex;
+                }
             }
 
-            return null;
+            TwentyNodeBrickElement? resultBrickElement = CreateFrom(resultVertices.ToList());
+            if (resultBrickElement != null)
+            {
+                SetParent(resultBrickElement);
+            }
+            return resultBrickElement;
         }
 
         public static TwentyNodeBrickElement? CreateFrom(List<BasePoint3D> vertices, Guid? id = null)

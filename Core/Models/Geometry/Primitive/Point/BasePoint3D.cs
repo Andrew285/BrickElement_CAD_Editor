@@ -62,6 +62,8 @@ namespace Core.Models.Geometry.Primitive.Point
         public float Radius { get; set; } = 0.1f;
 
 
+        public Guid SuperElementId { get; set; }
+
         public BasePoint3D() : base()
         {
         }
@@ -107,8 +109,9 @@ namespace Core.Models.Geometry.Primitive.Point
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(X, Y, Z);
-            //return ID.GetHashCode();
+            //var a = HashCode.Combine(X, Y, Z);
+            //return a;
+            return ID.GetHashCode();
             //return HashCode.Combine(ID, X, Y, Z);
         }
 

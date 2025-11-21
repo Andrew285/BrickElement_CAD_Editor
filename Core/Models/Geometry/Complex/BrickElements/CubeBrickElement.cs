@@ -9,10 +9,17 @@ namespace Core.Models.Geometry.Complex.BrickElements
     {
         public CubeBrickElement(Vector3 position, Vector3 size): base(position, size)
         {
+            IsSuperElement = true;
             Mesh.AddRange(InitializeVertices());
             CenterVertices = BrickElementInitializator.InitializeCenterVertices(Mesh.VerticesSet);
             List<BaseLine3D> edges = BrickElementInitializator.InitializeEdges(Mesh.VerticesSet.ToList());
             List<BasePlane3D> faces = BrickElementInitializator.InitializeFaces(Mesh.VerticesSet.ToList(), CenterVertices);
+
+            for (int i = 0; i < CenterVertices.Count; i++)
+            {
+                BasePlane3D f = faces[i];
+                f.CenterPoint = CenterVertices[i];
+            }
 
             Mesh.AddRange(edges);
             Mesh.AddRange(faces);

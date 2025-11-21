@@ -7,6 +7,8 @@ using Core.Models.Geometry.Primitive.Plane.Face;
 using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Scene;
 using Core.Models.Text.VertexText;
+using Core.Utils;
+using System.Numerics;
 
 namespace Core.Models.Geometry.Complex.Surfaces
 {
@@ -22,6 +24,13 @@ namespace Core.Models.Geometry.Complex.Surfaces
         }
     }
 
+    public struct SuperElementData
+    {
+        public List<BasePoint3D> localOuterVertices20;
+        public List<BasePoint3D> localInnerMeshVertices;
+        public Vector3 divisionValue;
+    }
+
     public class BrickElementSurface: MeshObject3D
     {
         private Dictionary<Guid, HashSet<Guid>> verticesMap {  get; set; } = new Dictionary<Guid, HashSet<Guid>>();
@@ -31,6 +40,9 @@ namespace Core.Models.Geometry.Complex.Surfaces
         public Dictionary<Guid, List<FaceAttachment>> facesMap { get; set; } = new Dictionary<Guid, List<FaceAttachment>>();
 
         public Dictionary<Guid, TwentyNodeBrickElement> BrickElements { get; set; } = new Dictionary<Guid, TwentyNodeBrickElement>();
+
+        // SuperElements
+        public Dictionary<Guid, SuperElementData> SuperBrickElementsPoints { get; set; } = new Dictionary<Guid, SuperElementData>();
 
         //public Dictionary<Guid, VertexIndex> GlobalVertexIndices { get; private set; } = new Dictionary<Guid, VertexIndex>();
 
@@ -116,7 +128,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
             LocalVertexIndices = globalIndexManager.GetLocalIndices(BrickElements, GlobalVertexIndices, Mesh.VerticesDictionary);
         }
 
-        public void AddBrickElement(TwentyNodeBrickElement newBrickElement)
+        public void AddBrickElement(TwentyNodeBrickElement newBrickElement, Guid? superElementId = null)
         {
             List<BasePoint3D> newPointsForBE = new List<BasePoint3D>();
             List<BaseLine3D> newEdgesForBE = new List<BaseLine3D>();
@@ -254,7 +266,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
                 Guid meshFaceId;
                 bool isNewFace = Mesh.Add(face);
-
+                
                 if (isNewFace)
                 {
                     // Brand new face - get its ID and initialize the map
@@ -344,6 +356,17 @@ namespace Core.Models.Geometry.Complex.Surfaces
                 newBrickElement.Mesh = newBE.Mesh;
 
                 BrickElements.Add(newBrickElement.ID, newBrickElement);
+                if (newBrickElement.IsSuperElement)
+                {
+                    SuperBrickElementsPoints.Add(newBrickElement.ID, new SuperElementData { localOuterVertices20 = newPointsForBE });
+                }
+                else if (superElementId != null)
+                {
+                    foreach (var point in newPointsForBE)
+                    {
+                        point.SuperElementId = (Guid)superElementId;
+                    }
+                }
 
                 // Generate Global Indices
                 InitializeGlobalAndLocalVertices();
@@ -363,6 +386,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
             if (newBrickElement != null)
             {
+                newBrickElement.IsSuperElement = true;
                 AddBrickElement(newBrickElement);
             }
 
@@ -456,10 +480,13 @@ namespace Core.Models.Geometry.Complex.Surfaces
             List<Guid> edgesToRemove = new List<Guid>();
             foreach (var edge in be.Mesh.EdgesSet)
             {
-                Guid edgeId = Mesh.EdgesDictionary.FirstOrDefault(kv => kv.Value.Equals(edge)).Key;
+                // Find the edge ID - handle case where edge might not exist
+                var edgeEntry = Mesh.EdgesDictionary.FirstOrDefault(kv => kv.Value.Equals(edge));
 
-                if (edgesMap.ContainsKey(edgeId))
+                // Check if we actually found the edge (Key won't be default Guid)
+                if (edgeEntry.Key != default(Guid) && edgesMap.ContainsKey(edgeEntry.Key))
                 {
+                    Guid edgeId = edgeEntry.Key;
                     edgesMap[edgeId].Remove(be.ID);
 
                     if (edgesMap[edgeId].Count == 0)
@@ -480,6 +507,11 @@ namespace Core.Models.Geometry.Complex.Surfaces
             List<Guid> verticesToRemove = new List<Guid>();
             foreach (var vertex in be.Mesh.VerticesSet)
             {
+                if (vertex.Position == new Vector3(0, 1, 2))
+                {
+                    Console.WriteLine();
+                }
+
                 Guid vertexId = Mesh.VerticesDictionary.FirstOrDefault(kv => kv.Value.Equals(vertex)).Key;
 
                 if (verticesMap.ContainsKey(vertexId))
@@ -503,6 +535,378 @@ namespace Core.Models.Geometry.Complex.Surfaces
             InitializeGlobalAndLocalVertices();
             OptimiseMesh();
         }
+
+        public BrickElementSurface AddSurface(BrickElementSurface surface)
+        {
+            foreach (var be in surface.BrickElements.Values)
+            {
+                AddBrickElement(be);
+            }
+
+            return this;
+        }
+
+        public BrickElementSurface AddMesh(IMesh meshToAdd, Guid? superElementId = null)
+        {
+            if (meshToAdd == null) return this;
+
+            // Словники для відображення старих ID на нові об'єкти в основній сітці
+            Dictionary<Guid, BasePoint3D> vertexIdMap = new Dictionary<Guid, BasePoint3D>();
+            Dictionary<Guid, BaseLine3D> edgeIdMap = new Dictionary<Guid, BaseLine3D>();
+            Dictionary<Guid, BasePlane3D> faceIdMap = new Dictionary<Guid, BasePlane3D>();
+
+            // ============ Phase 1: Add Vertices ============
+            foreach (var vertexKvp in meshToAdd.VerticesDictionary)
+            {
+                var vertex = vertexKvp.Value;
+
+                if (Mesh.Add(vertex))
+                {
+                    // Нова вершина
+                    verticesMap.Add(vertex.ID, new HashSet<Guid>());
+                    vertexIdMap[vertexKvp.Key] = vertex;
+                }
+                else
+                {
+                    // Вершина вже існує - знайдемо існуючу
+                    var existingVertex = Mesh.VerticesDictionary.Values
+                        .FirstOrDefault(v => v.Position == vertex.Position);
+
+                    if (existingVertex != null)
+                    {
+                        Guid existingId = Mesh.VerticesDictionary
+                            .FirstOrDefault(kv => kv.Value.Equals(existingVertex)).Key;
+                        vertexIdMap[vertexKvp.Key] = Mesh.VerticesDictionary[existingId];
+                    }
+                }
+            }
+
+            // ============ Phase 2: Add Edges ============
+            foreach (var edgeKvp in meshToAdd.EdgesDictionary)
+            {
+                var edge = edgeKvp.Value;
+
+                // Оновлюємо посилання на вершини ребра
+                if (vertexIdMap.ContainsKey(edge.StartPoint.ID))
+                {
+                    edge.StartPoint = vertexIdMap[edge.StartPoint.ID];
+                }
+                if (vertexIdMap.ContainsKey(edge.EndPoint.ID))
+                {
+                    edge.EndPoint = vertexIdMap[edge.EndPoint.ID];
+                }
+
+                if (Mesh.Add(edge))
+                {
+                    // Нове ребро
+                    edgesMap.Add(edge.ID, new HashSet<Guid>());
+                    edgeIdMap[edgeKvp.Key] = edge;
+                }
+                else
+                {
+                    // Ребро вже існує
+                    var existingEdge = Mesh.EdgesSet.FirstOrDefault(e => e.Equals(edge));
+                    if (existingEdge != null)
+                    {
+                        Guid existingId = Mesh.EdgesDictionary
+                            .FirstOrDefault(kv => kv.Value.Equals(existingEdge)).Key;
+                        edgeIdMap[edgeKvp.Key] = Mesh.EdgesDictionary[existingId];
+                    }
+                }
+            }
+
+            // ============ Phase 3: Add Faces ============
+            foreach (var faceKvp in meshToAdd.FacesDictionary)
+            {
+                var face = faceKvp.Value;
+                FaceType originalFaceType = face.FaceType;
+
+                // Оновлюємо вершини грані
+                for (int i = 0; i < face.Vertices.Count; i++)
+                {
+                    var vertexId = face.Vertices[i].ID;
+                    if (vertexIdMap.ContainsKey(vertexId))
+                    {
+                        face.Vertices[i] = vertexIdMap[vertexId];
+                    }
+                }
+
+                // Оновлюємо correctOrderVertices
+                for (int i = 0; i < face.correctOrderVertices.Count; i++)
+                {
+                    var vertexId = face.correctOrderVertices[i].ID;
+                    if (vertexIdMap.ContainsKey(vertexId))
+                    {
+                        face.correctOrderVertices[i] = vertexIdMap[vertexId];
+                    }
+                }
+
+                // Оновлюємо трикутники
+                foreach (var trianglePlane in face.TrianglePlanes)
+                {
+                    if (vertexIdMap.ContainsKey(trianglePlane.Point1.ID))
+                        trianglePlane.Point1 = vertexIdMap[trianglePlane.Point1.ID];
+
+                    if (vertexIdMap.ContainsKey(trianglePlane.Point2.ID))
+                        trianglePlane.Point2 = vertexIdMap[trianglePlane.Point2.ID];
+
+                    if (vertexIdMap.ContainsKey(trianglePlane.Point3.ID))
+                        trianglePlane.Point3 = vertexIdMap[trianglePlane.Point3.ID];
+                }
+
+                Guid meshFaceId;
+                bool isNewFace = Mesh.Add(face);
+
+                if (isNewFace)
+                {
+                    // Нова грань
+                    meshFaceId = face.ID;
+                    facesMap.Add(meshFaceId, new List<FaceAttachment>());
+                    faceIdMap[faceKvp.Key] = face;
+                }
+                else
+                {
+                    // Грань вже існує (спільна між елементами)
+                    var existingFace = Mesh.FacesSet.FirstOrDefault(f => f.Equals(face));
+                    if (existingFace != null)
+                    {
+                        meshFaceId = Mesh.FacesDictionary
+                            .FirstOrDefault(kv => kv.Value.Equals(existingFace)).Key;
+
+                        // Робимо грань невидимою, оскільки вона спільна
+                        Mesh.FacesDictionary[meshFaceId].IsDrawable = false;
+                        faceIdMap[faceKvp.Key] = Mesh.FacesDictionary[meshFaceId];
+                    }
+                }
+            }
+
+            // ============ Phase 4: Update Maps ============
+            // Оновлюємо verticesMap - додаємо зв'язки з brick elements
+            foreach (var vertexKvp in vertexIdMap)
+            {
+                var meshVertex = vertexKvp.Value;
+                Guid meshVertexId = Mesh.VerticesDictionary
+                    .FirstOrDefault(kv => kv.Value.Equals(meshVertex)).Key;
+
+                if (verticesMap.ContainsKey(meshVertexId))
+                {
+                    // Додаємо зв'язок з елементами (якщо потрібно)
+                    // verticesMap[meshVertexId].Add(someElementId);
+                }
+            }
+
+            // Оновлюємо edgesMap
+            foreach (var edgeKvp in edgeIdMap)
+            {
+                var meshEdge = edgeKvp.Value;
+                Guid meshEdgeId = Mesh.EdgesDictionary
+                    .FirstOrDefault(kv => kv.Value.Equals(meshEdge)).Key;
+
+                if (edgesMap.ContainsKey(meshEdgeId))
+                {
+                    // Додаємо зв'язок з елементами (якщо потрібно)
+                    // edgesMap[meshEdgeId].Add(someElementId);
+                }
+            }
+
+            OptimiseMesh();
+            InitializeGlobalAndLocalVertices();
+
+            return this;
+        }
+
+        //public BrickElementSurface AddMesh2(IMesh mesh)
+        //{
+        //    // Add Vertices
+        //    HashSet<BasePoint3D> beVertices = mesh.VerticesSet;
+        //    foreach (var vertex in beVertices)
+        //    {
+        //        if (Mesh.Add(vertex))
+        //        {
+        //            verticesMap.Add(vertex.ID, new HashSet<Guid>());
+        //        }
+
+        //        if (Mesh.VerticesSet.Contains(vertex))
+        //        {
+        //            // TODO Try to optimise a bit
+        //            Guid id = Mesh.VerticesDictionary.FirstOrDefault(kv => kv.Value.Equals(vertex)).Key;
+        //            verticesMap[id].Add(vertex.Parent.ID);
+        //        }
+        //    }
+
+        //    // Add Edges
+        //    HashSet<BaseLine3D> beEdges = newBrickElement.Mesh.EdgesSet;
+        //    foreach (var edge in beEdges)
+        //    {
+        //        if (Mesh.Add(edge))
+        //        {
+        //            if (Mesh.VerticesSet.Contains(edge.StartPoint))
+        //            {
+        //                foreach (BasePoint3D value in Mesh.VerticesDictionary.Values)
+        //                {
+        //                    if (value.Position == edge.StartPoint.Position)
+        //                    {
+        //                        edge.StartPoint = value;
+        //                    }
+        //                }
+        //            }
+
+        //            if (Mesh.VerticesSet.Contains(edge.EndPoint))
+        //            {
+        //                foreach (BasePoint3D value in Mesh.VerticesDictionary.Values)
+        //                {
+        //                    if (value.Position == edge.EndPoint.Position)
+        //                    {
+        //                        edge.EndPoint = value;
+        //                    }
+        //                }
+        //            }
+
+        //            edgesMap.Add(edge.ID, new HashSet<Guid>());
+        //        }
+
+        //        if (Mesh.EdgesSet.Contains(edge))
+        //        {
+        //            Guid id = Mesh.EdgesDictionary.FirstOrDefault(kv => kv.Value.Equals(edge)).Key;
+        //            edgesMap[id].Add(newBrickElement.ID);
+        //            newEdgesForBE.Add(Mesh.EdgesDictionary[id]);
+        //        }
+        //    }
+
+        //    // Add Faces
+        //    List<BasePlane3D> originalBEFaces = newBrickElement.Mesh.FacesSet.ToList();
+
+        //    for (int k = 0; k < originalBEFaces.Count; k++)
+        //    {
+        //        BasePlane3D face = originalBEFaces[k];
+
+        //        // Get the face type BEFORE we potentially merge with existing face
+        //        FaceType originalFaceType = face.FaceType;
+
+        //        // Update face vertices to reference existing mesh vertices
+        //        for (int i = 0; i < face.Vertices.Count; i++)
+        //        {
+        //            if (Mesh.VerticesSet.Contains(face.Vertices[i]))
+        //            {
+        //                foreach (BasePoint3D value in Mesh.VerticesDictionary.Values)
+        //                {
+        //                    if (value.Position == face.Vertices[i].Position)
+        //                    {
+        //                        face.Vertices[i] = value;
+        //                        break;
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        // Update face vertices to reference existing mesh vertices
+        //        for (int i = 0; i < face.correctOrderVertices.Count; i++)
+        //        {
+        //            if (Mesh.VerticesSet.Contains(face.correctOrderVertices[i]))
+        //            {
+        //                foreach (BasePoint3D value in Mesh.VerticesDictionary.Values)
+        //                {
+        //                    if (value.Position == face.correctOrderVertices[i].Position)
+        //                    {
+        //                        face.correctOrderVertices[i] = value;
+        //                        break;
+        //                    }
+        //                }
+        //            }
+        //        }
+
+
+        //        foreach (var trianglePlane in face.TrianglePlanes)
+        //        {
+        //            // Оновіть Point1
+        //            var matchingPoint1 = Mesh.VerticesDictionary.Values
+        //                .FirstOrDefault(v => v.Position == trianglePlane.Point1.Position);
+        //            if (matchingPoint1 != null)
+        //            {
+        //                trianglePlane.Point1 = matchingPoint1;
+        //            }
+
+        //            // Оновіть Point2
+        //            var matchingPoint2 = Mesh.VerticesDictionary.Values
+        //                .FirstOrDefault(v => v.Position == trianglePlane.Point2.Position);
+        //            if (matchingPoint2 != null)
+        //            {
+        //                trianglePlane.Point2 = matchingPoint2;
+        //            }
+
+        //            // Оновіть Point3
+        //            var matchingPoint3 = Mesh.VerticesDictionary.Values
+        //                .FirstOrDefault(v => v.Position == trianglePlane.Point3.Position);
+        //            if (matchingPoint3 != null)
+        //            {
+        //                trianglePlane.Point3 = matchingPoint3;
+        //            }
+        //        }
+
+
+
+        //        Guid meshFaceId;
+        //        bool isNewFace = Mesh.Add(face);
+
+        //        if (isNewFace)
+        //        {
+        //            // Brand new face - get its ID and initialize the map
+        //            meshFaceId = face.ID;
+        //            facesMap.Add(meshFaceId, new List<FaceAttachment>());
+        //        }
+        //        else
+        //        {
+        //            var newSharedFace = FaceInitializator.GenerateFaceByType(face.FaceType, newBrickElement.Mesh.VerticesSet.ToList(), newBrickElement.CenterVertices);
+        //            face = newSharedFace;
+        //            newSharedFace.FaceType = FaceType.NONE;
+        //            newSharedFace.IsDrawable = false;
+
+        //            meshFaceId = Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
+        //            var oldFace = Mesh.FacesDictionary[meshFaceId];
+        //            List<FaceAttachment> attachments = facesMap[meshFaceId];
+        //            facesMap.Remove(meshFaceId);
+        //            Mesh.FacesDictionary.Remove(meshFaceId);
+        //            Mesh.FacesSet.Remove(oldFace);
+
+        //            meshFaceId = newSharedFace.ID;
+        //            facesMap.Add(meshFaceId, attachments);
+        //            Mesh.FacesDictionary[meshFaceId] = newSharedFace;
+        //            Mesh.FacesSet.Add(newSharedFace);
+
+        //            var faceId1 = BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
+        //            var faceId2 = newBrickElement.Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
+
+        //            var face1 = BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary[faceId1];
+        //            var face2 = newBrickElement.Mesh.FacesDictionary[faceId2];
+
+        //            BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary.Remove(faceId1);
+        //            newBrickElement.Mesh.FacesDictionary.Remove(faceId2);
+
+        //            BrickElements[attachments[0].BrickElementId].Mesh.FacesSet.Remove(face1);
+        //            newBrickElement.Mesh.FacesSet.Remove(face2);
+
+        //            BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary.Add(newSharedFace.ID, newSharedFace);
+        //            newBrickElement.Mesh.FacesDictionary.Add(newSharedFace.ID, newSharedFace);
+        //            BrickElements[attachments[0].BrickElementId].Mesh.FacesSet.Add(newSharedFace);
+        //            newBrickElement.Mesh.FacesSet.Add(newSharedFace);
+
+        //            //// Face already exists (shared between brick elements)
+        //            //face.FaceType = FaceType.NONE;
+        //            ////originalBEFaces[k] = Mesh.FacesDictionary[meshFaceId];
+        //            //Mesh.FacesDictionary[meshFaceId].IsDrawable = false;
+        //            ////Mesh.FacesDictionary[face.ID].IsDrawable = false;
+        //        }
+
+        //        // CRITICAL: Add the attachment with the face type from THIS brick element's perspective
+        //        facesMap[meshFaceId].Add(new FaceAttachment(newBrickElement.ID, originalFaceType));
+
+        //        // Get the actual face from the mesh to add to newFacesForBE
+        //        //newFacesForBE.Add(Mesh.FacesDictionary[meshFaceId]);
+        //        newFacesForBE.Add(face);
+        //    }
+
+        //    OptimiseMesh();
+        //}
 
         public void OptimiseMesh()
         {

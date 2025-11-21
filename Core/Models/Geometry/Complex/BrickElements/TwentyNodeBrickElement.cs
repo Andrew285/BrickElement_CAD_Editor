@@ -1,4 +1,5 @@
-﻿using Core.Models.Geometry.Primitive.Line;
+﻿using Core.Models.Geometry.Complex.Meshing;
+using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Plane.Face;
 using Core.Models.Geometry.Primitive.Point;
@@ -36,6 +37,8 @@ namespace Core.Models.Geometry.Complex.BrickElements
                 SetEdgesAreSelected(isSelected);
             }
         }
+
+        public bool IsSuperElement = false;
 
         
         [Category("Трансформація")]
@@ -93,9 +96,11 @@ namespace Core.Models.Geometry.Complex.BrickElements
             {
                 e.Parent = this;
             }
-            foreach (var f in faces)
+            for (int i = 0; i < CenterVertices.Count; i++)
             {
+                BasePlane3D f = faces[i];
                 f.Parent = this;
+                f.CenterPoint = CenterVertices[i];
             }
 
             if (id != null) ID = (Guid)id;
@@ -177,6 +182,76 @@ namespace Core.Models.Geometry.Complex.BrickElements
                 if (face.FaceType == type) return face;
             }
             return null;
+        }
+
+        public TwentyNodeBrickElement Copy(Vector3? offset = null)
+        {
+            // Створюємо глибоку копію сітки
+            Mesh copiedMesh = Mesh.DeepCopy();
+
+            // Копіюємо центральні вершини
+            List<BasePoint3D> copiedCenterVertices = new List<BasePoint3D>();
+            foreach (var centerVertex in CenterVertices)
+            {
+                var copiedCenterVertex = new BasePoint3D(centerVertex.Position)
+                {
+                    ID = Guid.NewGuid(),
+                    NonSelectedColor = centerVertex.NonSelectedColor,
+                    SelectedColor = centerVertex.SelectedColor,
+                    IsDrawable = centerVertex.IsDrawable,
+                    IsSelected = centerVertex.IsSelected
+                };
+                copiedCenterVertices.Add(copiedCenterVertex);
+            }
+
+            // Створюємо новий brick element
+            var copiedBrickElement = new TwentyNodeBrickElement(
+                copiedMesh.VerticesSet.ToList(),
+                copiedCenterVertices,
+                copiedMesh.EdgesSet.ToList(),
+                copiedMesh.FacesSet.ToList(),
+                id: null
+            )
+            {
+                Position = this.Position,
+                Size = this.Size,
+                DivisionValue = this.DivisionValue,
+                IsSuperElement = this.IsSuperElement,
+                AreCenterVerticesDrawable = this.AreCenterVerticesDrawable,
+                IsDrawable = this.IsDrawable,
+                IsSelected = false,
+                NonSelectedColor = this.NonSelectedColor,
+                SelectedColor = this.SelectedColor
+            };
+
+            // Оновлюємо Parent
+            foreach (var vertex in copiedBrickElement.Mesh.VerticesSet)
+            {
+                vertex.Parent = copiedBrickElement;
+            }
+
+            foreach (var edge in copiedBrickElement.Mesh.EdgesSet)
+            {
+                edge.Parent = copiedBrickElement;
+            }
+
+            foreach (var face in copiedBrickElement.Mesh.FacesSet)
+            {
+                face.Parent = copiedBrickElement;
+            }
+
+            foreach (var centerVertex in copiedBrickElement.CenterVertices)
+            {
+                centerVertex.Parent = copiedBrickElement;
+            }
+
+            // Якщо передано зсув - застосовуємо його
+            if (offset.HasValue && offset.Value != Vector3.Zero)
+            {
+                copiedBrickElement.Move(offset.Value);
+            }
+
+            return copiedBrickElement;
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public abstract class SceneObject
     {
-        public Guid ID { get; protected set; }
+        public Guid ID { get; set; }
         public SceneObject Parent { get; set; }
 
         public SceneObject()
