@@ -35,6 +35,8 @@ namespace Triangulation
         int cubesCountByZ = 0;
 
         private Vector3 aValues;
+        private Vector3 nValues;
+
         Dictionary<Vector3, BasePoint3D> vertexDictionary = new Dictionary<Vector3, BasePoint3D>(); // Dictionary<Position, Point>
         List<BasePoint3D> vertices = new List<BasePoint3D>();
 
@@ -162,6 +164,7 @@ namespace Triangulation
         {
             Vector3 brickElementPosition = be.Position;
             this.aValues = sizeValues;
+            this.nValues = nValues;
 
             cubesCountByX = (int)nValues.X;
             cubesCountByY = (int)nValues.Y;
@@ -192,164 +195,44 @@ namespace Triangulation
 
                 VertexApproximation vertexApproximation = new VertexApproximation();
                 vertexApproximation.Transform(be.Mesh.VerticesSet.ToList(), copiedMesh.VerticesSet.ToList(), dividedMesh);
-
-                //for (int i = 0; i < vertexDictionary.Count; i++)
-                //{
-                //    var a = vertexDictionary.ElementAt(i);
-                //    Vector3 aV = a.Key;
-                //    vertexDictionary.Remove(a.Key);
-                //    vertexDictionary.Add(a.Key, copiedMesh.VerticesSet.ElementAt(i));
-                //}
             }
 
             List<TwentyNodeBrickElement> brickElements = GenerateBrickElements(nValues);
 
             BrickElementSurface surface = ApplyDivision(be, brickElements);
-
-            ////BrickElementSurface surface = BrickElementSurfaceInitializator.CreateFrom(scene, dividedMesh, brickElements);
-            //BrickElementSurface surface = new BrickElementSurface(scene);
-            //foreach (var b in brickElements)
-            //{
-            //    surface.AddBrickElement(b);
-            //}
-
-            //// Check if brick element is in Surface
-            //if (be.Parent != null && be.Parent is BrickElementSurface surface2)
-            //{
-            //    DivideBrickElementInSurface(surface2, be);
-            //}
-
-
-            //OnBrickElementDivided?.Invoke(be, surface);
             return surface;
         }
 
-        //private void DivideBrickElementInSurface(BrickElementSurface surface, TwentyNodeBrickElement be)
-        //{
-        //    List<TwentyNodeBrickElement> neighbours = surface.FindNeighboursOf(be);
-        //}
-
         private BrickElementSurface ApplyDivision(TwentyNodeBrickElement be, List<TwentyNodeBrickElement> dividedBrickElements)
         {
-            Guid? superElementId = (be.IsSuperElement) ? be.ID: null;
+            Guid? superElementId = (be.IsSuperElement) ? be.ID : null;
+                
+            //if (be.IsSuperElement) 
+            //{
+            //    superElementId = be.ID;
+            //}
+            //else
+            //{
+            //    superElementId = be.Mesh.VerticesSet.ElementAt(0).SuperElementId;
+            //}
 
             // Check if brick element is in Surface
             BrickElementSurface surface = new BrickElementSurface(scene);
+            // Find neighbours of this element
+            surface = (BrickElementSurface)be.Parent;
             if (be.Parent != null && be.Parent is BrickElementSurface)
             {
-                // Try to get element from surface
-                TwentyNodeBrickElement beFromSurface = surface.BrickElements.GetValueOrDefault(be.ID);
-
-                // Find neighbours of this element
-                surface = (BrickElementSurface)be.Parent;
-                BrickElementNeighboursData neighboursOfBe = surface.FindNeighboursOf(be);
-
-                // Remove element that should be divided
-                surface.Remove(be);
-
-
-                Dictionary<Guid, FaceNeighboursData> faceNeighboursMap = new Dictionary<Guid, FaceNeighboursData>();
-                Dictionary<Guid, CornerNeighboursData> cornerNeighboursMap = new Dictionary<Guid, CornerNeighboursData>();
-
-
-                AxisType axisTypeForDivision = AxisType.X;
-                if (cubesCountByX > 1)
+                if ((cubesCountByX == 3 || cubesCountByX == 1) &&
+                    (cubesCountByY == 3 || cubesCountByY == 1) &&
+                    (cubesCountByZ == 3 || cubesCountByZ == 1))
                 {
-                    axisTypeForDivision = AxisType.X;
-                    FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
+                    ApplyDivisionByThree(surface, be);
                 }
-
-                if (cubesCountByY > 1)
+                else if ((cubesCountByX == 2 || cubesCountByX == 1) &&
+                        (cubesCountByY == 2 || cubesCountByY == 1) &&
+                        (cubesCountByZ == 2 || cubesCountByZ == 1))
                 {
-                    axisTypeForDivision = AxisType.Y;
-                    FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
-                }
-
-                if (cubesCountByZ > 1)
-                {
-                    axisTypeForDivision = AxisType.Z;
-                    FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
-                }
-
-                PatternManager patternManager = new PatternManager();
-
-                // Use patterns for corner neighbours
-                foreach (var cornerNeighbour in cornerNeighboursMap)
-                {
-                    Guid elementId = cornerNeighbour.Key;
-                    TwentyNodeBrickElement cornerBrickElement = surface.BrickElements[elementId];
-                    CornerType cornerType = cornerNeighbour.Value.cornerType;
-                    AxisType axisDivision = cornerNeighbour.Value.axisDivision;
-                    BasePattern<CornerType>? standartCornerPattern = null;
-
-                    CubeBrickElement standartElement = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
-                    CornerSimplePattern? cornerPattern = null;
-                    if (axisDivision == AxisType.X)
-                    {
-                        cornerPattern = new CornerSimpleXPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
-                        standartCornerPattern = new CornerSimpleXPattern(standartElement.Mesh.VerticesSet.ToList(), cornerType);
-                    }
-                    else if (axisDivision == AxisType.Y)
-                    {
-                        cornerPattern = new CornerSimpleYPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
-                        standartCornerPattern = new CornerSimpleYPattern(standartElement.Mesh.VerticesSet.ToList(), cornerType);
-                    }
-                    else if (axisDivision == AxisType.Z)
-                    {
-                        cornerPattern = new CornerSimpleZPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
-                        standartCornerPattern = new CornerSimpleZPattern(standartElement.Mesh.VerticesSet.ToList(), cornerType);
-                    }
-
-                    if (cornerPattern == null) continue;
-
-                    Guid? cornerSuperElementId = (cornerBrickElement.IsSuperElement) ? cornerBrickElement.ID : null;
-                    surface.Remove(cornerBrickElement);
-                    BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(scene, surface, cornerType, cornerPattern, standartCornerPattern, cornerSuperElementId);
-                }
-
-                // User patterns for face neighbours
-                foreach (var faceNeighbour in faceNeighboursMap)
-                {
-                    Guid elementId = faceNeighbour.Key;
-                    TwentyNodeBrickElement faceBrickElement = surface.BrickElements[elementId];
-                    PatternDirection patternDirection = faceNeighbour.Value.direction;
-                    FaceType faceType = faceNeighbour.Value.faceType;
-                    BasePattern<FaceType>? pattern = null;
-                    BasePattern<FaceType>? standartFacepattern = null;
-                    AxisType axisDivision = faceNeighbour.Value.axisDivision;
-
-                    IMesh copiedMesh = faceBrickElement.Mesh.DeepCopy();
-                    CubeBrickElement standartElement = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
-
-                    if (faceNeighbour.Value.amount > 1)
-                    {
-                        pattern = new CrossSimplePattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection, faceType);
-                        standartFacepattern = new CrossSimplePattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection, faceType);
-                    }
-                    else
-                    {
-                        if (axisDivision == AxisType.X)
-                        {
-                            pattern = new MiddleSimpleXPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
-                            standartFacepattern = new MiddleSimpleXPattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection);
-                        }
-                        else if (axisDivision == AxisType.Y)
-                        {
-                            pattern = new MiddleSimpleYPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
-                            standartFacepattern = new MiddleSimpleYPattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection);
-                        }
-                        else if (axisDivision == AxisType.Z)
-                        {
-                            pattern = new MiddleSimpleZPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
-                            standartFacepattern = new MiddleSimpleZPattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection);
-                        }
-                    }
-
-                    if (pattern == null) continue;
-
-                    Guid? faceSuperElementId = (faceBrickElement.IsSuperElement) ? faceBrickElement.ID : null;
-                    surface.Remove(faceBrickElement);
-                    BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(scene, surface, faceType, pattern, standartFacepattern, faceSuperElementId);
+                    ApplyDivisionForTwo(surface, be);
                 }
             }
 
@@ -358,6 +241,198 @@ namespace Triangulation
                 surface.AddBrickElement(b, superElementId);
             }
             return surface;
+        }
+
+        Dictionary<AxisType, List<FaceType>> perpendicularSurfaceFaceTypes = new Dictionary<AxisType, List<FaceType>>()
+        {
+            { AxisType.X, new List<FaceType>() { FaceType.TOP, FaceType.FRONT, FaceType.BOTTOM, FaceType.BACK } },
+            { AxisType.Y, new List<FaceType>() { FaceType.FRONT, FaceType.RIGHT, FaceType.BACK, FaceType.LEFT } },
+            { AxisType.Z, new List<FaceType>() { FaceType.TOP, FaceType.RIGHT, FaceType.BOTTOM, FaceType.LEFT } },
+        };
+
+        private void ApplyDivisionForTwo(BrickElementSurface surface, TwentyNodeBrickElement be)
+        {
+            if (cubesCountByX == 2)
+            {
+                List<FaceType> faceTypes = perpendicularSurfaceFaceTypes[AxisType.X];
+                BrickElementNeighboursData data = surface.FindNeighboursOf(be, faceTypes.ToArray());
+            }
+            else if (cubesCountByY == 2)
+            {
+
+            }
+            else if (cubesCountByZ == 2)
+            {
+
+            }
+
+
+            //// Try to get element from surface
+            //TwentyNodeBrickElement
+            //= surface.BrickElements.GetValueOrDefault(be.ID);
+
+            //// Find neighbours of this element
+            //surface = (BrickElementSurface)be.Parent;
+            //BrickElementNeighboursData neighboursOfBe = surface.FindNeighboursOf(be);
+
+            //Dictionary<Guid, FaceNeighboursData> firstFaceNeighboursMap = new Dictionary<Guid, FaceNeighboursData>();
+            //Dictionary<Guid, CornerNeighboursData> firstCornerNeighboursMap = new Dictionary<Guid, CornerNeighboursData>();
+
+
+            //AxisType axisTypeForDivision = AxisType.X;
+            //if (cubesCountByX > 1)
+            //{
+            //    axisTypeForDivision = AxisType.X;
+            //    FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, firstFaceNeighboursMap, firstCornerNeighboursMap);
+            //}
+
+            //if (cubesCountByY > 1)
+            //{
+            //    axisTypeForDivision = AxisType.Y;
+            //    FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, firstFaceNeighboursMap, firstCornerNeighboursMap);
+            //}
+
+            //if (cubesCountByZ > 1)
+            //{
+            //    axisTypeForDivision = AxisType.Z;
+            //    FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, firstFaceNeighboursMap, firstCornerNeighboursMap);
+            //}
+
+            //Console.WriteLine();
+        }
+
+        private void ApplyDivisionByThree(BrickElementSurface surface, TwentyNodeBrickElement be)
+        {
+            //// Try to get element from surface
+            TwentyNodeBrickElement beFromSurface = surface.BrickElements.GetValueOrDefault(be.ID);
+
+            BrickElementNeighboursData neighboursOfBe = surface.FindNeighboursOf(be);
+
+            // Remove element that should be divided
+            surface.Remove(be);
+
+
+            Dictionary<Guid, FaceNeighboursData> faceNeighboursMap = new Dictionary<Guid, FaceNeighboursData>();
+            Dictionary<Guid, CornerNeighboursData> cornerNeighboursMap = new Dictionary<Guid, CornerNeighboursData>();
+
+
+            AxisType axisTypeForDivision = AxisType.X;
+            if (cubesCountByX > 1)
+            {
+                axisTypeForDivision = AxisType.X;
+                FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
+            }
+
+            if (cubesCountByY > 1)
+            {
+                axisTypeForDivision = AxisType.Y;
+                FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
+            }
+
+            if (cubesCountByZ > 1)
+            {
+                axisTypeForDivision = AxisType.Z;
+                FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
+            }
+
+            PatternManager patternManager = new PatternManager();
+
+            // Use patterns for corner neighbours
+            foreach (var cornerNeighbour in cornerNeighboursMap)
+            {
+                Guid elementId = cornerNeighbour.Key;
+                TwentyNodeBrickElement cornerBrickElement = surface.BrickElements[elementId];
+                CornerType cornerType = cornerNeighbour.Value.cornerType;
+                AxisType axisDivision = cornerNeighbour.Value.axisDivision;
+                BasePattern<CornerType>? standartCornerPattern = null;
+
+                CubeBrickElement standartElement = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
+                CornerSimplePattern? cornerPattern = null;
+                if (axisDivision == AxisType.X)
+                {
+                    cornerPattern = new CornerSimpleXPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
+                    standartCornerPattern = new CornerSimpleXPattern(standartElement.Mesh.VerticesSet.ToList(), cornerType);
+                }
+                else if (axisDivision == AxisType.Y)
+                {
+                    cornerPattern = new CornerSimpleYPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
+                    standartCornerPattern = new CornerSimpleYPattern(standartElement.Mesh.VerticesSet.ToList(), cornerType);
+                }
+                else if (axisDivision == AxisType.Z)
+                {
+                    cornerPattern = new CornerSimpleZPattern(cornerBrickElement.Mesh.VerticesSet.ToList(), cornerType);
+                    standartCornerPattern = new CornerSimpleZPattern(standartElement.Mesh.VerticesSet.ToList(), cornerType);
+                }
+
+                if (cornerPattern == null) continue;
+
+                Guid? cornerSuperElementId = null;
+                if (cornerBrickElement.IsSuperElement)
+                {
+                    cornerSuperElementId = cornerBrickElement.ID;
+                }
+                else
+                {
+                    cornerSuperElementId = cornerBrickElement.Mesh.VerticesSet.ElementAt(0).SuperElementId;
+                }
+
+                surface.Remove(cornerBrickElement);
+                BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(scene, surface, cornerType, cornerPattern, standartCornerPattern, cornerSuperElementId);
+            }
+
+            // User patterns for face neighbours
+            foreach (var faceNeighbour in faceNeighboursMap)
+            {
+                Guid elementId = faceNeighbour.Key;
+                TwentyNodeBrickElement faceBrickElement = surface.BrickElements[elementId];
+                PatternDirection patternDirection = faceNeighbour.Value.direction;
+                FaceType faceType = faceNeighbour.Value.faceType;
+                BasePattern<FaceType>? pattern = null;
+                BasePattern<FaceType>? standartFacepattern = null;
+                AxisType axisDivision = faceNeighbour.Value.axisDivision;
+
+                IMesh copiedMesh = faceBrickElement.Mesh.DeepCopy();
+                CubeBrickElement standartElement = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
+
+                if (faceNeighbour.Value.amount > 1)
+                {
+                    pattern = new CrossSimplePattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection, faceType);
+                    standartFacepattern = new CrossSimplePattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection, faceType);
+                }
+                else
+                {
+                    if (axisDivision == AxisType.X)
+                    {
+                        pattern = new MiddleSimpleXPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
+                        standartFacepattern = new MiddleSimpleXPattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection);
+                    }
+                    else if (axisDivision == AxisType.Y)
+                    {
+                        pattern = new MiddleSimpleYPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
+                        standartFacepattern = new MiddleSimpleYPattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection);
+                    }
+                    else if (axisDivision == AxisType.Z)
+                    {
+                        pattern = new MiddleSimpleZPattern(faceBrickElement.Mesh.VerticesSet.ToList(), patternDirection);
+                        standartFacepattern = new MiddleSimpleZPattern(standartElement.Mesh.VerticesSet.ToList(), patternDirection);
+                    }
+                }
+
+                if (pattern == null) continue;
+
+                Guid? faceSuperElementId = null;
+                if (faceBrickElement.IsSuperElement)
+                {
+                    faceSuperElementId = faceBrickElement.ID;
+                }
+                else
+                {
+                    faceSuperElementId = faceBrickElement.Mesh.VerticesSet.ElementAt(0).SuperElementId;
+                }
+
+                surface.Remove(faceBrickElement);
+                BrickElementSurface neighbourDividedSurfaceForCorner = patternManager.Use(scene, surface, faceType, pattern, standartFacepattern, faceSuperElementId);
+            }
         }
 
         private void FindNeighbourDivisionMap(BrickElementSurface surface, BrickElementNeighboursData neighboursOfBe, AxisType axisTypeForDivision, Dictionary<Guid, FaceNeighboursData> faceNeighboursMap, Dictionary<Guid, CornerNeighboursData> cornerNeighboursMap)

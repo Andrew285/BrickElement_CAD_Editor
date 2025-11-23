@@ -3,7 +3,9 @@ using App.Tools.Behaviors;
 using App.Utils.ConsoleLogging;
 using Core.Commands;
 using Core.Models.Geometry.Complex;
+using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Meshing;
+using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Services;
@@ -199,6 +201,22 @@ namespace App.Tools
                 if (SelectedObject is MeshObject3D meshable)
                 {
                     meshable.Mesh.PrintMesh();
+                }
+
+                foreach (var obj in scene.Objects3D.Values)
+                {
+                    if (obj is BrickElementSurface)
+                    {
+                        BrickElementSurface surface = (BrickElementSurface)obj;
+
+                        foreach (var el in surface.BrickElements.Values)
+                        {
+                            if (el.IsSuperElement)
+                            {
+                                el.AreFacesDrawable = false;
+                            }
+                        }
+                    }
                 }
             }
         }

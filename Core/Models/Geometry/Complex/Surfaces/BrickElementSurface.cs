@@ -960,14 +960,22 @@ namespace Core.Models.Geometry.Complex.Surfaces
         //    return BrickElements.Contains()
         //}
 
-        public BrickElementNeighboursData FindNeighboursOf(TwentyNodeBrickElement be)
+        public BrickElementNeighboursData FindNeighboursOf(TwentyNodeBrickElement be, params FaceType[] facesTypes)
         {
             //List<Tuple<FaceType, TwentyNodeBrickElement>> resultBrickElements = new List<Tuple<FaceType, TwentyNodeBrickElement>>();
             Dictionary<FaceType, TwentyNodeBrickElement> faceNeighbours = new Dictionary<FaceType, TwentyNodeBrickElement>();
             Dictionary<Tuple<FaceType, FaceType>, TwentyNodeBrickElement> cornerNeighbours = new Dictionary<Tuple<FaceType, FaceType>, TwentyNodeBrickElement>();
 
             foreach (var face in be.Mesh.FacesSet)
-            {
+            { 
+                if (facesTypes.Length != 0)
+                {
+                    if (!facesTypes.Contains(face.FaceType))
+                    {
+                        continue;
+                    }
+                }
+
                 if (facesMap.ContainsKey(face.ID) && facesMap[face.ID].Count > 1) 
                 {
                     List<FaceAttachment> faceAttachments = facesMap[face.ID];

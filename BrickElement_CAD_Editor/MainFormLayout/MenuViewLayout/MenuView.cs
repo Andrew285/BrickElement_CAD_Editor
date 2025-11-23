@@ -1,4 +1,6 @@
-﻿using Core.Services;
+﻿using Core.Models.Scene;
+using Core.Services;
+using Core.Services.Serialization;
 
 namespace App.MainFormLayout.MenuViewLayout
 {
@@ -99,7 +101,7 @@ namespace App.MainFormLayout.MenuViewLayout
 
             // Assign event handlers
             _openMenuItem.Click += OnOpenFileMenuItemClicked;
-            _saveMenuItem.Click += SaveFileMenuItemClicked;
+            _saveMenuItem.Click += OnSaveFileMenuItemClicked;
             _exportObjMenuItem.Click += ExportMenuItemClicked;
             _exitMenuItem.Click += ExitProgramMenuItemClicked;
 
@@ -258,9 +260,69 @@ namespace App.MainFormLayout.MenuViewLayout
             OpenFileMenuItemClicked?.Invoke(sender, e);
         }
 
+        public void LoadSaveConfirmDialog(string fileName, IScene scene)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+            openFileDialog.Title = "Open Scene File";
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            SceneSerializationService _serializationService = new SceneSerializationService();
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog.FileName;
+
+                try
+                {
+                    scene.Objects3D.Clear();
+                    scene.Objects2D.Clear();
+
+                    _serializationService.LoadSceneFromFile(filePath, scene);
+                    MessageBox.Show("File loaded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+
+        private void OnSaveFileMenuItemClicked(object sender, EventArgs e)
+        {
+            SaveFileMenuItemClicked?.Invoke(sender, e);
+        }
+
         public void Refresh()
         {
             SetInitialTexts();
+        }
+
+        public void OpenSaveConfirmDialog(string fileName, IScene scene)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+            saveFileDialog.Title = "Save your file";
+            saveFileDialog.FileName = fileName;
+            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // Стартова папка
+
+            SceneSerializationService _serializationService = new SceneSerializationService();
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = saveFileDialog.FileName; // Повний шлях який обрав користувач
+
+                try
+                {
+                    _serializationService.SaveSceneToFile(scene, filePath); // ✅ Використовуємо filePath
+                    MessageBox.Show("File saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error saving file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         // Custom renderer for modern menu appearance

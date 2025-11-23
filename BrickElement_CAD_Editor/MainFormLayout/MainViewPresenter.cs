@@ -21,7 +21,7 @@ namespace App.MainFormLayout
         {
             mainView = view;
 
-            MenuViewPresenter = new MenuViewPresenter(mainView.MenuView);
+            MenuViewPresenter = new MenuViewPresenter(mainView.MenuView, scene);
             ExtraToolsViewPresenter = new ExtraToolsViewPresenter(mainView.ExtraToolsView, scene, toolManager);
             MiddleViewPresenter = new MiddleViewPresenter(view.MiddleView, renderer, scene, toolManager);
         }
