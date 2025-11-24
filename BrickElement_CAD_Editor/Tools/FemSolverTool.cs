@@ -1,6 +1,7 @@
 ﻿
 using App.DataTableLayout;
 using App.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
+using ConsoleTables;
 using Core.Commands;
 using Core.Maths;
 using Core.Models.Geometry.Complex.BrickElements;
@@ -68,11 +69,11 @@ namespace App.Tools
                         mgeMatrices.Add(mge);
                     }
 
-                    DataTable mgeDataTable1 = ShowMatrix(mgeMatrices[0]);
+                    //DataTable mgeDataTable1 = ShowMatrix(mgeMatrices[0]);
                     //DataTable mgeDataTable2 = ShowMatrix(mgeMatrices[1]);
                     //DataTable mgeDataTable3 = ShowMatrix(mgeMatrices[2]);
 
-                    Write2DArrayToCsv(mgeMatrices[0], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge1.csv");
+                    //Write2DArrayToCsv(mgeMatrices[0], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge1.csv");
                     //Write2DArrayToCsv(mgeMatrices[1], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge2.csv");
                     //Write2DArrayToCsv(mgeMatrices[2], "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\mge3.csv");
 
@@ -104,14 +105,14 @@ namespace App.Tools
 
                     // find all ZU (fixed faces)
                     List<int> globalFixedVertices = new List<int>();
-                    foreach (var face in surface.Mesh.FacesSet)
+                    foreach (var face in surface.Mesh.FacesDictionary.Values)
                     {
                         if (face.IsFixed)
                         {
                             foreach (var vertex in face.correctOrderVertices)
                             {
-                                //int globalIndex = surface.GlobalVertexIndices[vertex.ID];
-                                int globalIndex = surface.GlobalVertexIndices.First(v => v.Key == vertex.ID).Value;
+                                int globalIndex = surface.GlobalVertexIndices[vertex.ID];
+                                //int globalIndex = surface.GlobalVertexIndices.First(v => v.Key == vertex.ID).Value;
                                 if (!globalFixedVertices.Contains(globalIndex))
                                 {
                                     globalFixedVertices.Add(globalIndex);
@@ -129,7 +130,7 @@ namespace App.Tools
                     double[] combinedVector = loadSolver.CreateCombinedF(fVectors, surface.LocalVertexIndices, surface.GlobalVertexIndices.Count);
 
 
-                    //var table = ConsoleTable.From(ShowMatrix(mgeMatrices[0]));
+                    //var table = ConsoleTable.From(ShowMatrix(combinedMatrix));
                     //var st = table.ToString();
 
                     double[] resultPoints = SolveLinearSystem2(combinedMatrix, combinedVector);

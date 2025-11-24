@@ -369,8 +369,10 @@ namespace Core.Models.Geometry.Complex.Surfaces
                 }
 
                 // Generate Global Indices
-                InitializeGlobalAndLocalVertices();
+                //InitializeGlobalAndLocalVertices();
             }
+
+            InitializeGlobalAndLocalVertices();
         }
 
         public TwentyNodeBrickElement AddBrickElementToFace(BasePlane3D faceToAttach)

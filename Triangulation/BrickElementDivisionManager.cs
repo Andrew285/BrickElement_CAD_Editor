@@ -196,6 +196,11 @@ namespace Triangulation
                 VertexApproximation vertexApproximation = new VertexApproximation();
                 vertexApproximation.Transform(be.Mesh.VerticesSet.ToList(), copiedMesh.VerticesSet.ToList(), dividedMesh);
             }
+            else
+            {
+                VertexApproximation vertexApproximation = new VertexApproximation();
+                vertexApproximation.Transform(be.Mesh.VerticesSet.ToList(), copiedMesh.VerticesSet.ToList(), dividedMesh);
+            }
 
             List<TwentyNodeBrickElement> brickElements = GenerateBrickElements(nValues);
 

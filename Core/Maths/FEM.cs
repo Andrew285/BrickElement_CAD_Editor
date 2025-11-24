@@ -270,7 +270,8 @@ namespace Core.Maths
             var A = Matrix<double>.Build.DenseOfArray(matrix);
             var B = MathNet.Numerics.LinearAlgebra.Vector<double>.Build.Dense(b);
 
-            if (Math.Abs(A.Determinant()) < 1e-9)
+            var d = A.Determinant();
+            if (Math.Abs(d) < 1e-9)
                 return null;
 
             return A.Solve(B).AsArray();

@@ -85,7 +85,9 @@ namespace Triangulation
                 TwentyNodeBrickElement sBe = standartBes[i];
 
                 VertexApproximation vertexApproximation = new VertexApproximation();
+                IMesh copiedMesh = be.Mesh.DeepCopy();
                 vertexApproximation.Transform(superElementData.localOuterVertices20, sBe.Mesh.VerticesSet.ToList(), be.Mesh);
+                //vertexApproximation.Transform(copiedMesh.VerticesSet.ToList(), sBe.Mesh.VerticesSet.ToList(), be.Mesh);
                 surface.AddBrickElement(be, superElementId);
             }
 
