@@ -266,62 +266,68 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
                 Guid meshFaceId;
                 bool isNewFace = Mesh.Add(face);
-                
-                if (isNewFace)
+                if (face.FaceType != FaceType.NONE)
                 {
-                    // Brand new face - get its ID and initialize the map
-                    meshFaceId = face.ID;
-                    facesMap.Add(meshFaceId, new List<FaceAttachment>());
+                    if (isNewFace)
+                    {
+                        // Brand new face - get its ID and initialize the map
+                        meshFaceId = face.ID;
+                        facesMap.Add(meshFaceId, new List<FaceAttachment>());
+                    }
+                    else
+                    {
+                        var newSharedFace = FaceInitializator.GenerateFaceByType(face.FaceType, newBrickElement.Mesh.VerticesSet.ToList(), newBrickElement.CenterVertices);
+                        face = newSharedFace;
+                        newSharedFace.FaceType = FaceType.NONE;
+                        newSharedFace.IsDrawable = false;
+
+                        meshFaceId = Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
+                        var oldFace = Mesh.FacesDictionary[meshFaceId];
+                        List<FaceAttachment> attachments = facesMap[meshFaceId];
+                        facesMap.Remove(meshFaceId);
+                        Mesh.FacesDictionary.Remove(meshFaceId);
+                        Mesh.FacesSet.Remove(oldFace);
+
+                        meshFaceId = newSharedFace.ID;
+                        facesMap.Add(meshFaceId, attachments);
+                        Mesh.FacesDictionary[meshFaceId] = newSharedFace;
+                        Mesh.FacesSet.Add(newSharedFace);
+
+                        var faceId1 = BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
+                        var faceId2 = newBrickElement.Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
+
+                        var face1 = BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary[faceId1];
+                        var face2 = newBrickElement.Mesh.FacesDictionary[faceId2];
+
+                        BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary.Remove(faceId1);
+                        newBrickElement.Mesh.FacesDictionary.Remove(faceId2);
+
+                        BrickElements[attachments[0].BrickElementId].Mesh.FacesSet.Remove(face1);
+                        newBrickElement.Mesh.FacesSet.Remove(face2);
+
+                        BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary.Add(newSharedFace.ID, newSharedFace);
+                        newBrickElement.Mesh.FacesDictionary.Add(newSharedFace.ID, newSharedFace);
+                        BrickElements[attachments[0].BrickElementId].Mesh.FacesSet.Add(newSharedFace);
+                        newBrickElement.Mesh.FacesSet.Add(newSharedFace);
+
+                        //// Face already exists (shared between brick elements)
+                        //face.FaceType = FaceType.NONE;
+                        ////originalBEFaces[k] = Mesh.FacesDictionary[meshFaceId];
+                        //Mesh.FacesDictionary[meshFaceId].IsDrawable = false;
+                        ////Mesh.FacesDictionary[face.ID].IsDrawable = false;
+                    }
+
+                    // CRITICAL: Add the attachment with the face type from THIS brick element's perspective
+                    facesMap[meshFaceId].Add(new FaceAttachment(newBrickElement.ID, originalFaceType));
+
+                    // Get the actual face from the mesh to add to newFacesForBE
+                    //newFacesForBE.Add(Mesh.FacesDictionary[meshFaceId]);
+                    newFacesForBE.Add(face);
                 }
                 else
                 {
-                    var newSharedFace = FaceInitializator.GenerateFaceByType(face.FaceType, newBrickElement.Mesh.VerticesSet.ToList(), newBrickElement.CenterVertices);
-                    face = newSharedFace;
-                    newSharedFace.FaceType = FaceType.NONE;
-                    newSharedFace.IsDrawable = false;
-
-                    meshFaceId = Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
-                    var oldFace = Mesh.FacesDictionary[meshFaceId];
-                    List<FaceAttachment> attachments = facesMap[meshFaceId];
-                    facesMap.Remove(meshFaceId);
-                    Mesh.FacesDictionary.Remove(meshFaceId);
-                    Mesh.FacesSet.Remove(oldFace);
-
-                    meshFaceId = newSharedFace.ID;
-                    facesMap.Add(meshFaceId , attachments);
-                    Mesh.FacesDictionary[meshFaceId] = newSharedFace;
-                    Mesh.FacesSet.Add(newSharedFace);
-
-                    var faceId1 = BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
-                    var faceId2 = newBrickElement.Mesh.FacesDictionary.FirstOrDefault(kv => kv.Value.Equals(face)).Key;
-
-                    var face1 = BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary[faceId1];
-                    var face2 = newBrickElement.Mesh.FacesDictionary[faceId2];
-
-                    BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary.Remove(faceId1);
-                    newBrickElement.Mesh.FacesDictionary.Remove(faceId2);
-
-                    BrickElements[attachments[0].BrickElementId].Mesh.FacesSet.Remove(face1);
-                    newBrickElement.Mesh.FacesSet.Remove(face2);
-
-                    BrickElements[attachments[0].BrickElementId].Mesh.FacesDictionary.Add(newSharedFace.ID, newSharedFace);
-                    newBrickElement.Mesh.FacesDictionary.Add(newSharedFace.ID, newSharedFace);
-                    BrickElements[attachments[0].BrickElementId].Mesh.FacesSet.Add(newSharedFace);
-                    newBrickElement.Mesh.FacesSet.Add(newSharedFace);
-
-                    //// Face already exists (shared between brick elements)
-                    //face.FaceType = FaceType.NONE;
-                    ////originalBEFaces[k] = Mesh.FacesDictionary[meshFaceId];
-                    //Mesh.FacesDictionary[meshFaceId].IsDrawable = false;
-                    ////Mesh.FacesDictionary[face.ID].IsDrawable = false;
+                    Console.WriteLine();
                 }
-
-                // CRITICAL: Add the attachment with the face type from THIS brick element's perspective
-                facesMap[meshFaceId].Add(new FaceAttachment(newBrickElement.ID, originalFaceType));
-
-                // Get the actual face from the mesh to add to newFacesForBE
-                //newFacesForBE.Add(Mesh.FacesDictionary[meshFaceId]);
-                newFacesForBE.Add(face);
             }
 
             OptimiseMesh();
@@ -916,7 +922,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
             {
                 if (face.Value.Count > 1)
                 {
-                    Mesh.FacesDictionary[face.Key].IsDrawable = false;
+                    //Mesh.FacesDictionary[face.Key].IsDrawable = false;
                 }
                 //else if (face.Value.Count == 1)
                 //{

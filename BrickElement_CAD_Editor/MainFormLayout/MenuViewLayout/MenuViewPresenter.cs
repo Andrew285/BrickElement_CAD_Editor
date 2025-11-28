@@ -1,7 +1,6 @@
 ﻿
 using Core.Models.Scene;
 using Core.Services;
-using Core.Services.Serialization;
 
 namespace App.MainFormLayout.MenuViewLayout
 {

@@ -278,7 +278,7 @@ namespace App.MainFormLayout.MenuViewLayout
                     scene.Objects3D.Clear();
                     scene.Objects2D.Clear();
 
-                    _serializationService.LoadSceneFromFile(filePath, scene);
+                    _serializationService.LoadSceneFromFile(filePath, (Scene)scene);
                     MessageBox.Show("File loaded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
@@ -307,6 +307,7 @@ namespace App.MainFormLayout.MenuViewLayout
             saveFileDialog.FileName = fileName;
             saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // Стартова папка
 
+            //SceneSerializationService _serializationService = new SceneSerializationService();
             SceneSerializationService _serializationService = new SceneSerializationService();
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -315,7 +316,7 @@ namespace App.MainFormLayout.MenuViewLayout
 
                 try
                 {
-                    _serializationService.SaveSceneToFile(scene, filePath); // ✅ Використовуємо filePath
+                    _serializationService.SaveSceneToFile((Scene)scene, filePath); // ✅ Використовуємо filePath
                     MessageBox.Show("File saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
