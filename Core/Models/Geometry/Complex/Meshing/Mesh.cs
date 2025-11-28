@@ -128,7 +128,12 @@ namespace Core.Models.Geometry.Complex.Meshing
                 e.Position = RoundVector3(e.Position);
             }
 
-            if (!FacesDictionary.ContainsKey(face.ID) && !FacesSet.Contains(face))
+            foreach (var faceFromSet in FacesSet)
+            {
+                if (faceFromSet.Equals(face)) return false;
+            }
+
+            if (!FacesDictionary.ContainsKey(face.ID))
             {
                 FacesDictionary[face.ID] = face;
                 FacesSet.Add(face);

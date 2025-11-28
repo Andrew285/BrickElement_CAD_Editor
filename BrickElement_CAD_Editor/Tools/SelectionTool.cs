@@ -192,6 +192,8 @@ namespace App.Tools
 
         protected override void OnHandleKeyPress(KeyboardKey key)
         {
+            float valueToMove = 0.3f;
+
             if (key == KeyboardKey.Tab)
             {
                 ToggleSelectionToolMode();
@@ -218,6 +220,30 @@ namespace App.Tools
                         }
                     }
                 }
+            }
+            else if (key == KeyboardKey.Q)
+            {
+                SelectedObject.Move(new System.Numerics.Vector3(valueToMove, 0, 0));
+            }
+            else if (key == KeyboardKey.A)
+            {
+                SelectedObject.Move(new System.Numerics.Vector3(-valueToMove, 0, 0));
+            }
+            else if (key == KeyboardKey.W)
+            {
+                SelectedObject.Move(new System.Numerics.Vector3(0, valueToMove, 0));
+            }
+            else if (key == KeyboardKey.S)
+            {
+                SelectedObject.Move(new System.Numerics.Vector3(0, -valueToMove, 0));
+            }
+            else if (key == KeyboardKey.E)
+            {
+                SelectedObject.Move(new System.Numerics.Vector3(0, 0, valueToMove));
+            }
+            else if (key == KeyboardKey.D)
+            {
+                SelectedObject.Move(new System.Numerics.Vector3(0, 0, -valueToMove));
             }
         }
 
