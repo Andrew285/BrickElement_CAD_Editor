@@ -51,11 +51,18 @@ namespace Core.Models.Geometry.Complex.Meshing
         {
             foreach (var vertex in vertices)
             {
-                if (!VerticesDictionary.ContainsKey(vertex.ID) && !VerticesSet.Contains(vertex))
-                {
-                    VerticesSet.Add(vertex);
-                    VerticesDictionary[vertex.ID] = vertex;
-                }
+                //foreach (var vertexInSet in VerticesSet)
+                //{
+                //    if (vertexInSet.Equals(vertex)) continue;
+                //}
+
+                //if (!VerticesDictionary.ContainsKey(vertex.ID))
+                //{
+                //    VerticesSet.Add(vertex);
+                //    VerticesDictionary[vertex.ID] = vertex;
+                //}
+
+                Add(vertex);
             }
         }
 
@@ -63,11 +70,13 @@ namespace Core.Models.Geometry.Complex.Meshing
         {
             foreach (var edge in edges)
             {
-                if (!EdgesDictionary.ContainsKey(edge.ID) && !EdgesSet.Contains(edge))
-                {
-                    EdgesDictionary[edge.ID] = edge;
-                    EdgesSet.Add(edge);
-                }
+                //if (!EdgesDictionary.ContainsKey(edge.ID) && !EdgesSet.Contains(edge))
+                //{
+                //    EdgesDictionary[edge.ID] = edge;
+                //    EdgesSet.Add(edge);
+                //}
+
+                Add(edge);
             }
         }
 
@@ -75,11 +84,13 @@ namespace Core.Models.Geometry.Complex.Meshing
         {
             foreach (var face in faces)
             {
-                if (!FacesDictionary.ContainsKey(face.ID) && !FacesSet.Contains(face))
-                {
-                    FacesDictionary[face.ID] = face;
-                    FacesSet.Add(face);
-                }
+                //if (!FacesDictionary.ContainsKey(face.ID) && !FacesSet.Contains(face))
+                //{
+                //    FacesDictionary[face.ID] = face;
+                //    FacesSet.Add(face);
+                //}
+
+                Add(face);
             }
         }
 

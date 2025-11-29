@@ -10,7 +10,7 @@ namespace Core.Models.Geometry.Primitive.Point
 {
     public class Vector3EqualityComparer : IEqualityComparer<Vector3>
     {
-        private const float EPSILON = 0.1f;
+        private const float EPSILON = 0.01f;
 
         public bool Equals(Vector3 v1, Vector3 v2)
         {
@@ -109,9 +109,17 @@ namespace Core.Models.Geometry.Primitive.Point
 
         public override int GetHashCode()
         {
+            const float EPSILON = 1e-5f;
+            // Округлюємо до grid, щоб близькі точки мали однаковий хеш
+            int x = (int)Math.Round(Position.X / EPSILON);
+            int y = (int)Math.Round(Position.Y / EPSILON);
+            int z = (int)Math.Round(Position.Z / EPSILON);
+            return HashCode.Combine(x, y, z);
+
+
             //var a = HashCode.Combine(X, Y, Z);
             //return a;
-            return ID.GetHashCode();
+            //return ID.GetHashCode();
             //return HashCode.Combine(ID, X, Y, Z);
         }
 

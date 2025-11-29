@@ -378,7 +378,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
                 //InitializeGlobalAndLocalVertices();
             }
 
-            InitializeGlobalAndLocalVertices();
+            //InitializeGlobalAndLocalVertices();
         }
 
         public TwentyNodeBrickElement AddBrickElementToFace(BasePlane3D faceToAttach)
@@ -975,7 +975,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
             Dictionary<Tuple<FaceType, FaceType>, TwentyNodeBrickElement> cornerNeighbours = new Dictionary<Tuple<FaceType, FaceType>, TwentyNodeBrickElement>();
 
             foreach (var face in be.Mesh.FacesSet)
-            { 
+            {
                 if (facesTypes.Length != 0)
                 {
                     if (!facesTypes.Contains(face.FaceType))
