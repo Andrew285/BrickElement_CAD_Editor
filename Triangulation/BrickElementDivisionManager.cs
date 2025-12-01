@@ -334,11 +334,11 @@ namespace Triangulation
                 FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
             }
 
-            //if (cubesCountByZ > 1)
-            //{
-            //    axisTypeForDivision = AxisType.Z;
-            //    FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
-            //}
+            if (cubesCountByZ > 1)
+            {
+                axisTypeForDivision = AxisType.Z;
+                FindNeighbourDivisionMap(surface, neighboursOfBe, axisTypeForDivision, faceNeighboursMap, cornerNeighboursMap);
+            }
 
             PatternManager patternManager = new PatternManager();
 

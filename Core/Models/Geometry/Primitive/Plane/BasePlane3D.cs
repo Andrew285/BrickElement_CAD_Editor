@@ -76,7 +76,7 @@ namespace Core.Models.Geometry.Primitive.Plane
                 BrickElementPressureManager.GetInstance().AddFaceForPressure(this);
             }
         }
-        private float pressure = 0.5f;
+        private float pressure = 0.02f;
 
 
         // Face Pressure

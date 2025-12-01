@@ -47,6 +47,7 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
             // Subscribe to view events
             extraToolsView.OnSelectionModeChanged += ChangeSelectionMode;
             extraToolsView.OnAddBrickElementToFaceItemClicked += ActivateAddBrickElementTool;
+            extraToolsView.OnRemoveBrickElementItemClicked += RemoveBrickElementTool;
             extraToolsView.OnDivideBrickElementItemClicked += DivideBrickElement;
             extraToolsView.OnfixFaceItemClicked += HandleFixFaceItemClicked;
             extraToolsView.OnSetPressureItemClicked += HandleSetPressureItemClicked;
@@ -127,7 +128,7 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
                 //scene.HandleOnBrickElementDivided(beToDivide, resultSurface);
             }
 
-            MessageBox.Show("Division applied successfully", "Success",
+            MessageBox.Show("Операція поділу сітки пройшла успішно", "Успіх",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
@@ -253,6 +254,11 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
         {
             toolManager.ActivateTool<AddBrickElementTool>();
         }
+        private void RemoveBrickElementTool(object? sender, EventArgs e)
+        {
+            toolManager.ActivateTool<RemoveBrickElementTool>();
+        }
+
 
         public void HandleFixFaceItemClicked(object? sender, EventArgs e)
         {

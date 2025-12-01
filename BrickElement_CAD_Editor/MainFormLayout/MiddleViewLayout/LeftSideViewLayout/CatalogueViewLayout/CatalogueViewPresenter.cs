@@ -62,11 +62,11 @@ namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLa
 
 
 
-            //Vector3 size = new Vector3(2, 2, 2);
+            Vector3 size = new Vector3(2, 2, 2);
             //Vector3 division = new Vector3(2, 2, 2);
-            //CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), size);
+            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), size);
             //cbe.IsSuperElement = true;
-            //IMesh copiedMesh = cbe.Mesh.DeepCopy();
+            IMesh copiedMesh = cbe.Mesh.DeepCopy();
             //cbe.Mesh.VerticesSet.ElementAt(0).Move(new Vector3(-0.4f, 0f, 0f));
             ////cbe.Mesh.VerticesSet.ElementAt(5).Move(new Vector3(-0.4f, 0.2f, 0.2f));
             ////cbe.Mesh.VerticesSet.ElementAt(6).Move(new Vector3(-0.4f, 0.2f, 0.2f));
@@ -80,8 +80,8 @@ namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLa
             //scene.AddObject3D(surface);
 
 
-            Vector3 size = new Vector3(2, 2, 2);
-            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0f, 0f, 0f), size);
+            //Vector3 size = new Vector3(2, 2, 2);
+            //CubeBrickElement cbe = new CubeBrickElement(new Vector3(0f, 0f, 0f), size);
             //CubeBrickElement cbe2 = new CubeBrickElement(new Vector3(0f, 2f, 0f), size);
             //CubeBrickElement cbe3 = new CubeBrickElement(new Vector3(0f, -2f, 0f), size);
             CubeBrickElement cbe4 = new CubeBrickElement(new Vector3(2f, 0f, 0f), size);
@@ -92,6 +92,8 @@ namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLa
             CubeBrickElement cbe7 = new CubeBrickElement(new Vector3(2f, 2f, 0f), size);
             CubeBrickElement cbe8 = new CubeBrickElement(new Vector3(2f, -2f, 0f), size);
             CubeBrickElement cbe9 = new CubeBrickElement(new Vector3(-2f, -2f, 0f), size);
+
+            CubeBrickElement cbe10 = new CubeBrickElement(new Vector3(-2f, -2f, -2f), size);
 
 
             CubeBrickElement cbeTopX = new CubeBrickElement(new Vector3(0f, 2f, 0f), size);
@@ -124,10 +126,11 @@ namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLa
             //surface.AddBrickElement(cbe7);
             //surface.AddBrickElement(cbe8);
             //surface.AddBrickElement(cbe9);
+            //surface.AddBrickElement(cbe10);
 
             //surface.AddBrickElement(cbeTopX);
             //surface.AddBrickElement(cbeBottomX);
-            ////surface.AddBrickElement(cbeFrontX);
+            //surface.AddBrickElement(cbeFrontX);
             //surface.AddBrickElement(cbeBackX);
 
             //surface.AddBrickElement(cbeBackTopX);
@@ -147,23 +150,30 @@ namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLa
             scene.AddObject3D(surface);
 
             //surface.Remove(cbe);
-            //MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(copiedMesh.VerticesSet.ToList(), PatternDirection.RIGHT);
-            //PatternManager patternManager = new PatternManager();
-            //patternManager.Use(scene, surface, Core.Models.Geometry.Primitive.Plane.Face.FaceType.LEFT, pattern, cbe.ID);
 
-            //CornerSimplePattern pattern = new CornerSimpleXPattern(copiedMesh.VerticesSet.ToList(), CornerType.TOP_LEFT);
+            //CubeBrickElement standartElement = new CubeBrickElement(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
+
+            //MiddleSimpleZPattern standartPattern = new MiddleSimpleZPattern(standartElement.Mesh.VerticesSet.ToList(), PatternDirection.LEFT);
+            //MiddleSimpleZPattern pattern = new MiddleSimpleZPattern(cbe.Mesh.VerticesSet.ToList(), PatternDirection.LEFT);
             //PatternManager patternManager = new PatternManager();
-            //patternManager.Use(surface, CornerType.TOP_LEFT, pattern, cbe.ID);
+            //patternManager.Use(scene, surface, Core.Models.Geometry.Primitive.Plane.Face.FaceType.RIGHT, pattern, standartPattern, cbe.ID);
+
+
+            //CornerSimplePattern pattern = new CornerSimpleXPattern(cbe.Mesh.VerticesSet.ToList(), CornerType.TOP_LEFT);
+            //CornerSimplePattern standartPattern = new CornerSimpleXPattern(standartElement.Mesh.VerticesSet.ToList(), CornerType.TOP_LEFT);
+            //PatternManager patternManager = new PatternManager();
+            //patternManager.Use(scene, surface, CornerType.TOP_LEFT, pattern, standartPattern, cbe.ID);
 
 
             //FaceType faceType = FaceType.FRONT;
             //PatternDirection direction = PatternDirection.BACK;
             //CrossSimplePattern pattern = new CrossSimplePattern(cbe.Mesh.VerticesSet.ToList(), direction, faceType);
+            //CrossSimplePattern standartPattern = new CrossSimplePattern(standartElement.Mesh.VerticesSet.ToList(), direction, faceType);
             //PatternManager patternManager = new PatternManager();
-            //patternManager.Use(surface, faceType, pattern);
+            //patternManager.Use(scene, surface, faceType, pattern, standartPattern, cbe.ID);
 
             //BrickElementDivisionManager divisionManager = new BrickElementDivisionManager(scene);
-            //divisionManager.Divide(surface.BrickElements.ElementAt(0).Value, size, new Vector3(1, 1, 3));
+            //divisionManager.Divide(surface.BrickElements.ElementAt(0).Value, size, new Vector3(3, 3, 3));
 
 
             //surface.Mesh.FacesSet.ElementAt(18).IsSelected = true;

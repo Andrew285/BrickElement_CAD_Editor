@@ -21,10 +21,11 @@ namespace App.Tools
     {
         SELECTION,
         ADD_BRICK_ELEMENT,
+        REMOVE_BRICK_ELEMENT,
         LINE,
         FIX_FACE,
         PRESSURE,
-        FEM_SOLVER
+        FEM_SOLVER,
     }
 
     public abstract class BaseTool

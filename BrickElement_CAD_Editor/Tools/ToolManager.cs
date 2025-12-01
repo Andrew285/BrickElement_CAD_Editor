@@ -43,6 +43,7 @@ namespace App.Tools
 
             // Register other tools
             RegisterTool(new AddBrickElementTool(scene, commandHistory, selectionTool));
+            RegisterTool(new RemoveBrickElementTool(scene, commandHistory, renderer, propertyView));
             //RegisterTool(new DivideBrickElementTool(scene, commandHistory, selectionTool));
             RegisterTool(new FixFaceTool(scene, commandHistory, renderer, propertyView));
             RegisterTool(new PressureTool(scene, commandHistory, selectionTool, renderer, propertyView));

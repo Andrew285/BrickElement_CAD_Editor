@@ -117,6 +117,7 @@ namespace App.Tools
             catch (Exception ex)
             {
                 UpdateStatusMessage($"Error: {ex.Message}");
+                Console.WriteLine($"Error: {ex.Message}");
                 SetState(ToolState.Ready);
             }
         }

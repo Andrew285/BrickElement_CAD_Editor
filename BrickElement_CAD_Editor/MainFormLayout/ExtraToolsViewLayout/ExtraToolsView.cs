@@ -25,6 +25,7 @@ public class ExtraToolsView : IExtraToolsView
     public event EventHandler? OnfixFaceItemClicked;
     public event EventHandler? OnSetPressureItemClicked;
     public event EventHandler? OnFemSolverItemClicked;
+    public event EventHandler? OnRemoveBrickElementItemClicked;
     public event Action<SelectionToolMode> OnSelectionModeChanged;
     public event EventHandler<Vector3>? OnDivisionApplied;
 
@@ -292,6 +293,7 @@ public class ExtraToolsView : IExtraToolsView
             imageList.Images.Add("fix", LoadIconOrPlaceholder("ic_add"));
             imageList.Images.Add("pressure", LoadIconOrPlaceholder("ic_add"));
             imageList.Images.Add("solve", LoadIconOrPlaceholder("ic_add"));
+            imageList.Images.Add("remove", LoadIconOrPlaceholder("ic_add"));
         }
         catch
         {
@@ -341,6 +343,9 @@ public class ExtraToolsView : IExtraToolsView
 
         CreateToolButton("Add Element", imageList.Images["add"], "Add brick element to selected face",
             (s, e) => OnAddBrickElementToFaceItemClicked?.Invoke(this, e));
+
+        CreateToolButton("Remove Element", imageList.Images["remove"], "Remove brick element",
+            (s, e) => OnRemoveBrickElementItemClicked?.Invoke(this, e));
 
         CreateToolButton("Divide Element", imageList.Images["divide"], "Divide selected brick element",
             (s, e) => OnDivideBrickElementItemClicked?.Invoke(this, e));
