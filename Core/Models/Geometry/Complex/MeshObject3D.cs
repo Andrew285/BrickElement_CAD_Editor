@@ -14,6 +14,10 @@ namespace Core.Models.Geometry.Complex
 {
     public class MeshObject3D : SceneObject3D, IMeshObject
     {
+
+        [Category("Малювання")]
+        [DisplayName("Сітка")]
+        [Description("Визначає сітку елемента")]
         public IMesh Mesh { get; set; }
 
         [Category("Вигляд")]

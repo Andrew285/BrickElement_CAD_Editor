@@ -34,8 +34,8 @@ public class CatalogueView : PanelView, ICatalogueView
         };
 
         // Create tab pages with improved styling
-        TabPage generalTab = CreateStyledTabPage("General");
-        TabPage libraryTab = CreateStyledTabPage("Library");
+        TabPage generalTab = CreateStyledTabPage("Загальні");
+        TabPage libraryTab = CreateStyledTabPage("Користувацькі");
 
         generalTabPanel = CreateTabPanel();
         libraryTabPanel = CreateTabPanel();
@@ -74,7 +74,7 @@ public class CatalogueView : PanelView, ICatalogueView
 
     private void LoadGeneralItems()
     {
-        List<string> items = new List<string> { "Hexagon", "Cylinder", "Pyramid" };
+        List<string> items = new List<string> { "Гексаедр", "Циліндр", "Піраміда" };
         List<string> images = new List<string>
         {
             @"D:\Projects\VisualStudio\BrickElement_CAD_Editor\BrickElement_CAD_Editor\Resources\Cube.png",

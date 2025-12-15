@@ -115,7 +115,7 @@ namespace App.MainFormLayout
             toolStrip.Renderer = new ModernToolbarRenderer();
 
             // Add common CAD tools
-            AddMainToolbarButtons(toolStrip);
+            //AddMainToolbarButtons(toolStrip);
 
             toolbarView.Controls.Add(toolStrip);
             AddControlToLayout(toolbarView, toolbarViewPosition);

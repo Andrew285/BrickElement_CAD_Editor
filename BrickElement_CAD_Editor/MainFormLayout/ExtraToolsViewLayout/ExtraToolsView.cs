@@ -366,7 +366,7 @@ public class ExtraToolsView : IExtraToolsView
 
     private void CreateSelectionModeDropdown()
     {
-        var selectionLabel = new ToolStripLabel("Selection:");
+        var selectionLabel = new ToolStripLabel("Виділення:");
         selectionLabel.ForeColor = Color.FromArgb(80, 80, 80);
         selectionLabel.Margin = new Padding(5, 0, 2, 0);
         toolStrip.Items.Add(selectionLabel);
@@ -381,9 +381,9 @@ public class ExtraToolsView : IExtraToolsView
 
         selectionModeCombo.Items.AddRange(new string[]
         {
-            "Surface",
-            "Object",
-            "Component"
+            "Поверхня",
+            "Шестигранник",
+            "Компонент"
         });
 
         selectionModeCombo.SelectedIndex = 2;

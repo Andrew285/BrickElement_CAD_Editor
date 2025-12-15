@@ -69,6 +69,15 @@ namespace App.Tools
                         mgeMatrices.Add(mge);
                     }
 
+                    //foreach (var be in surface.SuperBrickElementsPoints)
+                    //{
+                    //    var yakobians = CalculateYakobians(surface.BrickElements[be.Key], dfiabg);
+                    //    var dfixyz = CalculateDFIXYZ(yakobians, dfiabg);
+                    //    var mge = CalculateMGE(yakobians, dfixyz);
+                    //    mgeMatrices.Add(mge);
+                    //}
+
+
                     //DataTable mgeDataTable1 = ShowMatrix(mgeMatrices[0]);
                     //DataTable mgeDataTable2 = ShowMatrix(mgeMatrices[1]);
                     //DataTable mgeDataTable3 = ShowMatrix(mgeMatrices[2]);
@@ -102,6 +111,31 @@ namespace App.Tools
                         fValues = new double[60];
                         fVectors.Add(fValues);
                     }
+
+                    //foreach (var bePair in surface.SuperBrickElementsPoints)
+                    //{
+                    //    double[] fValues = null;
+                    //    TwentyNodeBrickElement be = surface.BrickElements[bePair.Key];
+                    //    foreach (var face in be.Mesh.FacesDictionary)
+                    //    {
+                    //        if (face.Value.IsStressed)
+                    //        {
+                    //            var deriv = loadSolver.CalculateFaceDerivativesNT();
+                    //            var standartValues = loadSolver.CalculateStandartFaceDerivativesNT();
+                    //            fValues = loadSolver.CalculateValuesF(face.Value.Pressure, face.Value, deriv, standartValues);
+                    //            fVectors.Add(fValues);
+                    //            break;
+                    //        }
+                    //    }
+                    //    if (fValues != null)
+                    //    {
+                    //        continue;
+                    //    }
+
+                    //    fValues = new double[60];
+                    //    fVectors.Add(fValues);
+                    //}
+
 
                     // find all ZU (fixed faces)
                     List<int> globalFixedVertices = new List<int>();

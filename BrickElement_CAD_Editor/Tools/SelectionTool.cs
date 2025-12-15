@@ -192,7 +192,7 @@ namespace App.Tools
 
         protected override void OnHandleKeyPress(KeyboardKey key)
         {
-            float valueToMove = 0.3f;
+            float valueToMove = 0.125f;
 
             if (key == KeyboardKey.Tab)
             {

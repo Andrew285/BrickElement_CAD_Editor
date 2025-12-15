@@ -5,6 +5,7 @@ using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Scene;
 using Core.Services;
+using Newtonsoft.Json.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 using Triangulation;
@@ -117,11 +118,20 @@ namespace UI.MainFormLayout.ExtraToolsViewLayout
             }
 
 
-            BrickElementSurface resultSurface = divisionManager.Divide(
-                beToDivide,
-                beToDivide.Size,
-                divisionValues
-            );
+
+            // Global Division
+            foreach (var otherBe in surface.BrickElements.Values.ToList())
+            {
+                divisionManager.Divide(otherBe, beToDivide.Size, divisionValues);
+            }
+
+
+            // Local Division
+            //BrickElementSurface resultSurface = divisionManager.Divide(
+            //    beToDivide,
+            //    beToDivide.Size,
+            //    divisionValues
+            //);
 
             if (surface == null)
             {

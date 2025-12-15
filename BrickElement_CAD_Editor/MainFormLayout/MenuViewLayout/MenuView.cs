@@ -129,7 +129,7 @@ namespace App.MainFormLayout.MenuViewLayout
 
         private void InitializeEditMenu()
         {
-            _editMenuItem = new ToolStripMenuItem("Edit");
+            _editMenuItem = new ToolStripMenuItem("Сцена");
 
             _undoMenuItem = CreateMenuItem("Undo", "Ctrl+Z");
             _redoMenuItem = CreateMenuItem("Redo", "Ctrl+Y");
@@ -158,7 +158,7 @@ namespace App.MainFormLayout.MenuViewLayout
 
         private void InitializeViewMenu()
         {
-            _viewMenuItem = new ToolStripMenuItem("View");
+            _viewMenuItem = new ToolStripMenuItem("Вигляд");
 
             _wireframeMenuItem = CreateMenuItem("Wireframe", "1");
             _solidMenuItem = CreateMenuItem("Solid", "2");
@@ -192,7 +192,7 @@ namespace App.MainFormLayout.MenuViewLayout
 
         private void InitializeToolsMenu()
         {
-            _toolsMenuItem = new ToolStripMenuItem("Tools");
+            _toolsMenuItem = new ToolStripMenuItem("Інструменти");
 
             var measureMenuItem = CreateMenuItem("Measure", "M");
             var analyzeMenuItem = CreateMenuItem("Analyze", "");
@@ -211,7 +211,7 @@ namespace App.MainFormLayout.MenuViewLayout
 
         private void InitializeHelpMenu()
         {
-            _helpMenuItem = new ToolStripMenuItem("Help");
+            _helpMenuItem = new ToolStripMenuItem("Довідка");
 
             var documentationMenuItem = CreateMenuItem("Documentation", "F1");
             var shortcutsMenuItem = CreateMenuItem("Keyboard Shortcuts", "");

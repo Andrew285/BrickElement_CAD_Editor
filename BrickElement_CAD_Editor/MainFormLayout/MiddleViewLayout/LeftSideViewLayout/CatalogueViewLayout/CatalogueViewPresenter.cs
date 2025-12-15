@@ -64,7 +64,7 @@ namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLa
 
             Vector3 size = new Vector3(2, 2, 2);
             //Vector3 division = new Vector3(2, 2, 2);
-            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, 0, 0), size);
+            CubeBrickElement cbe = new CubeBrickElement(new Vector3(0, -10, 0), size);
             //cbe.IsSuperElement = true;
             IMesh copiedMesh = cbe.Mesh.DeepCopy();
             //cbe.Mesh.VerticesSet.ElementAt(0).Move(new Vector3(-0.4f, 0f, 0f));
@@ -146,6 +146,21 @@ namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLa
             //surface.AddBrickElement(cbeFrontY);
 
             //surface.Remove(cbe);
+
+
+            //int elementsCount = 5;
+            //for (int x = -elementsCount; x < elementsCount; x += 2)
+            //{
+            //    for (int y = -elementsCount; y < elementsCount; y += 2)
+            //    {
+            //        for (int z = -elementsCount; z < elementsCount; z += 2)
+            //        {
+            //            CubeBrickElement newCbe = new CubeBrickElement(new Vector3(x, y, z), size);
+            //            surface.AddBrickElement(newCbe);
+            //        }
+            //    }
+            //}
+
 
             scene.AddObject3D(surface);
 

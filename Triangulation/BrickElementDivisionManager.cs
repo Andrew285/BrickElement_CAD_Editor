@@ -231,7 +231,7 @@ namespace Triangulation
                     (cubesCountByY == 3 || cubesCountByY == 1) &&
                     (cubesCountByZ == 3 || cubesCountByZ == 1))
                 {
-                    ApplyDivisionByThree(surface, be);
+                    //ApplyDivisionByThree(surface, be);
                 }
                 else if ((cubesCountByX == 2 || cubesCountByX == 1) &&
                         (cubesCountByY == 2 || cubesCountByY == 1) &&

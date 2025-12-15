@@ -8,6 +8,7 @@ using Core.Models.Geometry.Primitive.Point;
 using Core.Models.Scene;
 using Core.Models.Text.VertexText;
 using Core.Utils;
+using System.ComponentModel;
 using System.Numerics;
 
 namespace Core.Models.Geometry.Complex.Surfaces
@@ -37,16 +38,30 @@ namespace Core.Models.Geometry.Complex.Surfaces
 
         private Dictionary<Guid, HashSet<Guid>> edgesMap { get; set; } = new Dictionary<Guid, HashSet<Guid>>();
 
+        [Browsable(false)]
         public Dictionary<Guid, List<FaceAttachment>> facesMap { get; set; } = new Dictionary<Guid, List<FaceAttachment>>();
 
+        [Category("Малювання")]
+        [DisplayName("Шестигранники")]
+        [Description("Визначає сітку елемента")]
         public Dictionary<Guid, TwentyNodeBrickElement> BrickElements { get; set; } = new Dictionary<Guid, TwentyNodeBrickElement>();
 
         // SuperElements
+        [Category("Малювання")]
+        [DisplayName("Супер елементи")]
+        [Description("Визначає сітку елемента")]
         public Dictionary<Guid, SuperElementData> SuperBrickElementsPoints { get; set; } = new Dictionary<Guid, SuperElementData>();
 
         //public Dictionary<Guid, VertexIndex> GlobalVertexIndices { get; private set; } = new Dictionary<Guid, VertexIndex>();
 
+        [Category("Малювання")]
+        [DisplayName("Глобальні вершини")]
+        [Description("Визначає сітку елемента")]
         public Dictionary<Guid, int> GlobalVertexIndices { get; set; } = new Dictionary<Guid, int>();
+
+        [Category("Малювання")]
+        [DisplayName("Локальні вершини")]
+        [Description("Визначає сітку елемента")]
         public Dictionary<Guid, List<int>> LocalVertexIndices { get; set; } = new Dictionary<Guid, List<int>>();
 
 
@@ -55,6 +70,11 @@ namespace Core.Models.Geometry.Complex.Surfaces
         private GlobalIndexManager globalIndexManager;
 
         private bool areVertexLabelsDrawable = false;
+
+
+        [Category("Малювання")]
+        [DisplayName("Нумерація вершин")]
+        [Description("Визначає сітку елемента")]
         public bool AreVertexLabelsDrawable
         {
             get
@@ -69,6 +89,7 @@ namespace Core.Models.Geometry.Complex.Surfaces
             }
         }
 
+        [Browsable(false)]
         public Dictionary<int, double[]> mainStresses = new Dictionary<int, double[]>();
         private bool drawTension = false;
         public bool DrawTension
@@ -93,6 +114,9 @@ namespace Core.Models.Geometry.Complex.Surfaces
             }
         }
 
+        [Category("Малювання")]
+        [DisplayName("Виділений")]
+        [Description("Визначає сітку елемента")]
         public override bool IsSelected 
         {
             get => base.IsSelected;
