@@ -1,4 +1,4 @@
-﻿using Core.Models.Geometry.Complex.BrickElements;
+﻿using Core.Models.Geometry.Complex.Meshing;
 using Core.Models.Geometry.Primitive.Line;
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
@@ -8,12 +8,16 @@ using Raylib_cs;
 using System.ComponentModel;
 using System.Drawing.Design;
 using Color = Raylib_cs.Color;
-using Mesh = Core.Models.Geometry.Complex.BrickElements.Mesh;
+using Mesh = Core.Models.Geometry.Complex.Meshing.Mesh;
 
 namespace Core.Models.Geometry.Complex
 {
     public class MeshObject3D : SceneObject3D, IMeshObject
     {
+
+        [Category("Малювання")]
+        [DisplayName("Сітка")]
+        [Description("Визначає сітку елемента")]
         public IMesh Mesh { get; set; }
 
         [Category("Вигляд")]

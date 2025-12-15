@@ -1,11 +1,12 @@
 ﻿using App.Tools;
 using Core.Models.Geometry.Complex;
 using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Meshing;
 using Core.Models.Geometry.Complex.Surfaces;
 using Core.Models.Scene;
 using Raylib_cs;
 
-namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout
 {
     public class SceneTreeViewPresenter
     {
@@ -19,7 +20,8 @@ namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLay
             this.scene = scene;
             this.selectionTool = selectionTool;
 
-            //scene.OnObjectAddedToScene += AddObject;
+            // TODO: remove comment
+            scene.OnObjectAddedToScene += AddObject;
             sceneTreeView.OnSceneObjectNodeRemoved += RemoveObject;
             sceneTreeView.OnSceneObjectNodeSelected += SelectObject;
             // TODO: Implement Node Click Event

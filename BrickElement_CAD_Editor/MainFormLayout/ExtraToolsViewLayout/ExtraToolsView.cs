@@ -1,14 +1,22 @@
-﻿using App.Tools;
-using UI.MainFormLayout.ExtraToolsViewLayout;
+﻿using App.MainFormLayout.ExtraToolsViewLayout;
+using App.Tools;
+using System.Reflection;
+using System.Numerics;
 
 public class ExtraToolsView : IExtraToolsView
 {
     private Panel panel;
     private ToolStrip toolStrip;
     private ImageList imageList;
-    private bool advancedMode = false; // Toggle for toolset switch
+    private ToolStripComboBox selectionModeCombo;
 
-    ToolStripComboBox comboBox;
+    // Division container controls
+    private ToolStripControlHost divisionContainerHost;
+    private Panel divisionContainerPanel;
+    private TextBox divisionXTextBox;
+    private TextBox divisionYTextBox;
+    private TextBox divisionZTextBox;
+    private Button applyDivisionButton;
 
     public Panel Control { get { return panel; } set { panel = value; } }
 
@@ -17,237 +25,465 @@ public class ExtraToolsView : IExtraToolsView
     public event EventHandler? OnfixFaceItemClicked;
     public event EventHandler? OnSetPressureItemClicked;
     public event EventHandler? OnFemSolverItemClicked;
+    public event EventHandler? OnRemoveBrickElementItemClicked;
     public event Action<SelectionToolMode> OnSelectionModeChanged;
+    public event EventHandler<Vector3>? OnDivisionApplied;
 
     public ExtraToolsView()
     {
-        this.panel = new Panel
-        {
-            Dock = DockStyle.Fill,
-            BackColor = Color.LightGray
-        };
-
         InitializeUI();
     }
 
     private void InitializeUI()
     {
-        // Initialize ImageList for icons
-        imageList = new ImageList();
-        imageList.ImageSize = new Size(30, 30); // Increase icon size
-        imageList.Images.Add("add", Image.FromFile("D:\\Downloads\\pixil-frame-0 (3).png"));
-        imageList.Images.Add("divide", Image.FromFile("D:\\Downloads\\pixil-frame-0__5_-removebg-preview.png"));
-        imageList.Images.Add("settings", Image.FromFile("D:\\Downloads\\Adding_Cube.png"));
-        imageList.Images.Add("delete", Image.FromFile("D:\\Downloads\\Adding_Cube.png"));
-        imageList.Images.Add("toggle", Image.FromFile("D:\\Downloads\\Adding_Cube.png"));
-
-        // Create ToolStrip with increased height
-        toolStrip = new ToolStrip
+        panel = new Panel
         {
-            Dock = DockStyle.Top,
-            GripStyle = ToolStripGripStyle.Hidden,
-            BackColor = Color.WhiteSmoke,
-            ImageScalingSize = new Size(30, 30), // Increase icon size
-            AutoSize = false, // Prevent automatic resizing
-            Height = 38 // Set fixed height to accommodate larger icons
+            Dock = DockStyle.Fill,
+            BackColor = Color.FromArgb(240, 240, 240),
+            Height = 50
         };
 
-        //LoadBasicToolset(); // Load default buttons
+        CreateModernToolStrip();
+        CreateDivisionContainer();
 
         panel.Controls.Add(toolStrip);
     }
 
-    ///// <summary>
-    ///// Loads the basic set of tools in the ToolStrip
-    ///// </summary>
-    //private void LoadBasicToolset()
-    //{
-    //    toolStrip.Items.Clear();
-
-    //    // Create ToolStripComboBox
-    //    ToolStripComboBox comboBox = new ToolStripComboBox();
-
-    //    // Create ToolStripMenuItems with images
-    //    ToolStripMenuItem objectSelectionItem = new ToolStripMenuItem("Object Mode", imageList.Images["add"]);
-    //    ToolStripMenuItem componentSelectionItem = new ToolStripMenuItem("Component Mode", imageList.Images["edit"]);
-
-    //    objectSelectionItem.Click += (s, e) => MessageBox.Show("Object Mode clicked");
-    //    componentSelectionItem.Click += (s, e) => MessageBox.Show("Component Mode clicked");
-
-    //    comboBox.Items.Add(objectSelectionItem);
-    //    comboBox.Items.Add(componentSelectionItem);
-    //    comboBox.SelectedIndex = 0;
-
-    //    // Add Button
-    //    ToolStripButton addButton = new ToolStripButton("Add", imageList.Images["add"]);
-    //    addButton.Text = "";
-    //    addButton.ToolTipText = "Add a new object";
-    //    addButton.Click += (s, e) => OnAddBrickElementToFaceItemClicked.Invoke(this, e);
-
-
-    //    // Add ComboBox to ToolStrip
-    //    toolStrip.Items.Add(comboBox);
-    //    toolStrip.Items.Add(new ToolStripSeparator());
-    //    toolStrip.Items.Add(addButton);
-    //}
-
-
-    ///// <summary>
-    ///// Loads an advanced set of tools
-    ///// </summary>
-    //private void LoadAdvancedToolset()
-    //{
-    //    toolStrip.Items.Clear(); // Clear existing buttons
-
-    //    // Copy Button
-    //    ToolStripButton copyButton = new ToolStripButton("Copy", imageList.Images["add"]);
-    //    copyButton.ToolTipText = "Copy object";
-    //    copyButton.Click += (s, e) => MessageBox.Show("Copy clicked");
-
-    //    // Paste Button
-    //    ToolStripButton pasteButton = new ToolStripButton("Paste", imageList.Images["edit"]);
-    //    pasteButton.ToolTipText = "Paste object";
-    //    pasteButton.Click += (s, e) => MessageBox.Show("Paste clicked");
-
-    //    // Separator
-    //    ToolStripSeparator separator1 = new ToolStripSeparator();
-
-    //    // Delete Button
-    //    ToolStripButton deleteButton = new ToolStripButton("Delete", imageList.Images["delete"]);
-    //    deleteButton.ToolTipText = "Delete selected object";
-    //    deleteButton.Click += (s, e) => MessageBox.Show("Delete clicked");
-
-    //    // Separator
-    //    ToolStripSeparator separator2 = new ToolStripSeparator();
-
-    //    // Settings Button to revert toolset
-    //    ToolStripButton settingsButton = new ToolStripButton("Back", imageList.Images["settings"]);
-    //    settingsButton.ToolTipText = "Switch tool palette";
-    //    settingsButton.Click += (s, e) => ToggleToolset();
-
-    //    // Add all items
-    //    toolStrip.Items.Add(copyButton);
-    //    toolStrip.Items.Add(pasteButton);
-    //    toolStrip.Items.Add(separator1);
-    //    toolStrip.Items.Add(deleteButton);
-    //    toolStrip.Items.Add(separator2);
-    //    toolStrip.Items.Add(settingsButton);
-    //}
-
-    ///// <summary>
-    ///// Toggles between toolsets
-    ///// </summary>
-    //private void ToggleToolset()
-    //{
-    //    advancedMode = !advancedMode;
-    //    if (advancedMode)
-    //    {
-    //        LoadAdvancedToolset();
-    //    }
-    //    else
-    //    {
-    //        LoadBasicToolset();
-    //    }
-    //}
-
-    public void Refresh()
+    private void CreateDivisionContainer()
     {
-        panel.Invalidate();
+        // Create a panel to host the division controls
+        divisionContainerPanel = new Panel
+        {
+            Height = 35,
+            Width = 400,
+            BackColor = Color.Transparent,
+            Padding = new Padding(0)
+        };
+
+        var flowPanel = new FlowLayoutPanel
+        {
+            FlowDirection = FlowDirection.LeftToRight,
+            AutoSize = true,
+            WrapContents = false,
+            Dock = DockStyle.Fill,
+            Padding = new Padding(0),
+            Margin = new Padding(0)
+        };
+
+        // Division label
+        var divisionLabel = new Label
+        {
+            Text = "Division:",
+            AutoSize = true,
+            Font = new Font("Segoe UI", 8.5F),
+            ForeColor = Color.FromArgb(80, 80, 80),
+            Margin = new Padding(5, 8, 5, 0),
+            TextAlign = ContentAlignment.MiddleLeft
+        };
+        flowPanel.Controls.Add(divisionLabel);
+
+        // X input
+        flowPanel.Controls.Add(CreateCompactDivisionInput("X:", out divisionXTextBox));
+
+        // Y input
+        flowPanel.Controls.Add(CreateCompactDivisionInput("Y:", out divisionYTextBox));
+
+        // Z input
+        flowPanel.Controls.Add(CreateCompactDivisionInput("Z:", out divisionZTextBox));
+
+        // Apply button
+        applyDivisionButton = new Button
+        {
+            Text = "Apply",
+            Width = 70,
+            Height = 28,
+            FlatStyle = FlatStyle.Flat,
+            BackColor = Color.FromArgb(0, 120, 215),
+            ForeColor = Color.White,
+            Font = new Font("Segoe UI", 8.5F),
+            Cursor = Cursors.Hand,
+            Margin = new Padding(8, 3, 0, 0)
+        };
+
+        applyDivisionButton.FlatAppearance.BorderSize = 0;
+        applyDivisionButton.Click += ApplyDivisionButton_Click;
+
+        // Hover effects
+        applyDivisionButton.MouseEnter += (s, e) => applyDivisionButton.BackColor = Color.FromArgb(0, 100, 195);
+        applyDivisionButton.MouseLeave += (s, e) => applyDivisionButton.BackColor = Color.FromArgb(0, 120, 215);
+
+        flowPanel.Controls.Add(applyDivisionButton);
+
+        divisionContainerPanel.Controls.Add(flowPanel);
+
+        // Create ToolStripControlHost to embed the panel in ToolStrip
+        divisionContainerHost = new ToolStripControlHost(divisionContainerPanel)
+        {
+            Margin = new Padding(5, 0, 5, 0),
+            AutoSize = false,
+            Width = 400
+        };
+    }
+
+    private Panel CreateCompactDivisionInput(string labelText, out TextBox textBox)
+    {
+        var container = new Panel
+        {
+            Width = 60,
+            Height = 30,
+            Margin = new Padding(3, 3, 3, 0)
+        };
+
+        var label = new Label
+        {
+            Text = labelText,
+            AutoSize = true,
+            Location = new Point(0, 6),
+            Font = new Font("Segoe UI", 8F),
+            ForeColor = Color.FromArgb(80, 80, 80)
+        };
+
+        textBox = new TextBox
+        {
+            Width = 40,
+            Location = new Point(18, 3),
+            Font = new Font("Segoe UI", 8.5F),
+            Text = "1",
+            TextAlign = HorizontalAlignment.Center,
+            BorderStyle = BorderStyle.FixedSingle
+        };
+
+        // Only allow numeric input
+        textBox.KeyPress += (s, e) =>
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        };
+
+        container.Controls.Add(label);
+        container.Controls.Add(textBox);
+
+        return container;
+    }
+
+    private void ApplyDivisionButton_Click(object? sender, EventArgs e)
+    {
+        int x = int.Parse(divisionXTextBox.Text);
+        int y = int.Parse(divisionYTextBox.Text);
+        int z = int.Parse(divisionZTextBox.Text);
+
+        if (x < 1 || y < 1 || z < 1)
+        {
+            MessageBox.Show("Division values must be at least 1", "Invalid Input",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        Vector3 divisionValues = new Vector3(x, y, z);
+        OnDivisionApplied?.Invoke(this, divisionValues);
+
+        //try
+        //{
+        //    int x = int.Parse(divisionXTextBox.Text);
+        //    int y = int.Parse(divisionYTextBox.Text);
+        //    int z = int.Parse(divisionZTextBox.Text);
+
+        //    if (x < 1 || y < 1 || z < 1)
+        //    {
+        //        MessageBox.Show("Division values must be at least 1", "Invalid Input",
+        //            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //        return;
+        //    }
+
+        //    Vector3 divisionValues = new Vector3(x, y, z);
+        //    OnDivisionApplied?.Invoke(this, divisionValues);
+        //}
+        //catch (FormatException)
+        //{
+        //    MessageBox.Show("Please enter valid numeric values", "Invalid Input",
+        //        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //}
+    }
+
+    public void ShowDivisionContainer()
+    {
+        if (divisionContainerHost != null && !toolStrip.Items.Contains(divisionContainerHost))
+        {
+            // Reset to default values
+            divisionXTextBox.Text = "1";
+            divisionYTextBox.Text = "1";
+            divisionZTextBox.Text = "1";
+
+            // Add division container after the separator, before other buttons
+            // Find the position after "Divide Element" button
+            int insertIndex = FindInsertIndexForDivision();
+
+            if (insertIndex >= 0)
+            {
+                toolStrip.Items.Insert(insertIndex, divisionContainerHost);
+            }
+        }
+    }
+
+    public void HideDivisionContainer()
+    {
+        if (divisionContainerHost != null && toolStrip.Items.Contains(divisionContainerHost))
+        {
+            toolStrip.Items.Remove(divisionContainerHost);
+        }
+    }
+
+    private int FindInsertIndexForDivision()
+    {
+        // Find position after "Divide Element" button and its separator
+        for (int i = 0; i < toolStrip.Items.Count; i++)
+        {
+            if (toolStrip.Items[i] is ToolStripButton btn &&
+                btn.ToolTipText == "Divide selected brick element")
+            {
+                // Insert after the next separator
+                for (int j = i + 1; j < toolStrip.Items.Count; j++)
+                {
+                    if (toolStrip.Items[j] is ToolStripSeparator)
+                    {
+                        return j + 1;
+                    }
+                }
+                return i + 1;
+            }
+        }
+        return toolStrip.Items.Count;
+    }
+
+    private void CreateModernToolStrip()
+    {
+        toolStrip = new ToolStrip
+        {
+            Dock = DockStyle.Fill,
+            GripStyle = ToolStripGripStyle.Hidden,
+            BackColor = Color.FromArgb(250, 250, 250),
+            ForeColor = Color.FromArgb(60, 60, 60),
+            ImageScalingSize = new Size(20, 20),
+            AutoSize = false,
+            Height = 45,
+            Padding = new Padding(8, 5, 8, 5),
+            Font = new Font("Segoe UI", 9F, FontStyle.Regular),
+            RenderMode = ToolStripRenderMode.Professional
+        };
+
+        toolStrip.Renderer = new ModernToolStripRenderer();
+        toolStrip.MouseEnter += (s, e) => toolStrip.Focus();
+
+        InitializeImageList();
+    }
+
+    private void InitializeImageList()
+    {
+        imageList = new ImageList();
+        imageList.ImageSize = new Size(20, 20);
+        imageList.ColorDepth = ColorDepth.Depth32Bit;
+
+        try
+        {
+            imageList.Images.Add("select", LoadIconOrPlaceholder("ic_select"));
+            imageList.Images.Add("add", LoadIconOrPlaceholder("ic_add"));
+            imageList.Images.Add("divide", LoadIconOrPlaceholder("ic_add"));
+            imageList.Images.Add("fix", LoadIconOrPlaceholder("ic_add"));
+            imageList.Images.Add("pressure", LoadIconOrPlaceholder("ic_add"));
+            imageList.Images.Add("solve", LoadIconOrPlaceholder("ic_add"));
+            imageList.Images.Add("remove", LoadIconOrPlaceholder("ic_add"));
+        }
+        catch
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                imageList.Images.Add(CreatePlaceholderIcon(20, 20));
+            }
+        }
+    }
+
+    private Image LoadIconOrPlaceholder(string iconName)
+    {
+        try
+        {
+            PropertyInfo property = typeof(App.Properties.Images).GetProperty(iconName,
+                                                                              BindingFlags.Static |
+                                                                              BindingFlags.NonPublic |
+                                                                              BindingFlags.Public);
+            return (Image)property?.GetValue(null, null);
+        }
+        catch (Exception e)
+        {
+            return CreatePlaceholderIcon(20, 20);
+        }
+    }
+
+    private Image CreatePlaceholderIcon(int width, int height)
+    {
+        Bitmap icon = new Bitmap(width, height);
+        using (Graphics g = Graphics.FromImage(icon))
+        {
+            g.Clear(Color.Transparent);
+            using (var brush = new SolidBrush(Color.FromArgb(100, 100, 100)))
+            {
+                g.FillEllipse(brush, 2, 2, width - 4, height - 4);
+            }
+        }
+        return icon;
     }
 
     public void SetSelectionTools()
     {
         toolStrip.Items.Clear();
 
-        // Create ToolStripComboBox
-        comboBox = new ToolStripComboBox();
-        comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+        CreateSelectionModeDropdown();
+        AddSeparator();
 
-        // Create ToolStripMenuItems with images
-        ToolStripMenuItem surfaceSelection = new ToolStripMenuItem("Surface Mode", imageList.Images["add"]);
-        ToolStripMenuItem objectSelectionItem = new ToolStripMenuItem("Object Mode", imageList.Images["add"]);
-        ToolStripMenuItem componentSelectionItem = new ToolStripMenuItem("Component Mode", imageList.Images["edit"]);
+        CreateToolButton("Add Element", imageList.Images["add"], "Add brick element to selected face",
+            (s, e) => OnAddBrickElementToFaceItemClicked?.Invoke(this, e));
 
-        surfaceSelection.Click += (s, e) => OnSelectionModeChanged?.Invoke(SelectionToolMode.SURFACE_SELECTION);
-        objectSelectionItem.Click += (s, e) => OnSelectionModeChanged?.Invoke(SelectionToolMode.OBJECT_SELECTION);
-        componentSelectionItem.Click += (s, e) => OnSelectionModeChanged?.Invoke(SelectionToolMode.COMPONENT_SELECTION);
+        CreateToolButton("Remove Element", imageList.Images["remove"], "Remove brick element",
+            (s, e) => OnRemoveBrickElementItemClicked?.Invoke(this, e));
 
-        comboBox.Items.Add(surfaceSelection);
-        comboBox.Items.Add(objectSelectionItem);
-        comboBox.Items.Add(componentSelectionItem);
+        CreateToolButton("Divide Element", imageList.Images["divide"], "Divide selected brick element",
+            (s, e) => OnDivideBrickElementItemClicked?.Invoke(this, e));
 
-        // Handle selection change
-        comboBox.SelectedIndexChanged += (s, e) =>
+        AddSeparator();
+
+        CreateToolButton("Fix Face", imageList.Images["fix"], "Fix face for FEM analysis",
+            (s, e) => OnfixFaceItemClicked?.Invoke(this, e));
+
+        CreateToolButton("Set Pressure", imageList.Images["pressure"], "Apply pressure to face",
+            (s, e) => OnSetPressureItemClicked?.Invoke(this, e));
+
+        AddSeparator();
+
+        CreateToolButton("FEM Solver", imageList.Images["solve"], "Run FEM analysis",
+            (s, e) => OnFemSolverItemClicked?.Invoke(this, e));
+    }
+
+    private void CreateSelectionModeDropdown()
+    {
+        var selectionLabel = new ToolStripLabel("Виділення:");
+        selectionLabel.ForeColor = Color.FromArgb(80, 80, 80);
+        selectionLabel.Margin = new Padding(5, 0, 2, 0);
+        toolStrip.Items.Add(selectionLabel);
+
+        selectionModeCombo = new ToolStripComboBox
         {
-            switch (comboBox.SelectedIndex)
-            {
-                case 0:
-                    OnSelectionModeChanged?.Invoke(SelectionToolMode.SURFACE_SELECTION);
-                    break;
-                case 1:
-                    OnSelectionModeChanged?.Invoke(SelectionToolMode.OBJECT_SELECTION);
-                    break;
-                case 2:
-                    OnSelectionModeChanged?.Invoke(SelectionToolMode.COMPONENT_SELECTION);
-                    break;
-            }
+            DropDownStyle = ComboBoxStyle.DropDownList,
+            Width = 100,
+            FlatStyle = FlatStyle.System,
+            Font = new Font("Segoe UI", 8.5F)
         };
 
-        // Set default selection
-        comboBox.SelectedIndex = 2;
-        toolStrip.Items.Add(comboBox);
+        selectionModeCombo.Items.AddRange(new string[]
+        {
+            "Поверхня",
+            "Шестигранник",
+            "Компонент"
+        });
 
+        selectionModeCombo.SelectedIndex = 2;
 
-        // Add Button
-        ToolStripButton addButton = new ToolStripButton("Add", imageList.Images["add"]);
-        addButton.Text = "";
-        addButton.ToolTipText = "Add a new object";
-        addButton.Click += (s, e) => OnAddBrickElementToFaceItemClicked?.Invoke(this, e);
-        toolStrip.Items.Add(new ToolStripSeparator());
-        toolStrip.Items.Add(addButton);
+        selectionModeCombo.SelectedIndexChanged += (s, e) =>
+        {
+            var mode = selectionModeCombo.SelectedIndex switch
+            {
+                0 => SelectionToolMode.SURFACE_SELECTION,
+                1 => SelectionToolMode.OBJECT_SELECTION,
+                2 => SelectionToolMode.COMPONENT_SELECTION,
+                _ => SelectionToolMode.COMPONENT_SELECTION
+            };
+            OnSelectionModeChanged?.Invoke(mode);
+        };
 
-        // Divide Button
-        ToolStripButton divideBrickElementButton = new ToolStripButton("Divide", imageList.Images["divide"]);
-        divideBrickElementButton.Text = "";
-        divideBrickElementButton.ToolTipText = "Divide selected brick element";
-        divideBrickElementButton.Click += (s, e) => OnDivideBrickElementItemClicked?.Invoke(this, e);
-        toolStrip.Items.Add(new ToolStripSeparator());
-        toolStrip.Items.Add(divideBrickElementButton);
+        toolStrip.Items.Add(selectionModeCombo);
+    }
 
-        // Fix Face Button
-        ToolStripButton fixFaceButton = new ToolStripButton("Fix", imageList.Images["divide"]);
-        fixFaceButton.Text = "";
-        fixFaceButton.ToolTipText = "Fix Face for FEM algorithm";
-        fixFaceButton.Click += (s, e) => OnfixFaceItemClicked?.Invoke(this, e);
-        toolStrip.Items.Add(new ToolStripSeparator());
-        toolStrip.Items.Add(fixFaceButton);
+    private void CreateToolButton(string text, Image image, string tooltip, EventHandler clickHandler)
+    {
+        var button = new ToolStripButton
+        {
+            Image = image,
+            ToolTipText = tooltip,
+            DisplayStyle = ToolStripItemDisplayStyle.Image,
+            ImageAlign = ContentAlignment.MiddleCenter,
+            Margin = new Padding(2),
+            AutoSize = false,
+            Size = new Size(32, 32)
+        };
 
-        // Pressure Face Button
-        ToolStripButton pressureButton = new ToolStripButton("Pressure", imageList.Images["divide"]);
-        pressureButton.Text = "";
-        pressureButton.ToolTipText = "Set face pressure for FEM algorithm";
-        pressureButton.Click += (s, e) => OnSetPressureItemClicked?.Invoke(this, e);
-        toolStrip.Items.Add(new ToolStripSeparator());
-        toolStrip.Items.Add(pressureButton);
+        button.Click += clickHandler;
+        button.MouseEnter += (s, e) => button.BackColor = Color.FromArgb(230, 240, 250);
+        button.MouseLeave += (s, e) => button.BackColor = Color.Transparent;
 
+        toolStrip.Items.Add(button);
+    }
 
-        // FEM Solver Button
-        ToolStripButton femSolverButton = new ToolStripButton("FEM Solver", imageList.Images["add"]);
-        femSolverButton.Text = "";
-        femSolverButton.ToolTipText = "Solve using FEM algorithm";
-        femSolverButton.Click += (s, e) => OnFemSolverItemClicked?.Invoke(this, e);
-        toolStrip.Items.Add(new ToolStripSeparator());
-        toolStrip.Items.Add(femSolverButton);
+    private void AddSeparator()
+    {
+        var separator = new ToolStripSeparator
+        {
+            Margin = new Padding(5, 0, 5, 0)
+        };
+        toolStrip.Items.Add(separator);
     }
 
     public void ChangeSelectionMode(SelectionToolMode mode)
     {
-        //comboBox.SelectedIndex = (mode == SelectionToolMode.OBJECT_SELECTION) ? 0 : 1;
-        switch (mode)
+        if (selectionModeCombo != null)
         {
-            case SelectionToolMode.SURFACE_SELECTION: comboBox.SelectedIndex = 0; break;
-            case SelectionToolMode.OBJECT_SELECTION: comboBox.SelectedIndex = 1; break;
-            case SelectionToolMode.COMPONENT_SELECTION: comboBox.SelectedIndex = 2; break;
+            selectionModeCombo.SelectedIndex = mode switch
+            {
+                SelectionToolMode.SURFACE_SELECTION => 0,
+                SelectionToolMode.OBJECT_SELECTION => 1,
+                SelectionToolMode.COMPONENT_SELECTION => 2,
+                _ => 2
+            };
+        }
+    }
+
+    public void Refresh()
+    {
+        panel.Invalidate();
+    }
+
+    private class ModernToolStripRenderer : ToolStripProfessionalRenderer
+    {
+        protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
+        {
+            // Remove default border
+        }
+
+        protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
+        {
+            var button = e.Item as ToolStripButton;
+            if (button?.Pressed == true)
+            {
+                using (var brush = new SolidBrush(Color.FromArgb(200, 230, 255)))
+                {
+                    e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
+                }
+            }
+            else if (button?.Selected == true)
+            {
+                using (var brush = new SolidBrush(Color.FromArgb(230, 240, 250)))
+                {
+                    e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
+                }
+            }
+        }
+
+        protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
+        {
+            using (var pen = new Pen(Color.FromArgb(220, 220, 220)))
+            {
+                var bounds = e.Item.Bounds;
+                e.Graphics.DrawLine(pen, bounds.Width / 2, 5, bounds.Width / 2, bounds.Height - 5);
+            }
         }
     }
 }

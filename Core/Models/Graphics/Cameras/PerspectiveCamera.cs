@@ -15,7 +15,7 @@ namespace Core.Models.Graphics.Cameras
         public Vector3 Up { get; set; }
         public float FovY { get; set; }
         public CameraProjection Projection { get; set; }
-        public float ZoomMax { get; set; } = 50f;
+        public float ZoomMax { get; set; } = 100f;
         public float ZoomMin { get; set; } = 0f;
         public float DistanceToTarget { get { return distanceToTarget; } set { distanceToTarget = value; } }
 

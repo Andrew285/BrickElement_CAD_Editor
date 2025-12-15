@@ -1,4 +1,5 @@
-﻿using Core.Models.Graphics.Rendering;
+﻿using Core.Models.Geometry.Primitive.Plane;
+using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Resources;
 using Core.Services;
@@ -7,7 +8,29 @@ using System.Numerics;
 
 namespace Core.Models.Geometry.Primitive.Point
 {
-    public abstract class BasePoint3D : SceneObject3D, IPoint3D, IComparable<BasePoint3D>
+    public class Vector3EqualityComparer : IEqualityComparer<Vector3>
+    {
+        private const float EPSILON = 0.01f;
+
+        public bool Equals(Vector3 v1, Vector3 v2)
+        {
+            return Math.Abs(v1.X - v2.X) < EPSILON &&
+                   Math.Abs(v1.Y - v2.Y) < EPSILON &&
+                   Math.Abs(v1.Z - v2.Z) < EPSILON;
+        }
+
+        public int GetHashCode(Vector3 v)
+        {
+            // Round to a grid to ensure nearby points have the same hash
+            int x = (int)Math.Round(v.X / EPSILON);
+            int y = (int)Math.Round(v.Y / EPSILON);
+            int z = (int)Math.Round(v.Z / EPSILON);
+            return HashCode.Combine(x, y, z);
+        }
+    }
+
+
+    public class BasePoint3D : SceneObject3D, IPoint3D, IComparable<BasePoint3D>
     {
         public const float MIN_RADIUS = 0.01f;
         public const float MAX_RADIS = 0.1f;
@@ -39,14 +62,18 @@ namespace Core.Models.Geometry.Primitive.Point
         public float Radius { get; set; } = 0.1f;
 
 
+        public Guid SuperElementId { get; set; }
+
         public BasePoint3D() : base()
         {
         }
 
-        public BasePoint3D(BasePoint3D point)
+        public BasePoint3D(Vector3 v)
         {
-            this.Position = point.Position;
+            this.Position = v;
         }
+
+        public BasePoint3D(BasePoint3D point) : this(point.Position) { }
 
         public override void Draw(IRenderer renderer)
         {
@@ -69,7 +96,7 @@ namespace Core.Models.Geometry.Primitive.Point
             return String.Format("({0}, {1}, {2})", X, Y, Z);
         }
 
-        public abstract BasePoint3D Clone();
+        //public abstract BasePoint3D Clone();
 
         public int CompareTo(BasePoint3D other)
         {
@@ -80,18 +107,37 @@ namespace Core.Models.Geometry.Primitive.Point
             return Z.CompareTo(other.Z);
         }
 
-        public override int GetHashCode() 
+        public override int GetHashCode()
         {
-            return HashCode.Combine(X, Y, Z);
+            const float EPSILON = 1e-5f;
+            // Округлюємо до grid, щоб близькі точки мали однаковий хеш
+            int x = (int)Math.Round(Position.X / EPSILON);
+            int y = (int)Math.Round(Position.Y / EPSILON);
+            int z = (int)Math.Round(Position.Z / EPSILON);
+            return HashCode.Combine(x, y, z);
+
+
+            //var a = HashCode.Combine(X, Y, Z);
+            //return a;
             //return ID.GetHashCode();
             //return HashCode.Combine(ID, X, Y, Z);
         }
+
+        //public override bool Equals(object obj)
+        //{
+        //    if (obj is BasePoint3D other)
+        //    {
+        //        return Math.Abs(X - other.X) < 0.001 && Math.Abs(Y - other.Y) < 0.001 && Math.Abs(Z - other.Z) < 0.001;
+        //    }
+        //    return false;
+        //}
 
         public override bool Equals(object obj)
         {
             if (obj is BasePoint3D other)
             {
-                return X == other.X && Y == other.Y && Z == other.Z;
+                const float EPSILON = 1e-5f; // 0.00001
+                return Vector3.Distance(Position, other.Position) < EPSILON;
             }
             return false;
         }
@@ -118,6 +164,16 @@ namespace Core.Models.Geometry.Primitive.Point
                     default: throw new ArgumentException("Index argument is invalid");
                 }
             }
+        }
+
+        public static BasePoint3D operator +(BasePoint3D p1, BasePoint3D p2)
+        {
+            return new BasePoint3D(p1.ToVector3() + p2.ToVector3());
+        }
+
+        public static BasePoint3D operator -(BasePoint3D p1, BasePoint3D p2)
+        {
+            return new BasePoint3D(p1.ToVector3() - p2.ToVector3());
         }
     }
 
@@ -151,4 +207,7 @@ namespace Core.Models.Geometry.Primitive.Point
             }
         }
     }
+    
 }
+
+

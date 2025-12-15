@@ -1,4 +1,4 @@
-﻿namespace UI.Utils.ViewLayout.ControlUtil
+﻿namespace App.Utils.ViewLayout.ControlUtil
 {
     public interface IView<T> where T : Control
     {

@@ -3,6 +3,7 @@ using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Plane.Face;
 using Core.Models.Geometry.Primitive.Point;
 using System.Numerics;
+using System.Windows.Forms.VisualStyles;
 
 namespace Core.Models.Geometry.Complex.BrickElements
 {
@@ -11,92 +12,173 @@ namespace Core.Models.Geometry.Complex.BrickElements
         public static TwentyNodeBrickElement? CreateFrom(BasePlane3D face, TwentyNodeBrickElement be)
         {
             List<BasePoint3D> vertices = FaceManager.GetFacePoints(face.FaceType, be.Mesh.VerticesDictionary.Values);
-            if (vertices.Count == 8)
+            Vector3 normal = face.CalculateNormal();
+
+            //if (vertices.Count == 8)
+            //{
+            //    Vector3 normal = face.CalculateNormal();
+
+            //    List<BasePoint3D> bottomPoints = new List<BasePoint3D>();
+            //    List<BasePoint3D> upPoints = new List<BasePoint3D>();
+            //    List<BasePoint3D> middlePoints = new List<BasePoint3D>();
+
+            //    foreach (var v in face.correctOrderVertices)
+            //    {
+            //        bottomPoints.Add(v);
+            //    }
+
+            //    foreach (var v in face.correctOrderVertices)
+            //    {
+            //        BasePoint3D newP = new BasePoint3D(v.Position + normal * 2);
+            //        upPoints.Add(newP);
+            //    }
+
+            //    BasePoint3D mP1 = new BasePoint3D((bottomPoints[0].Position + upPoints[0].Position) / 2);
+            //    BasePoint3D mP2 = new BasePoint3D((bottomPoints[1].Position + upPoints[1].Position) / 2);
+            //    BasePoint3D mP3 = new BasePoint3D((bottomPoints[2].Position + upPoints[2].Position) / 2);
+            //    BasePoint3D mP4 = new BasePoint3D((bottomPoints[3].Position + upPoints[3].Position) / 2);
+
+            //    middlePoints.AddRange( new List<BasePoint3D> { mP1, mP2, mP3, mP4 });
+
+
+            //    List<BasePoint3D> resultPoints = new List<BasePoint3D>()
+            //    {
+            //        bottomPoints[0],
+            //        bottomPoints[1],
+            //        bottomPoints[2],
+            //        bottomPoints[3],
+
+            //        upPoints[0],
+            //        upPoints[1],
+            //        upPoints[2],
+            //        upPoints[3],
+
+            //        bottomPoints[4],
+            //        bottomPoints[5],
+            //        bottomPoints[6],
+            //        bottomPoints[7],
+
+            //        middlePoints[0],
+            //        middlePoints[1],
+            //        middlePoints[2],
+            //        middlePoints[3],
+
+            //        upPoints[4],
+            //        upPoints[5],
+            //        upPoints[6],
+            //        upPoints[7],
+            //    };
+
+            //    return CreateFrom(resultPoints);
+
+
+            FaceType faceType = face.FaceType;
+            FaceType secondFaceType = FaceManager.GetOppositeFaceOf(faceType);
+
+            List<int> firstFaceVerticesIndices = FaceManager.GetFaceIndices(secondFaceType);
+            List<int> secondFaceVerticesIndices = FaceManager.GetFaceIndices(faceType);
+            List<int> middleFacesVerticesIndices = FaceManager.GetIndicesBetweenFaces(faceType, secondFaceType);
+
+            List<BasePoint3D> secondPlanePoints = new List<BasePoint3D>();
+            BasePoint3D[] resultVertices = new BasePoint3D[20];
+            for (int i = 0; i < vertices.Count; i++)
             {
-                Vector3 normal = face.CalculateNormal();
-                FaceType faceType = face.FaceType;
-                FaceType secondFaceType = FaceManager.GetOppositeFaceOf(faceType);
+                //if (vertex.PointType != Point3D.Type.Corner)
+                //{
+                //    continue;
+                //}
 
-                List<int> firstFaceVerticesIndices = FaceManager.GetFaceIndices(secondFaceType);
-                List<int> secondFaceVerticesIndices = FaceManager.GetFaceIndices(faceType);
-                List<int> middleFacesVerticesIndices = FaceManager.GetIndicesBetweenFaces(faceType, secondFaceType);
+                BasePoint3D vertex = vertices[i];
 
-                List<BasePoint3D> secondPlanePoints = new List<BasePoint3D>();
-                BasePoint3D[] resultVertices = new BasePoint3D[20];
-                for (int i = 0; i < vertices.Count; i++)
+                int firstFaceLocalIndex = firstFaceVerticesIndices[i];
+                resultVertices[firstFaceLocalIndex] = vertex;
+                int positionIndex = firstFaceVerticesIndices.IndexOf(firstFaceLocalIndex);
+
+                if (positionIndex == -1)
                 {
-                    //if (vertex.PointType != Point3D.Type.Corner)
-                    //{
-                    //    continue;
-                    //}
-
-                    BasePoint3D vertex = vertices[i];
-
-                    int firstFaceLocalIndex = firstFaceVerticesIndices[i];
-                    resultVertices[firstFaceLocalIndex] = vertex;
-                    int positionIndex = firstFaceVerticesIndices.IndexOf(firstFaceLocalIndex);
-
-                    if (positionIndex == -1)
-                    {
-                        throw new Exception("Incorrect Local Index");
-                    }
-
-                    int secondFaceLocalIndex = secondFaceVerticesIndices[positionIndex];
-                    if (secondFaceLocalIndex == -1)
-                    {
-                        throw new Exception("Incorrect Local Index");
-                    }
-
-                    BasePoint3D secondVertex = new Point3D(vertex);
-                    //secondVertex.LocalIndex = secondFaceLocalIndex;
-                    secondVertex.Position += normal * 2f;
-                    resultVertices[secondFaceLocalIndex] = secondVertex;
-
-                    //secondPlanePoints.Add(secondVertex);
-
-
-                    //if (vertex.PointType != Point3D.Type.Corner)
-                    //{
-                    //    continue;
-                    //}
-
-                    // middle point
-                    if (i % 2 == 0)
-                    {
-                        int middleIndex = i / 2;
-                        int localIndex = middleFacesVerticesIndices[middleIndex];
-
-                        BasePoint3D middleVertex = new Point3D(vertex);
-                        middleVertex.Position += normal * 1f;
-                        resultVertices[localIndex] = middleVertex;
-                    }
+                    throw new Exception("Incorrect Local Index");
                 }
 
-                TwentyNodeBrickElement? resultBrickElement = CreateFrom(resultVertices.ToList());
-                if (resultBrickElement != null)
+                int secondFaceLocalIndex = secondFaceVerticesIndices[positionIndex];
+                if (secondFaceLocalIndex == -1)
                 {
-                    SetParent(resultBrickElement);
+                    throw new Exception("Incorrect Local Index");
                 }
-                return resultBrickElement;
+
+                BasePoint3D secondVertex = new Point3D(vertex);
+                //secondVertex.LocalIndex = secondFaceLocalIndex;
+                secondVertex.Position += normal * 2f;
+                resultVertices[secondFaceLocalIndex] = secondVertex;
+
+                //secondPlanePoints.Add(secondVertex);
+
+
+                //if (vertex.PointType != Point3D.Type.Corner)
+                //{
+                //    continue;
+                //}
+
+                // middle point
+                if (i % 2 == 0)
+                {
+                    int middleIndex = i / 2;
+                    int localIndex = middleFacesVerticesIndices[middleIndex];
+
+                    BasePoint3D middleVertex = new Point3D(vertex);
+                    middleVertex.Position += normal * 1f;
+                    resultVertices[localIndex] = middleVertex;
+                }
             }
 
-            return null;
+            TwentyNodeBrickElement? resultBrickElement = CreateFrom(resultVertices.ToList());
+            if (resultBrickElement != null)
+            {
+                SetParent(resultBrickElement);
+            }
+            return resultBrickElement;
         }
 
-        public static TwentyNodeBrickElement? CreateFrom(List<BasePoint3D> vertices)
+        public static TwentyNodeBrickElement? CreateFrom(List<BasePoint3D> vertices, Guid? id = null)
         {
             if (vertices.Count == 0)
             {
                 return null;
             }
-            
+
+            if (vertices.Count == 8)
+            {
+                List<BasePoint3D> resultPoints = new List<BasePoint3D>();
+                resultPoints.AddRange(vertices);
+
+                // Bottom
+                resultPoints.Add(new BasePoint3D((resultPoints[0].Position + resultPoints[1].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[1].Position + resultPoints[2].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[2].Position + resultPoints[3].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[3].Position + resultPoints[0].Position) / 2));
+
+                // Middle
+                resultPoints.Add(new BasePoint3D((resultPoints[0].Position + resultPoints[4].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[1].Position + resultPoints[5].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[2].Position + resultPoints[6].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[3].Position + resultPoints[7].Position) / 2));
+
+                // Top
+                resultPoints.Add(new BasePoint3D((resultPoints[4].Position + resultPoints[5].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[5].Position + resultPoints[6].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[6].Position + resultPoints[7].Position) / 2));
+                resultPoints.Add(new BasePoint3D((resultPoints[7].Position + resultPoints[4].Position) / 2));
+
+                return CreateFrom(resultPoints, id);
+            }
+
             if (vertices.Count == 20)
             {
                 List<BasePoint3D> centerVertices = InitializeCenterVertices(vertices);
                 List<BaseLine3D> edges = InitializeEdges(vertices);
                 List<BasePlane3D> faces = InitializeFaces(vertices, centerVertices);
 
-                return new TwentyNodeBrickElement(vertices, centerVertices, edges, faces);
+                TwentyNodeBrickElement be = new TwentyNodeBrickElement(vertices, centerVertices, edges, faces, id);
+                return be;
             }
 
             return null;
@@ -170,188 +252,12 @@ namespace Core.Models.Geometry.Complex.BrickElements
         {
             List<BasePlane3D> faces = new List<BasePlane3D>
             {
-                ///       FRONT FACE
-                /// 
-                ///     4 - - 16- - 5
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     12- - 0 - - 13
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     0 - - 8 - - 1
-
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[0], Vertices[12], Vertices[8]),
-                    new TrianglePlane3D(Vertices[12], Vertices[0], Vertices[8]),
-
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[0], Vertices[8], Vertices[13]),
-                    new TrianglePlane3D(Vertices[8], Vertices[1], Vertices[13]),
-
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[0], Vertices[13], Vertices[16]),
-                    new TrianglePlane3D(Vertices[16], Vertices[13], Vertices[5]),
-
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[0], Vertices[16], Vertices[12]),
-                    new TrianglePlane3D(Vertices[16], Vertices[4], Vertices[12]),
-                },
-                new List<BasePoint3D>() { Vertices[0], Vertices[1], Vertices[5], Vertices[4], Vertices[8], Vertices[13], Vertices[16], Vertices[12] }),
-
-
-                ///       RIGHT FACE
-                /// 
-                ///     5 - - 17- - 6
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     13- - 1 - - 14
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     1 - - 9 - - 2
-                ///     
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[1], Vertices[13], Vertices[9]),
-                    new TrianglePlane3D(Vertices[13], Vertices[1], Vertices[9]),
-
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[1], Vertices[9], Vertices[14]),
-                    new TrianglePlane3D(Vertices[14], Vertices[9], Vertices[2]),
-
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[1], Vertices[14], Vertices[17]),
-                    new TrianglePlane3D(Vertices[14], Vertices[6], Vertices[17]),
-
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[1], Vertices[17], Vertices[13]),
-                    new TrianglePlane3D(Vertices[17], Vertices[5], Vertices[13]),
-                },
-                new List<BasePoint3D>() { Vertices[1], Vertices[2], Vertices[6], Vertices[5], Vertices[9], Vertices[14], Vertices[17], Vertices[13] }),
-
-
-                ///       BACK FACE
-                /// 
-                ///     6 - - 18 -- 7
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     14- - 2 - - 15
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     2 - - 10 -- 3
-                ///     
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[2], Vertices[14], Vertices[10]),
-                    new TrianglePlane3D(Vertices[14], Vertices[2], Vertices[10]),
-
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[2], Vertices[10], Vertices[15]),
-                    new TrianglePlane3D(Vertices[15], Vertices[10], Vertices[3]),
-
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[2], Vertices[15], Vertices[18]),
-                    new TrianglePlane3D(Vertices[18], Vertices[15], Vertices[7]),
-
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[2], Vertices[18], Vertices[14]),
-                    new TrianglePlane3D(Vertices[18], Vertices[6], Vertices[14]),
-                },
-                new List<BasePoint3D>() { Vertices[2], Vertices[3], Vertices[7], Vertices[6], Vertices[10], Vertices[15], Vertices[18], Vertices[14] }),
-
-                
-                ///       LEFT FACE
-                /// 
-                ///     7 - - 19 -- 4
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     15 -- 3 -- 12
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     3 - - 11 -- 0
-                ///     
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[3], Vertices[15], Vertices[11]),
-                    new TrianglePlane3D(Vertices[15], Vertices[3], Vertices[11]),
-
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[3], Vertices[11], Vertices[12]),
-                    new TrianglePlane3D(Vertices[12], Vertices[11], Vertices[0]),
-
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[3], Vertices[12], Vertices[19]),
-                    new TrianglePlane3D(Vertices[19], Vertices[12], Vertices[4]),
-
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[3], Vertices[19], Vertices[15]),
-                    new TrianglePlane3D(Vertices[19], Vertices[7], Vertices[15]),
-                },
-                new List<BasePoint3D>() { Vertices[3], Vertices[0], Vertices[4], Vertices[7], Vertices[11], Vertices[12], Vertices[19], Vertices[15] }),
-
-                ///       BOTTOM FACE
-                /// 
-                ///     2 - - 10 -- 3
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     9 - - 4 - - 11
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     1 - - 8 - - 0
-                ///  
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[4], Vertices[9], Vertices[8]),
-                    new TrianglePlane3D(Vertices[9], Vertices[1], Vertices[8]),
-
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[4], Vertices[8], Vertices[11]),
-                    new TrianglePlane3D(Vertices[11], Vertices[8], Vertices[0]),
-
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[4], Vertices[11], Vertices[10]),
-                    new TrianglePlane3D(Vertices[11], Vertices[3], Vertices[10]),
-
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[4], Vertices[10], Vertices[9]),
-                    new TrianglePlane3D(Vertices[9], Vertices[10], Vertices[2]),
-                },
-                new List<BasePoint3D>() { Vertices[1], Vertices[0], Vertices[3], Vertices[2], Vertices[8], Vertices[11], Vertices[10], Vertices[9] }),
-
-                ///       TOP FACE
-                /// 
-                ///     7 - - 18 -- 6
-                ///     |   / | \   |
-                ///     | /   |   \ |
-                ///     19 -- 5 - - 17
-                ///     | \   |   / |
-                ///     |   \ | /   |
-                ///     4 - - 16 -- 5
-                /// 
-                new Plane3D(new List<TrianglePlane3D>
-                {
-                    // Left Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[5], Vertices[19], Vertices[16]),
-                    new TrianglePlane3D(Vertices[19], Vertices[4], Vertices[16]),
-
-                    // Right Bottom Corner Square
-                    new TrianglePlane3D(CenterVertices[5], Vertices[16], Vertices[17]),
-                    new TrianglePlane3D(Vertices[16], Vertices[5], Vertices[17]),
-
-                    // Right Top Corner Square
-                    new TrianglePlane3D(CenterVertices[5], Vertices[17], Vertices[18]),
-                    new TrianglePlane3D(Vertices[17], Vertices[6], Vertices[18]),
-
-                    // Left Top Corner Square
-                    new TrianglePlane3D(CenterVertices[5], Vertices[18], Vertices[19]),
-                    new TrianglePlane3D(Vertices[18], Vertices[7], Vertices[19]),
-                },
-                new List<BasePoint3D>() { Vertices[4], Vertices[5], Vertices[6], Vertices[7], Vertices[16], Vertices[17], Vertices[18], Vertices[19] })
+                FaceInitializator.GenerateFaceByType(FaceType.FRONT, Vertices, CenterVertices),
+                FaceInitializator.GenerateFaceByType(FaceType.RIGHT, Vertices, CenterVertices),
+                FaceInitializator.GenerateFaceByType(FaceType.BACK, Vertices, CenterVertices),
+                FaceInitializator.GenerateFaceByType(FaceType.LEFT, Vertices, CenterVertices),
+                FaceInitializator.GenerateFaceByType(FaceType.BOTTOM, Vertices, CenterVertices),
+                FaceInitializator.GenerateFaceByType(FaceType.TOP, Vertices, CenterVertices),
             };
 
             faces[0].FaceType = FaceType.FRONT;

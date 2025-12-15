@@ -8,7 +8,7 @@ using System.Numerics;
 
 namespace Core.Models.Geometry.Primitive.Plane
 {
-    public abstract class BasePlane3D : SceneObject3D, IPlane3D, IEquatable<BasePlane3D>, IAttachable
+    public abstract class BasePlane3D : SceneObject3D, IPlane3D, IAttachable
     {
         protected List<TrianglePlane3D> trianglePlanes;
         protected List<BasePoint3D> vertices;
@@ -17,7 +17,50 @@ namespace Core.Models.Geometry.Primitive.Plane
         public List<BasePoint3D> Vertices { get { return vertices; } }
         public List<TrianglePlane3D> TrianglePlanes { get { return trianglePlanes; } }
 
+        public BasePoint3D CenterPoint { get; set; }
+
         public FaceType FaceType { get; set; } = FaceType.NONE;
+        public bool DrawCustom
+        {
+            get
+            {
+                return drawCustom;
+            }
+            set
+            {
+                drawCustom = value;
+
+                int red = 0;
+                int green = 0;
+                int blue = 0;
+                int alpha = 0;
+
+                Vector3 avaragePosition = Vector3.Zero;
+                for (int i = 0; i < correctOrderVertices.Count; i++)
+                {
+                    BasePoint3D vertex = correctOrderVertices[i];
+
+                    red += vertex.Color.R;
+                    green += vertex.Color.G;
+                    blue += vertex.Color.B;
+                    alpha += vertex.Color.A;
+
+                    avaragePosition += vertex.Position;
+                }
+
+                Raylib_cs.Color color = new Raylib_cs.Color(red / 8, green / 8, blue / 8, alpha / 8);
+                Vector3 resultAvaragePosition = avaragePosition / 8;
+
+                CenterPoint.NonSelectedColor = color;
+                CenterPoint.Position = resultAvaragePosition;
+
+                foreach (var trianglePlane in TrianglePlanes)
+                {
+                    trianglePlane.DrawCustom = drawCustom;
+                }
+            }
+        }
+        private bool drawCustom = false;
 
         // Face Pressure
         [LocalizedCategory(PropertyConstants.C_APPEARANCE)]
@@ -33,7 +76,7 @@ namespace Core.Models.Geometry.Primitive.Plane
                 BrickElementPressureManager.GetInstance().AddFaceForPressure(this);
             }
         }
-        private float pressure = 0f;
+        private float pressure = 0.02f;
 
 
         // Face Pressure
@@ -157,7 +200,7 @@ namespace Core.Models.Geometry.Primitive.Plane
             correctOrderVertices = new List<BasePoint3D>();
         }
 
-        public BasePlane3D(List<TrianglePlane3D> planes, List<BasePoint3D> correctOrderVertices) : base()
+        public BasePlane3D(List<TrianglePlane3D> planes, List<BasePoint3D> correctOrderVertices, BasePoint3D centerPoint) : base()
         {
             trianglePlanes = planes;
             vertices = GetUniqueVertices(trianglePlanes);
@@ -169,6 +212,7 @@ namespace Core.Models.Geometry.Primitive.Plane
                  .ThenBy(p => p.Y)
                  .ThenBy(p => p.Z)
                  .ToList();
+            CenterPoint = centerPoint;
         }
 
         public override void SetColor(Raylib_cs.Color color)
@@ -189,7 +233,7 @@ namespace Core.Models.Geometry.Primitive.Plane
 
             Vector3 centerPoint = Vector3.Zero;
 
-            foreach (Point3D p in vertices)
+            foreach (BasePoint3D p in vertices)
             {
                 centerPoint += p.Position;
             }
@@ -259,39 +303,46 @@ namespace Core.Models.Geometry.Primitive.Plane
         {
             base.Move(moveVector);
 
-            foreach (Point3D vertex in vertices)
+            foreach (BasePoint3D vertex in vertices)
             {
                 vertex.Move(moveVector);
             }
         }
 
-        public override int GetHashCode()
-        {
-            //return Vertices.Aggregate(17, (current, point) => current * 31 + point.GetHashCode());
-            //return RuntimeHelpers.GetHashCode(Vertices);
+        //public override int GetHashCode()
+        //{
+        //    //return Vertices.Aggregate(17, (current, point) => current * 31 + point.GetHashCode());
+        //    //return RuntimeHelpers.GetHashCode(Vertices);
 
-            //unchecked
-            //{
-            //    int hash = 17;
-            //    foreach (var vertex in Vertices)
-            //    {
-            //        hash = hash * 31 + vertex.GetHashCode();
-            //    }
-            //    return hash;
-            //}
+        //    //unchecked
+        //    //{
+        //    //    int hash = 17;
+        //    //    foreach (var vertex in Vertices)
+        //    //    {
+        //    //        hash = hash * 31 + vertex.GetHashCode();
+        //    //    }
+        //    //    return hash;
+        //    //}
 
-            unchecked
-            {
-                int hash = 17;
-                foreach (var vertex in Vertices) // Сортуємо
-                {
-                    int vertexHashCode = vertex.GetHashCode();
-                    hash = hash * 31 + vertexHashCode;
-                    //Console.WriteLine(String.Format("Face ID: {0}, Hash: {1}", ID, hash));
-                }
-                return hash;
-            }
-        }
+        //    unchecked
+        //    {
+        //        int hash = 17;
+        //        foreach (var vertex in Vertices) // Сортуємо
+        //        {
+        //            int vertexHashCode = vertex.GetHashCode();
+        //            hash = hash * 31 + vertexHashCode;
+        //            //Console.WriteLine(String.Format("Face ID: {0}, Hash: {1}", ID, hash));
+        //        }
+        //        return hash;
+        //    }
+        //}
+
+        //public override int GetHashCode()
+        //{
+        //    // Hash based on sorted vertex positions to ensure same hash for equivalent faces
+        //    var sortedPositions = Vertices.Select(v => v.Position).OrderBy(p => p.X).ThenBy(p => p.Y).ThenBy(p => p.Z);
+        //    return sortedPositions.Aggregate(0, (hash, pos) => hash ^ pos.GetHashCode());
+        //}
 
         //public override bool Equals(object obj)
         //{
@@ -310,20 +361,89 @@ namespace Core.Models.Geometry.Primitive.Plane
         //    return true;
         //}
 
+        //public override bool Equals(object obj)
+        //{
+        //    if (obj is BasePlane3D other)
+        //    {
+        //        return Equals(other);
+        //    }
+        //    return false;
+        //}
+
+        //public override bool Equals(object obj)
+        //{
+        //    if (obj is not BasePlane3D other) return false;
+
+        //    // Check if all vertices match (position-wise)
+        //    if (this.Vertices.Count != other.Vertices.Count) return false;
+
+        //    // Create sets of vertex positions for comparison
+        //    var thisPositions = new HashSet<Vector3>(this.Vertices.Select(v => v.Position));
+        //    var otherPositions = new HashSet<Vector3>(other.Vertices.Select(v => v.Position));
+
+        //    return thisPositions.SetEquals(otherPositions);
+        //}
+
+        //public override bool Equals(object obj)
+        //{
+        //    if (obj is not BasePlane3D other) return false;
+        //    if (Vertices.Count != other.Vertices.Count) return false;
+
+        //    // Compare by positions, regardless of order
+        //    var thisPositions = Vertices.Select(v => v.Position)
+        //        .OrderBy(p => p.X).ThenBy(p => p.Y).ThenBy(p => p.Z)
+        //        .ToList();
+
+        //    var otherPositions = other.Vertices.Select(v => v.Position)
+        //        .OrderBy(p => p.X).ThenBy(p => p.Y).ThenBy(p => p.Z)
+        //        .ToList();
+
+        //    for (int i = 0; i < thisPositions.Count; i++)
+        //    {
+        //        if (!thisPositions[i].Equals(otherPositions[i]))
+        //            return false;
+        //    }
+
+        //    return true;
+        //}
+
+        //public override bool Equals(object obj)
+        //{
+        //    if (obj is not BasePlane3D other) return false;
+        //    // Check if all vertices match (position-wise) 
+        //    if (this.Vertices.Count != other.Vertices.Count) return false;
+        //    // Create sets of vertex positions for comparison 
+        //    var thisPositions = new HashSet<Vector3>(this.Vertices.Select(v => v.Position));
+        //    var otherPositions = new HashSet<Vector3>(other.Vertices.Select(v => v.Position));
+        //    return thisPositions.SetEquals(otherPositions);
+        //}
+
         public override bool Equals(object obj)
         {
-            if (obj is BasePlane3D other)
-            {
-                return Equals(other);
-            }
-            return false;
+            if (obj is not BasePlane3D other) return false;
+            if (this.correctOrderVertices.Count != other.correctOrderVertices.Count) return false;
+
+            var comparer = new Vector3EqualityComparer();
+            var thisPositions = new HashSet<Vector3>(this.correctOrderVertices.Select(v => v.Position), comparer);
+            var otherPositions = new HashSet<Vector3>(other.correctOrderVertices.Select(v => v.Position), comparer);
+            return thisPositions.SetEquals(otherPositions);
         }
 
-        public bool Equals(BasePlane3D other)
+        public override int GetHashCode()
         {
-            if (other is null) return false;
-            return new HashSet<BasePoint3D>(Vertices).SetEquals(other.Vertices);
+            // Keep the hash compatible with Equals
+            var sortedPositions = correctOrderVertices.Select(v => v.Position)
+                .OrderBy(p => p.X).ThenBy(p => p.Y).ThenBy(p => p.Z)
+                .ToList();
+
+            return sortedPositions.Aggregate(17, (hash, pos) => hash * 31 + pos.GetHashCode());
         }
+
+        //public bool Equals(BasePlane3D other)
+        //{
+        //    if (other is null) return false;
+        //    return new HashSet<BasePoint3D>(Vertices).SetEquals(other.Vertices);
+        //}
 
 
         public void Attach()

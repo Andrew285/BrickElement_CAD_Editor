@@ -15,9 +15,9 @@ namespace Core.Models.Geometry.Primitive.Point
         {
         }
 
-        public override Point3D Clone()
-        {
-            return new Point3D(Position);
-        }
+        //public override Point3D Clone()
+        //{
+        //    return new Point3D(Position);
+        //}
     }
 }

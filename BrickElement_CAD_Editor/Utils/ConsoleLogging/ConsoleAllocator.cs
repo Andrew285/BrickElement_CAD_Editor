@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace UI.Utils.ConsoleLogging
+namespace App.Utils.ConsoleLogging
 {
     public static class ConsoleAllocator
     {

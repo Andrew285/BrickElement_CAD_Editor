@@ -1,9 +1,9 @@
-﻿using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout;
-using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
-using UI.MainFormLayout.MiddleViewLayout.SceneViewLayout;
-using UI.Utils.ViewLayout.ControlUtil;
+﻿using App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout;
+using App.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
+using App.MainFormLayout.MiddleViewLayout.SceneViewLayout;
+using App.Utils.ViewLayout.ControlUtil;
 
-namespace UI.MainFormLayout.MiddleViewLayout
+namespace App.MainFormLayout.MiddleViewLayout
 {
     public interface IMiddleView : IView<TableLayoutPanel>
     {

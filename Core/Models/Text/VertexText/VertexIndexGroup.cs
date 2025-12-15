@@ -15,10 +15,11 @@ namespace Core.Models.Text.VertexText
         {
             List<LabelObject> labelObjects = new List<LabelObject>();
 
-            foreach (Point3D vertex in vertices)
+            foreach (BasePoint3D vertex in vertices)
             {
                 int index = vertices.IndexOf(vertex);
 
+                //LabelObject labelObject = new LabelObject(vertex, vertex.Position.ToString());
                 LabelObject labelObject = new LabelObject(vertex, index.ToString());
                 labelObjects.Add(labelObject);
             }

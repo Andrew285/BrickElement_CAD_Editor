@@ -1,6 +1,6 @@
-﻿using UI.Utils.ViewLayout.ControlUtil;
+﻿using App.Utils.ViewLayout.ControlUtil;
 
-namespace UI.MainFormLayout.MiddleViewLayout.SceneViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.SceneViewLayout
 {
     public interface ISceneView : IView<Panel>
     {

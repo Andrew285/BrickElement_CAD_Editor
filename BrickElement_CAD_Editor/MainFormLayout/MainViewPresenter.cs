@@ -1,12 +1,12 @@
 ﻿
+using App.MainFormLayout.MenuViewLayout;
+using App.MainFormLayout.MiddleViewLayout;
 using App.Tools;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using UI.MainFormLayout.ExtraToolsViewLayout;
-using UI.MainFormLayout.MenuViewLayout;
-using UI.MainFormLayout.MiddleViewLayout;
 
-namespace UI.MainFormLayout
+namespace App.MainFormLayout
 {
     public class MainViewPresenter
     {
@@ -21,7 +21,7 @@ namespace UI.MainFormLayout
         {
             mainView = view;
 
-            MenuViewPresenter = new MenuViewPresenter(mainView.MenuView);
+            MenuViewPresenter = new MenuViewPresenter(mainView.MenuView, scene);
             ExtraToolsViewPresenter = new ExtraToolsViewPresenter(mainView.ExtraToolsView, scene, toolManager);
             MiddleViewPresenter = new MiddleViewPresenter(view.MiddleView, renderer, scene, toolManager);
         }

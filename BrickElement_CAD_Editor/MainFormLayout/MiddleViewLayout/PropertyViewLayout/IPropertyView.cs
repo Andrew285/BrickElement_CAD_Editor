@@ -1,7 +1,7 @@
-﻿using Core.Models.Scene;
-using UI.Utils.ViewLayout.ControlUtil;
+﻿using App.Utils.ViewLayout.ControlUtil;
+using Core.Models.Scene;
 
-namespace UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.PropertyViewLayout
 {
     public interface IPropertyView: IView<Panel>
     {

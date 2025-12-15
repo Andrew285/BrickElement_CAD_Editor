@@ -1,108 +1,81 @@
 ﻿
+using App.DataTableLayout;
+using App.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
+using ConsoleTables;
+using Core.Commands;
 using Core.Maths;
 using Core.Models.Geometry.Complex.BrickElements;
 using Core.Models.Geometry.Complex.Surfaces;
-using Core.Services.Events;
+using Core.Models.Graphics.Rendering;
+using Core.Models.Scene;
 using System.Data;
 using System.Numerics;
-using App.DataTableLayout;
-
-using static Core.Maths.FEM;
-using Core.Services;
 using System.Text;
-using System.Runtime.CompilerServices;
-using System.IO;
-using System.Diagnostics.Metrics;
+using static Core.Maths.FEM;
 
 namespace App.Tools
 {
-    public class FemSolverTool : ITool2
+    public class FemSolverTool : SelectionTool
     {
+        public FemSolverTool(IScene scene, CommandHistory commandHistory, IRenderer renderer, IPropertyView propertyView) : base(scene, commandHistory, renderer, propertyView)
+        {
+        }
+
+        public override ToolType Type => ToolType.FEM_SOLVER;
+
+        //public override string Name => "FEM_SOLVER";
+
+        //public override string Description => "FEM_SOLVER";
 
         public void Activate()
         {
-            EventBus.Subscribe<SelectedObjectEvent>(OnCalculateDeformation);
+            //EventBus.Subscribe<SelectedObjectEvent>(OnCalculateDeformation);
         }
 
         public void Deactivate()
         {
-            EventBus.Unsubscribe<SelectedObjectEvent>(OnCalculateDeformation);
+            //EventBus.Unsubscribe<SelectedObjectEvent>(OnCalculateDeformation);
         }
 
-        public void OnCalculateDeformation(SelectedObjectEvent e)
+        public override void HandleLeftMouseButtonClick(int x, int y)
         {
-            if (e.Object is BrickElementSurface surface)
+            base.HandleLeftMouseButtonClick(x, y);
+
+            OnCalculateDeformation(SelectedObject);
+            // Implement fix face logic here
+            // This would typically involve:
+            // 1. Raycast to find clicked face
+            // 2. Apply fix constraints to the face
+        }
+
+
+
+
+        public void OnCalculateDeformation(SceneObject obj)
+        {
+            if (obj is BrickElementSurface surface)
             {
                 if (surface != null)
                 {
-                    //// Global Points
-                    //StringBuilder sb1 = new StringBuilder();
-                    //foreach (var point in surface.GlobalVertexIndices)
-                    //{
-                    //    sb1.Append(String.Format("Global Index: {0} -- Vertex: {1}\n", point.Value, surface.Mesh.VerticesDictionary[point.Key]));
-                    //}
-                    //sb1.Append('\n');
-                    //File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\globalPoints.txt", sb1.ToString());
-
-                    //// Local Points
-                    //StringBuilder sb2 = new StringBuilder();
-                    //int cubeCounter = 0;
-                    //foreach (var point in surface.LocalVertexIndices)
-                    //{
-                    //    sb2.Append(String.Format("Local Points Indices for Cube {0}:", cubeCounter));
-                    //    foreach (var item in point.Value)
-                    //    {
-                    //        sb2.Append(item + ", ");
-                    //    }
-                    //    sb2.Append('\n');
-                    //    cubeCounter++;
-                    //}
-                    //sb2.Append('\n');
-                    //File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\localPoints.txt", sb2.ToString());
-
-
                     TwentyNodeBrickElement standartCube = BrickElementInitializator.CreateStandartElement();
                     Dictionary<Vector3Double, Dictionary<int, List<double>>> dfiabg = CalculateDFIABG(standartCube);
 
-                    //StringBuilder sb = new StringBuilder();
-                    //foreach (var elem in dfiabg)
-                    //{
-                    //    sb.Append("Gauss Point: " + elem.Key.ToString() + "\n");
-                    //    foreach (var dictElem in elem.Value)
-                    //    {
-                    //        sb.Append(String.Format("Local Index {0} -- X: {1}, Y: {2}, Z: {3}\n", dictElem.Key, dictElem.Value[0], dictElem.Value[1], dictElem.Value[2]));
-                    //    }
-                    //    sb.Append("\n");
-                    //}
-                    //File.WriteAllText("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\dfiabg_1.txt", sb.ToString());
-
                     List<double[,]> mgeMatrices = new List<double[,]>();
-                    int xyzCounter = 0;
                     foreach (var be in surface.BrickElements)
                     {
                         var yakobians = CalculateYakobians(be.Value, dfiabg);
                         var dfixyz = CalculateDFIXYZ(yakobians, dfiabg);
-
-                        //if (xyzCounter < 3)
-                        //{
-                        //    StringBuilder sb3 = new StringBuilder();
-                        //    foreach (var elem in dfixyz)
-                        //    {
-                        //        sb3.Append("Gauss Point: " + elem.Key.ToString() + "\n");
-                        //        foreach (var dictElem in elem.Value)
-                        //        {
-                        //            sb3.Append(String.Format("Local Index {0} -- X: {1}, Y: {2}, Z: {3}\n", dictElem.Key, dictElem.Value[0], dictElem.Value[1], dictElem.Value[2]));
-                        //        }
-                        //        sb3.Append("\n");
-                        //    }
-                        //    File.WriteAllText(String.Format("D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\dfixyz{0}.txt", xyzCounter), sb3.ToString());
-                        //    xyzCounter++;
-                        //}
-                        
                         var mge = CalculateMGE(yakobians, dfixyz);
                         mgeMatrices.Add(mge);
                     }
 
+                    //foreach (var be in surface.SuperBrickElementsPoints)
+                    //{
+                    //    var yakobians = CalculateYakobians(surface.BrickElements[be.Key], dfiabg);
+                    //    var dfixyz = CalculateDFIXYZ(yakobians, dfiabg);
+                    //    var mge = CalculateMGE(yakobians, dfixyz);
+                    //    mgeMatrices.Add(mge);
+                    //}
 
 
                     //DataTable mgeDataTable1 = ShowMatrix(mgeMatrices[0]);
@@ -115,31 +88,6 @@ namespace App.Tools
 
                     LoadSolver loadSolver = new LoadSolver();
                     List<double[]> fVectors = new List<double[]>();
-
-                    // Choose faces for pressure
-                    //surface.BrickElements.ElementAt(20).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.6f;
-                    //surface.BrickElements.ElementAt(5).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
-                    //surface.BrickElements.ElementAt(6).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
-                    //surface.BrickElements.ElementAt(7).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 0.2f;
-
-                    //surface.BrickElements.ElementAt(0).Value.Mesh.FacesDictionary.ElementAt(5).Value.Pressure = 1f;
-
-
-
-                    surface.AreFacesDrawable = false;
-
-                    //double[] fValues = null;
-                    //foreach (var face in surface.Mesh.FacesDictionary.Values)
-                    //{
-                    //    if (face.IsStressed)
-                    //    {
-                    //        var deriv = loadSolver.CalculateFaceDerivativesNT();
-                    //        var standartValues = loadSolver.CalculateStandartFaceDerivativesNT();
-                    //        fValues = loadSolver.CalculateValuesF(face.Pressure, face, deriv, standartValues);
-                    //        fVectors.Add(fValues);
-                    //        break;
-                    //    }
-                    //}
 
                     foreach (var be in surface.BrickElements)
                     {
@@ -164,6 +112,31 @@ namespace App.Tools
                         fVectors.Add(fValues);
                     }
 
+                    //foreach (var bePair in surface.SuperBrickElementsPoints)
+                    //{
+                    //    double[] fValues = null;
+                    //    TwentyNodeBrickElement be = surface.BrickElements[bePair.Key];
+                    //    foreach (var face in be.Mesh.FacesDictionary)
+                    //    {
+                    //        if (face.Value.IsStressed)
+                    //        {
+                    //            var deriv = loadSolver.CalculateFaceDerivativesNT();
+                    //            var standartValues = loadSolver.CalculateStandartFaceDerivativesNT();
+                    //            fValues = loadSolver.CalculateValuesF(face.Value.Pressure, face.Value, deriv, standartValues);
+                    //            fVectors.Add(fValues);
+                    //            break;
+                    //        }
+                    //    }
+                    //    if (fValues != null)
+                    //    {
+                    //        continue;
+                    //    }
+
+                    //    fValues = new double[60];
+                    //    fVectors.Add(fValues);
+                    //}
+
+
                     // find all ZU (fixed faces)
                     List<int> globalFixedVertices = new List<int>();
                     foreach (var face in surface.Mesh.FacesDictionary.Values)
@@ -173,6 +146,7 @@ namespace App.Tools
                             foreach (var vertex in face.correctOrderVertices)
                             {
                                 int globalIndex = surface.GlobalVertexIndices[vertex.ID];
+                                //int globalIndex = surface.GlobalVertexIndices.First(v => v.Key == vertex.ID).Value;
                                 if (!globalFixedVertices.Contains(globalIndex))
                                 {
                                     globalFixedVertices.Add(globalIndex);
@@ -190,10 +164,11 @@ namespace App.Tools
                     double[] combinedVector = loadSolver.CreateCombinedF(fVectors, surface.LocalVertexIndices, surface.GlobalVertexIndices.Count);
 
 
-                    //var table = ConsoleTable.From(ShowMatrix(mgeMatrices[0]));
+                    //var table = ConsoleTable.From(ShowMatrix(combinedMatrix));
                     //var st = table.ToString();
 
                     double[] resultPoints = SolveLinearSystem2(combinedMatrix, combinedVector);
+
 
                     ////ShowMatrix(mgeMatrices[0]);
                     //DataTable combinedMatrixMGEDataTable = ShowMatrix(combinedMatrix);
@@ -206,17 +181,42 @@ namespace App.Tools
                     //WriteToCSV(resultPointsDataTable, "D:\\Projects\\VisualStudio\\BrickElement_CAD_Editor\\BrickElement_CAD_Editor\\Resources\\result_points.csv");
 
                     Vector3[] newPoints = new Vector3[resultPoints.Length];
+                    Vector3[] oldPoints = new Vector3[resultPoints.Length];
                     int counter = 0;
                     for (int i = 0; i < surface.GlobalVertexIndices.Count; i++)
                     {
                         Guid globalVertexId = surface.GlobalVertexIndices.ElementAt(i).Key;
                         Vector3 vertex = surface.Mesh.VerticesDictionary[globalVertexId].Position;
+                        oldPoints[i] = vertex;
                         Vector3 newPoint = new Vector3(vertex.X - (float)resultPoints[counter + 0], vertex.Y - (float)resultPoints[counter + 2], vertex.Z - (float)resultPoints[counter + 1]);
                         newPoints[i] = newPoint;
                         surface.Mesh.VerticesDictionary[globalVertexId].Position = newPoint;
                         counter += 3;
-                        Console.WriteLine(newPoint);
                     }
+
+                    foreach (var face in surface.Mesh.FacesDictionary)
+                    {
+                        face.Value.DrawCustom = false;
+                    }
+                    //surface.AreFacesDrawable = false;
+
+
+                    double E = 1f;
+                    double nu = 0.3f;
+                    double lambda = E / ((1 + nu) * (1 - 2 * nu));
+                    double mu = E / (2 * (1 + nu));
+                    StressSolver stressSolver = new StressSolver(lambda, nu, mu);
+                    var translationDerivatives = stressSolver.CalculateTranslationDerivatives(resultPoints, surface, oldPoints);
+                    var mainStresses = stressSolver.CalculateSigmaStressesForPoint(translationDerivatives);
+                    surface.mainStresses = mainStresses;
+
+                    //stressSolver.ChangeVerticesColor(mainStresses, surface);
+
+                    //foreach (var face in surface.Mesh.FacesDictionary)
+                    //{
+                    //    face.Value.DrawCustom = true;
+                    //}
+
 
                     //StringBuilder sb = new StringBuilder();
                     //foreach (var elem in surface.Mesh.VerticesDictionary)

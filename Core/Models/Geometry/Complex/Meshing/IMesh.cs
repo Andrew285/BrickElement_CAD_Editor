@@ -2,7 +2,7 @@
 using Core.Models.Geometry.Primitive.Plane;
 using Core.Models.Geometry.Primitive.Point;
 
-namespace Core.Models.Geometry.Complex.BrickElements
+namespace Core.Models.Geometry.Complex.Meshing
 {
     public interface IMesh
     {
@@ -30,5 +30,7 @@ namespace Core.Models.Geometry.Complex.BrickElements
         bool Add(BasePoint3D vertex);
         bool Add(BaseLine3D edge);
         bool Add(BasePlane3D face);
+        bool Add2(BasePlane3D face);
+        Mesh DeepCopy();
     }
 }

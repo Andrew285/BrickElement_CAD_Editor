@@ -1,12 +1,12 @@
 ﻿
+using App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout;
+using App.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
+using App.MainFormLayout.MiddleViewLayout.SceneViewLayout;
 using App.Tools;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
-using UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout;
-using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
-using UI.MainFormLayout.MiddleViewLayout.SceneViewLayout;
 
-namespace UI.MainFormLayout.MiddleViewLayout
+namespace App.MainFormLayout.MiddleViewLayout
 {
     public class MiddleViewPresenter
     {

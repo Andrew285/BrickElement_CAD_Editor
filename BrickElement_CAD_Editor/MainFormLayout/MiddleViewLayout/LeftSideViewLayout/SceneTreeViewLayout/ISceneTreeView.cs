@@ -1,7 +1,6 @@
-﻿using Core.Models.Scene;
-using UI.Utils.ViewLayout.ControlUtil;
+﻿using App.Utils.ViewLayout.ControlUtil;
 
-namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout
 {
     public interface ISceneTreeView: IView<TreeView>
     {

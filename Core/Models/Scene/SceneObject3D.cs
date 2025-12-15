@@ -21,7 +21,7 @@ namespace Core.Models.Scene
         public virtual Vector3 Position { 
             get 
             {
-                return GetCenter();
+                return position;
             }
             set 
             {
@@ -147,7 +147,10 @@ namespace Core.Models.Scene
             ObjectMoved += OnObjectMoved;
         }
 
-        public virtual void OnPositionChanged(Vector3 newPosition) { }
+        public virtual void OnPositionChanged(Vector3 newPosition) 
+        {
+            position = newPosition;
+        }
         public virtual void OnObjectMoved(Vector3 moveVector) { }
 
         public abstract void Draw(IRenderer renderer);

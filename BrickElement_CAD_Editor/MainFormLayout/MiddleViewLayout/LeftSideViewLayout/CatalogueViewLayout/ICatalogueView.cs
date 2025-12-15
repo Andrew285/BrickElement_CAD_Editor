@@ -1,6 +1,7 @@
-﻿using UI.Utils.ViewLayout.ControlUtil;
+﻿
+using App.Utils.ViewLayout.ControlUtil;
 
-namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.CatalogueViewLayout
 {
     public interface ICatalogueView: IView<Panel>
     {

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "Utils\Utils.csproj", "{50E56541-62BD-47D4-B316-1E8410ECAF73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Triangulation", "Triangulation\Triangulation.csproj", "{8AABB183-148F-4F88-8F1D-7F6FCFFD4761}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{50E56541-62BD-47D4-B316-1E8410ECAF73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50E56541-62BD-47D4-B316-1E8410ECAF73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50E56541-62BD-47D4-B316-1E8410ECAF73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AABB183-148F-4F88-8F1D-7F6FCFFD4761}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AABB183-148F-4F88-8F1D-7F6FCFFD4761}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AABB183-148F-4F88-8F1D-7F6FCFFD4761}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AABB183-148F-4F88-8F1D-7F6FCFFD4761}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

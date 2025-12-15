@@ -1,4 +1,5 @@
 ﻿using Core.Models.Geometry.Complex.BrickElements;
+using Core.Models.Geometry.Complex.Meshing;
 using Core.Models.Scene;
 
 namespace Core.Models.Geometry.Complex.Surfaces

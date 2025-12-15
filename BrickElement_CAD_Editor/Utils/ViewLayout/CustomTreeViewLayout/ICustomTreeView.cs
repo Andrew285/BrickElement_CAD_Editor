@@ -1,4 +1,4 @@
-﻿namespace UI.Utils.ViewLayout.CustomTreeViewLayout
+﻿namespace App.Utils.ViewLayout.CustomTreeViewLayout
 {
     public interface ICustomTreeView
     {

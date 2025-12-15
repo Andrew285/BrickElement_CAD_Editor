@@ -1,7 +1,7 @@
-﻿using Core.Models.Scene;
-using UI.Utils.ViewLayout.CustomTreeViewLayout;
+﻿using App.Utils.ViewLayout.CustomTreeViewLayout;
+using Core.Models.Scene;
 
-namespace UI.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout
+namespace App.MainFormLayout.MiddleViewLayout.LeftSideViewLayout.SceneTreeViewLayout
 {
     public class SceneTreeView : CustomTreeView, ISceneTreeView
     {

@@ -74,5 +74,10 @@ namespace Core.Models.Geometry.Primitive.Line
             if (other is null) return false;
             return StartPoint.Equals(other.StartPoint) && EndPoint.Equals(other.EndPoint);
         }
+
+        public override string ToString()
+        {
+            return String.Format("{0} -> {1}", StartPoint, EndPoint);
+        }
     }
 }

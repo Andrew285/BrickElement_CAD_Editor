@@ -1,14 +1,14 @@
-﻿using App.Tools;
-using BrickElement_CAD_Editor;
+﻿using App.MainFormLayout;
+using App.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
+using App.Tools;
+using App.Utils.ConsoleLogging;
+using Core.Commands;
 using Core.Models.Graphics.Cameras;
 using Core.Models.Graphics.Rendering;
 using Core.Models.Scene;
 using Core.Services;
-using UI.MainFormLayout;
-using UI.MainFormLayout.MiddleViewLayout.PropertyViewLayout;
-using UI.Utils.ConsoleLogging;
 
-namespace UI
+namespace BrickElement_CAD_Editor
 {
     static class Program
     {
@@ -59,8 +59,9 @@ namespace UI
 
             IPropertyView propertyView = view.MainView.MiddleView.PropertyView;
 
-            ToolManager toolManager = new ToolManager();
-            toolManager.SetTool(new SelectionTool(scene, renderer, propertyView));
+            CommandHistory commandHistory = new CommandHistory();
+            ToolManager toolManager = new ToolManager(scene, commandHistory, renderer, propertyView);
+            //toolManager.SetTool(new SelectionTool(scene, renderer, propertyView));
 
             new MainFormPresenter(view, renderer, scene, toolManager, languageService);
 

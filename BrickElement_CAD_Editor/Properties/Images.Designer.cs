@@ -61,12 +61,32 @@ namespace App.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static byte[] App_4dwIw093C1 {
+        internal static System.Drawing.Bitmap ic_add {
             get {
-                object obj = ResourceManager.GetObject("App_4dwIw093C1", resourceCulture);
-                return ((byte[])(obj));
+                object obj = ResourceManager.GetObject("ic_add", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ic_select {
+            get {
+                object obj = ResourceManager.GetObject("ic_select", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap parrots {
+            get {
+                object obj = ResourceManager.GetObject("parrots", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

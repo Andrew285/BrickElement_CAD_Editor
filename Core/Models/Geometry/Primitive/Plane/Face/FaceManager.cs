@@ -83,5 +83,19 @@ namespace Core.Models.Geometry.Primitive.Plane.Face
 
             return center / 8;
         }
+
+        public static FaceType GetFaceTypeByIndex(int index)
+        {
+            switch (index)
+            {
+                case 0: return FaceType.FRONT;
+                case 1: return FaceType.RIGHT;
+                case 2: return FaceType.BACK;
+                case 3: return FaceType.LEFT;
+                case 4: return FaceType.BOTTOM;
+                case 5: return FaceType.TOP;
+                default: return FaceType.NONE;
+            }
+        }
     }
 }
